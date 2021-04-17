@@ -1,5 +1,6 @@
 const express = require('express')
 const app = express()
+const port = process.env.PORT || 3000;
 
 // set up author routes
 const authorRouter = require('./routes/authorRouter')
@@ -13,6 +14,6 @@ app.get('/', (req, res) => {
 // the author routes are added onto the end of '/author-management'
 app.use('/author-management', authorRouter)
 
-app.listen(process.env.PORT || 3000, () => {
- console.log("The library app is running!")
+app.listen(port || 3000, () => {
+    console.log('Example app listening at http://localhost:${port}')
 })
