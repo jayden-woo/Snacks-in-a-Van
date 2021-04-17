@@ -4,6 +4,7 @@
   "description": "Web App Project for UniMelb INFO30005 Semester 1, 2021",
   "main": "app.js",
   "scripts": {
+    "start": "node app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
