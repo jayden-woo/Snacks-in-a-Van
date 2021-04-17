@@ -14,6 +14,6 @@ app.get('/', (req, res) => {
 // the author routes are added onto the end of '/author-management'
 app.use('/author-management', authorRouter)
 
-app.listen(port || 3000, () => {
+app.listen(port, () => {
     console.log('Example app listening at http://localhost:${port}')
 })
