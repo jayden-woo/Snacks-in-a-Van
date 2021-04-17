@@ -1,19 +1,22 @@
 const express = require('express')
 const app = express()
-const port = process.env.PORT || 3000;
 
-// set up author routes
-const authorRouter = require('./routes/authorRouter')
+// set up customer routes
+const customerRouter = require('./routes/customerRouter')
 
-// GET home page
+// handler for GET home page
 app.get('/', (req, res) => {
-    res.send('<h1>Library System</h1>')
+    res.send('<h1>Snacks in a Van</h1>')
 })
 
-// Handle author-management requests
-// the author routes are added onto the end of '/author-management'
-app.use('/author-management', authorRouter)
+// handler for customer requests
+// customer routes are added onto the end of '/customer'
+app.use('/customer', customerRouter)
 
+// dynamically set the port number or use static 8080 port for local testing
+const port = process.env.PORT || 8080
+
+// listen to any request to the web app
 app.listen(port, () => {
-    console.log('Example app listening at http://localhost:${port}')
+    console.log('The web app is listening on port', port)
 })
