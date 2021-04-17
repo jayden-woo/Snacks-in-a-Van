@@ -23,6 +23,9 @@ Temporary Items
 
 
 ## Node
+node_modules/
+.env
+.vscode/
 
 # Logs
 logs
