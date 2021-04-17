@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/INFO30005-2021-SM1/project-t10-generator#readme",
   "dependencies": {
+    "-": "0.0.1",
     "express": "^4.17.1",
     "express-handlebars": "^5.3.0"
   }
