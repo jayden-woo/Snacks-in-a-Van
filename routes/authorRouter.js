@@ -8,7 +8,7 @@ const authorController = require('../controllers/authorController.js')
 
 // handle the GET request toget all authors
 authorRouter.get('/', authorController.getAllAuthors)
-authorRouter.get('/:id', authorController.getAuthorByID)
+authorRouter.get('/:authorid', authorController.getOneAuthor)
 
 // export the router
 module.exports = authorRouter
