@@ -13,10 +13,10 @@ customerRouter.get('/', customerController.getNearestVans)
 customerRouter.get('/menu', customerController.getMenu)
 
 // handle the GET request to get details of one snack
-customerRouter.get('/menu/:id', customerController.getSnackByID)
+customerRouter.get('/menu/:snackName', customerController.getSnackByName)
 
 // handle the POST request to start a new order by add a snack to order
-customerRouter.post('/menu/:id', customerController.addSnackToOrder)
+customerRouter.post('/menu/:snackName', customerController.addSnackToOrder)
 
 // export the router
 module.exports = customerRouter

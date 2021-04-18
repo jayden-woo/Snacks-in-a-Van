@@ -1,19 +1,40 @@
-// temporary locally stored orders
-// module.exports = [
-// ]
+const mongoose = require("mongoose")
 
-module.exports = [
-    {
-        "orderNumber": "0",
-        "vendorID": "123456", //Tester
-        "snacks": [
-            {
-                "id": "3",
-                "name": "Fancy Biscuit",
-                "price": "3.00"
-            }
-        ],
-        "status": 0
-
+// define the schema for one line of snacks to be usedd in the order schema
+const orderLineSchema = new mongoose.Schema({
+    snackId: {
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: 'Menu', 
+        required: true
+    }, 
+    quantity: {
+        type: Number, 
+        required: true, 
+        min: 1
     }
-]
+})
+
+// define the schema for one order in the orders database
+const orderSchema = new mongoose.Schema({
+    orderNumber: { 
+        type: Number, 
+        required: true, 
+        unique: true, 
+        min: 0
+    }, 
+    snacks: [orderLineSchema]
+}, 
+{
+    timestamps: true
+}, 
+{
+    collection: 'orders' 
+})
+
+// export the orderLine and order model to be used by the controllers
+const OrderLine = mongoose.model("OrderLine", orderLineSchema)
+const Order = mongoose.model("Order", orderSchema)
+module.exports = {
+    OrderLine, 
+    Order
+}

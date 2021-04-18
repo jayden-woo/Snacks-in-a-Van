@@ -1,7 +1,8 @@
-// link to the temporary menu model
-const menu = require('../models/menu')
-// link to the temporary orders model
-const orders = require('../models/order')
+const mongoose = require("mongoose")
+
+// import the models used
+const { Menu } = require('../models/menu.js')
+const { OrderLine, Order } = require('../models/order.js')
 
 // handle request to get the nearest vans
 const getNearestVans = (req, res) => {
@@ -18,49 +19,70 @@ const getNearestVans = (req, res) => {
 }
 
 // handle request to get the menu
-const getMenu = (req, res) => {
-    res.send(menu)
+const getMenu = async (req, res) => {
+    try {
+        const result = await Menu.find( {}, {_id: false} )
+        res.send(result)
+    // error occurred during query
+    } catch (err) {
+        res.status(400)
+        res.send("Database query failed!")
+    }
 }
 
 // handle request to get details of one snack
-const getSnackByID = (req, res) => {
-	
-	// search for a snack by ID
-	const snack = menu.find(snack => snack.id === req.params.id);
-
-    // check for presence of snack in database
-	if (snack){
-        // send back the snack details
-		res.send(snack)
-	}
-	else{
-		// return an error message or error page
-        res.statusCode = 404
-        res.setHeader("Content-Type", "text/html");
-		res.write('<h1> Error 404 </h1>')
-        res.end('<h2> Oops! Snacks not found! </h2>')
-	}
+const getSnackByName = async (req, res) => {
+    try {
+        // search for a snack by name
+        const snack = await Menu.findOne( {"snackName": req.params.snackName}, {_id: false} )
+        // snack not found in database
+        if (snack === null) { 
+            // return an error message or error page
+            res.status(404)
+            res.setHeader("Content-Type", "text/html")
+		    res.write('<h1> Error 404 </h1>')
+            res.end('<h2> Oops! Snacks not found! </h2>')
+        }
+        // send back snack details
+        res.send(snack)
+    // error occurred during query
+    } catch (err) {
+        res.status(400)
+        res.send("Database query failed!")
+    }
 }
 
 // handle request to add a snack to order
-const addSnackToOrder = (req, res) => {
+const addSnackToOrder = async (req, res) => {
+    // get the snack to be added
+    let snack = await Menu.findOne( {"snackName": req.params.snackName} )
+
+    // construct a new order line item
+    const lineItem = await new OrderLine({
+        snackId: snack._id, 
+        quantity: req.body.quantity 
+    })
+
     // construct a new order
-    let newOrder = {
-        "orderNumber":orders.length.toString(), 
-        "snacks":[
-            menu.find(snack => snack.id === req.params.id)
-        ]
-    }
-    // add the new order to the database
-    orders.push(newOrder)
-    // return entire orders list to browser as a check
-    res.send(orders)
+    let orderNumber = await Order.countDocuments()
+    const newOrder = new Order({
+        orderNumber: orderNumber, 
+        snacks: [lineItem]
+    })
+
+    // save the new order to the orders database
+    newOrder.save( (err, result) => {
+        // error occured during saving of a new order
+        if (err) res.send(err)
+        // send back order details for checking
+        res.send(result)
+    })
 }
 
 // export the controller functions
 module.exports = {
     getNearestVans, 
     getMenu, 
-    getSnackByID, 
+    getSnackByName, 
     addSnackToOrder
 }
