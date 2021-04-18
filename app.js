@@ -1,12 +1,16 @@
 const express = require('express')
+require('./models');
+
 const app = express()
+app.use(express.json())  // replaces body-parser
 
 // set up customer routes
 const customerRouter = require('./routes/customerRouter')
 
 // handler for GET home page
 app.get('/', (req, res) => {
-    res.send('<h1>Snacks in a Van</h1>')
+    console.log('connected')
+    res.send('<h1>Snack in a Van</h1>')
 })
 
 // handler for customer requests
