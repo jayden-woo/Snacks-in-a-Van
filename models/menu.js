@@ -28,23 +28,27 @@ const mongoose = require("mongoose")
 const menuSchema = new mongoose.Schema({
     snackName: { 
         type: String, 
-        required: true , 
+        required: true, 
         unique: true
     },
     image: { 
         type: String, 
-        required: true
     },
     price: { 
         type: Number, 
-        required: true , 
+        required: true, 
         min: 0
     }, 
     description: { 
         type: String
     }
+}, 
+{
+    collection: 'menu' 
 })
 
 // export the menu model to be used by the controllers
 const Menu = mongoose.model("Menu", menuSchema)
-module.exports = Menu
+module.exports = {
+    Menu
+}

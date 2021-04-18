@@ -30,18 +30,24 @@ const orderLineSchema = new mongoose.Schema({
 
 // define the schema for one order in the orders database
 const orderSchema = new mongoose.Schema({
-    orderId: { 
-        type: String, 
-        required: true , 
-        unique: true
+    orderNumber: { 
+        type: number, 
+        required: true, 
+        unique: true, 
+        min: 0
     }, 
     snacks: 
         [orderLineSchema]
     , 
     timestamps: 
         true
+}, 
+{
+    collection: 'orders' 
 })
 
 // export the order model to be used by the controllers
 const Order = mongoose.model("Order", orderSchema)
-module.exports = Order
+module.exports = {
+    Order
+}
