@@ -10,7 +10,7 @@ const authorController = require('../controllers/authorController.js')
 authorRouter.get('/', (req, res) => authorController.getAllAuthors(req, res))
 authorRouter.get('/:authorId', (req, res) => authorController.getOneAuthor(req, res))
 authorRouter.post('/', (req, res) => authorController.addAuthor(req, res))
-authorRouter.post('/update', (req, res) => authorController.updateAuthor(req, res))
+authorRouter.post('/update/:authorId', (req, res) => authorController.updateAuthor(req, res))
 
 
 // export the router
