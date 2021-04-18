@@ -1,15 +1,8 @@
-// link to the temporary menu model
-// const menu = require('../models/menu')
-// link to the temporary orders model
-// const orders = require('../models/order')
-
 const mongoose = require("mongoose")
 
 // import the models used
-// const Menu = mongoose.model("Menu")
 const { Menu } = require('../models/menu.js')
-// const Order = mongoose.model("Order")
-const { Order } = require('../models/order.js')
+const { OrderLine, Order } = require('../models/order.js')
 
 // handle request to get the nearest vans
 const getNearestVans = (req, res) => {
@@ -60,18 +53,30 @@ const getSnackByName = async (req, res) => {
 }
 
 // handle request to add a snack to order
-const addSnackToOrder = (req, res) => {
+const addSnackToOrder = async (req, res) => {
+    // get the snack to be added
+    let snack = await Menu.findOne( {"snackName": req.params.snackName} )
+
+    // construct a new order line item
+    const lineItem = await new OrderLine({
+        snackId: snack._id, 
+        quantity: req.body.quantity 
+    })
+
     // construct a new order
-    let newOrder = {
-        "orderNumber":orders.length.toString(), 
-        "snacks":[
-            menu.find(snack => snack.id === req.params.id)
-        ]
-    }
-    // add the new order to the database
-    orders.push(newOrder)
-    // return entire orders list to browser as a check
-    res.send(orders)
+    let orderNumber = await Order.countDocuments()
+    const newOrder = new Order({
+        orderNumber: orderNumber, 
+        snacks: [lineItem]
+    })
+
+    // save the new order to the orders database
+    newOrder.save( (err, result) => {
+        // error occured during saving of a new order
+        if (err) res.send(err)
+        // send back order details for checking
+        res.send(result)
+    })
 }
 
 // export the controller functions
