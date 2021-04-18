@@ -1,6 +1,8 @@
 const mongoose = require("mongoose")
+
 // import author model
 const Author = mongoose.model("Author")
+
 // get all authors
 const getAllAuthors = async (req, res) => {
     try {
