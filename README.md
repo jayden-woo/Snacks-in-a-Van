@@ -14,31 +14,36 @@ We have added to this repository a `README.md` file and `.gitignore` file.
 Remember that _"this document"_ can use `different formats` to **highlight** important information. This is just an example of different formating tools available for you. For help with the format you can find a guide [here](https://docs.github.com/en/github/writing-on-github).
 
 ## Table of contents
-* [Team Members](#team-members)
-* [General Info](#general-info)
-* [Technologies](#technologies)
-* [Code Implementation](#code-implementation)
-* [Adding Images](#adding-images)
+- [INFO30005 – Web Information Technologies](#info30005--web-information-technologies)
+- [Group Project Repository](#group-project-repository)
+  - [Table of contents](#table-of-contents)
+  - [Team Members](#team-members)
+  - [General info](#general-info)
+  - [Technologies](#technologies)
+  - [Code Implementation](#code-implementation)
+  - [Adding Images](#adding-images)
 
 ## Team Members
 
 | Name | Task | State |
 | :---         |     :---:      |          ---: |
-| Student Name 1  | Back End     |  Done |
-| Student Name 2    | Front End      |  Testing |
-| Student Name 3    | README Format      |  Amazing! |
+| Xinyue Zhang  | Back End, Database, Heroku connection     |  xxx |
+| Lilian Ly   | Database, README Format, Postman     |  xxx |
+| Zihang Zhang    | Back End, Database, Heroku connection      |  xxx |
+| Juncheng Woo  | Back End | xxx |
+| Xinhui Chen | Back End, Database | xxx |
 
 ## General info
-This is project ...
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum
+This project is by Generator, a INFO30005 student team, based on the business requirements from Snacks in a Van, a startup company in Melbourne operatng a fleet of mobile food trucks operating as pop up cafes. This operation involves creation of a web app for customers and vendors to use, viewable through vertical mobile devices and horizontal tablets. 
 	
 ## Technologies
 Project is created with:
-* NodeJs 14.16.X
-* Ipsum version: 2.33
-* Ament library version: 999
+* NodeJs 15.14.0
+* npm 7.7.6
 
 ## Code Implementation
+
+Include code connecting to database and the GET/POST request?
 
 You can include a code snippet here.
 
