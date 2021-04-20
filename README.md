@@ -5,14 +5,6 @@
 
 Welcome!
 
-We have added to this repository a `README.md` file and `.gitignore` file.
-
-* **README.md**: is the document you are currently reading. It should be replaced with information about your project, and instructions on how to use your code in someone else's local computer.
- 
-* **.gitignore**: lets you filter out files that should not be added to git. For example, Windows 10 and Mac OS create hidden system files (e.g., .DS_Store) that are local to your computer and should not be part of the repository. This files should be filtered by the `.gitignore` file. This initial `.gitignore` has  been created to filter local files when using MacOS and Node. Depending on your project make sure you update the `.gitignore` file.  More information about this can be found in this [link](https://www.atlassian.com/git/tutorials/saving-changes/gitignore).
-
-Remember that _"this document"_ can use `different formats` to **highlight** important information. This is just an example of different formating tools available for you. For help with the format you can find a guide [here](https://docs.github.com/en/github/writing-on-github).
-
 ## Table of contents
 - [INFO30005 – Web Information Technologies](#info30005--web-information-technologies)
 - [Group Project Repository](#group-project-repository)
@@ -30,11 +22,11 @@ Remember that _"this document"_ can use `different formats` to **highlight** imp
 | Xinyue Zhang  | Back End, Database, Heroku connection     |  xxx |
 | Lilian Ly   | Database, README Format, Postman     |  xxx |
 | Zihang Zhang    | Back End, Database, Heroku connection      |  xxx |
-| Juncheng Woo  | Back End | xxx |
+| Juncheng Woo  | Back End, Database, Postman | xxx |
 | Xinhui Chen | Back End, Database | xxx |
 
 ## General info
-This project is by Generator, a INFO30005 student team, based on the business requirements from Snacks in a Van, a startup company in Melbourne operatng a fleet of mobile food trucks operating as pop up cafes. This operation involves creation of a web app for customers and vendors to use, viewable through vertical mobile devices and horizontal tablets. 
+This project is by Generator, a INFO30005 student team, based on the business requirements from Snacks in a Van, a startup company in Melbourne managing a fleet of mobile food trucks that operate as cafes. This operation involves creation of a web app for customers and vendors to use, viewable through vertical mobile devices and horizontal tablets. 
 	
 ## Technologies
 Project is created with:
@@ -72,11 +64,10 @@ function myFunction() {
 
 ## Adding Images
 
-You can use images/gif hosted online:
+Image values contained in MongoDB are Strings. They point to images that are hosted on https://unsplash.com/. To open up the image, append the String to https://unsplash.com/photos/.
 
-<p align="center">
-  <img src="https://github.com/Martin-Reinoso/sandpit-Profile/raw/main/Images_Readme/01.gif"  width="300" >
-</p>
+For example, to access "cappucinno" photos from menu that has String "T-kJRC_xqFI" in images, visit https://unsplash.com/photos/T-kJRC_xqFI
+
 
 Or you can add your own images from a folder in your repo with the following code. The example has a folder `Gifs` with an image file `Q1-1.gif`:
 ```HTML
@@ -87,7 +78,6 @@ Or you can add your own images from a folder in your repo with the following cod
 
 To create a gif from a video you can follow this [link](https://ezgif.com/video-to-gif/ezgif-6-55f4b3b086d4.mov).
 
-You can use emojis :+1: but do not over use it, we are looking for professional work. If you would not add them in your job, do not use them here! :shipit:
 
 **Now Get ready to complete all the tasks:**
 
