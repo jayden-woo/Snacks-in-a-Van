@@ -5,7 +5,6 @@ const app = express()
 app.use(express.json())  // replaces body-parser
 
 // set up customer routes
-const authorRouter = require('./routes/authorRouter')
 const customerRouter = require('./routes/customerRouter')
 const vendorRouter =  require('./routes/vendorRouter')
 
@@ -14,10 +13,6 @@ app.get('/', (req, res) => {
     console.log('connected')
     res.send('<h1>Snack in a Van</h1>')
 })
-
-// Handle author-management requests
-// the author routes are added onto the end of '/author-management'
-app.use('/author-management', authorRouter)
 
 // handler for customer requests
 // customer routes are added onto the end of '/customer'
