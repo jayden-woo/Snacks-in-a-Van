@@ -26,6 +26,15 @@ const orderSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
+    customerID: {
+        type: Number,
+        required: true
+    },
+    status: {
+        type: String,
+        enum: ["COOKING", "READY", "PICKED UP"],
+        required: true
+    },
     snacks: [orderLineSchema]
 }, 
 {

@@ -1,5 +1,6 @@
 const Vendor = require('../models/vendor.js')
 const {OrderLine, Order} = require('../models/order.js')
+const { restart } = require('nodemon')
 // get all Vendors
 //TODO: IMPLEMET LOGIN
 
@@ -12,6 +13,7 @@ const getAllVendors = async (req, res) => {
         return res.send("Database query failed")
     }
 }
+
 const vendorStatus = async (req, res) => {
     try {
         const vendors = await Vendor.findOne( {"VendorId": req.params.VendorId} )
@@ -81,7 +83,6 @@ const updateVendor = async (req, res) => {
           return res.send("Database update failed")
       }
   }
-  
   // add an Vendor (POST)
   const addVendor = async (req, res) => {
     const vendor = new Vendor(req.body)   // construct a new Vendor object from body of POST

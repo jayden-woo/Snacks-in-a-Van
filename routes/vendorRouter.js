@@ -15,7 +15,6 @@ vendorRouter.get('/orders/:id',(req, res) => vendorController.getOutstandingOrde
 vendorRouter.get('/:id',(req, res) =>vendorController.getOneVendor(req, res))
 vendorRouter.get('/', (req, res) => vendorController.getAllVendors(req, res))
 
-
 //POST
 vendorRouter.post(':id/', (req, res) => vendorController.updateVendor(req, res))
 vendorRouter.post('/', (req, res) => vendorController.addVendor(req, res))
