@@ -18,7 +18,17 @@ const getAllVendors = async (req, res) => {
 const vendorStatus = async (req, res) => {
     try {
         const vendors = await Vendor.findOne( {"VendorId": req.params.VendorId} )
-        return res.send(vendors.venderStatus)
+        return res.send(vendors.status)
+    } catch (err) {
+        res.status(400)
+        return res.send("Database query failed")
+    }
+}
+
+const oustandingOrders = async (req, res) => {
+    try {
+        const OutstandingOrders = await Order.find( {"VendorId": req.params.VendorId} )
+        return (res.send(OutstandingOrders))
     } catch (err) {
         res.status(400)
         return res.send("Database query failed")
@@ -33,6 +43,7 @@ const getOneVendor = async (req, res) => {
             res.status(404)
             return res.send("Vendor not found")
         }
+        res.status(200); //OK
         return res.send(oneVendor) // Vendor was found
     } catch (err) { // error occurred
         res.status(400)
@@ -65,6 +76,7 @@ const updateVendor = async (req, res) => {
   
       Object.assign(Vendor, new_Vendor)   // replace properties that are listed in the POST body
       let result = await Vendor.save()    // save updated Vendor to database
+      res.status(200); //OK
       return res.send(result)             // return saved Vendor to sender
   
       } catch (err) {   // error detected
@@ -79,6 +91,7 @@ const updateVendor = async (req, res) => {
   
     try {
         let result = await vendor.save()  // save new Vendor object to database
+        res.status(200); //OK
         return res.send(result)           // return saved object to sender
     } catch (err) {   // error detected
         res.status(400)
@@ -96,5 +109,4 @@ module.exports = {
     addVendor,
     updateVendor,
     getOutstandingOrders
-
 }

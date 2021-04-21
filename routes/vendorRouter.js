@@ -1,19 +1,27 @@
 const express = require('express')
-
 // add the customer router 
 const vendorRouter = express.Router()
 
-// add the customer controller
 const vendorController = require('../controllers/vendorController.js')
+
+// add the customer controller
+
 
 
 //GET
-vendorRouter.get('/vendor/login', vendorController.login(req, res))
-vendorRouter.get('/vendor/:id/status',vendorController.vendorStatus(req, res))
-vendorRouter.get('/vendor/:id/orders', vendorController.getOutstandingOrders(req, res))
+vendorRouter.get('/login', (req, res) => vendorController.login(req, res))
+vendorRouter.get('/status/:id',(req, res) =>vendorController.vendorStatus(req, res))
+vendorRouter.get('/orders/:id',(req, res) => vendorController.getOutstandingOrders(req, res))
+vendorRouter.get('/:id',(req, res) =>vendorController.getOneVendor(req, res))
+vendorRouter.get('/', (req, res) => vendorController.getAllVendors(req, res))
+
+
 //POST
-vendorRouter.post('vendor/:id/update', vendorController.updateVendor(req, res))
-vendorRouter.post('vendor/update/:orderid', vendorController.updateOrder(req, res))
-vendorRouter.post('vendor/add', addVendor(req, res))
+vendorRouter.post(':id/', (req, res) => vendorController.updateVendor(req, res))
+vendorRouter.post('/', (req, res) => vendorController.addVendor(req, res))
+
+
+
+
 // export the router
-module.exports = vendorRouter
+module.exports = vendorRouter 

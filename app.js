@@ -7,6 +7,7 @@ app.use(express.json())  // replaces body-parser
 // set up customer routes
 const authorRouter = require('./routes/authorRouter')
 const customerRouter = require('./routes/customerRouter')
+const vendorRouter =  require('./routes/vendorRouter')
 
 // handler for GET home page
 app.get('/', (req, res) => {
@@ -21,7 +22,7 @@ app.use('/author-management', authorRouter)
 // handler for customer requests
 // customer routes are added onto the end of '/customer'
 app.use('/customer', customerRouter)
-
+app.use('/vendor', vendorRouter)
 // dynamically set the port number or use static 8080 port for local testing
 const port = process.env.PORT || 8080
 

@@ -21,7 +21,11 @@ const orderSchema = new mongoose.Schema({
         required: true, 
         unique: true, 
         min: 0
-    }, 
+    },
+    vendorID: {
+        type: Number,
+        required: true
+    },
     snacks: [orderLineSchema]
 }, 
 {
