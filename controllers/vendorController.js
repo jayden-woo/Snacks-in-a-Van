@@ -1,8 +1,5 @@
-const mongoose = require("mongoose")
-
-// import Vendor model
-const Vendor = mongoose.model("Vendor")
-const Order = mongoose.model("Order")
+const Vendor = require('../models/vendor.js')
+const {OrderLine, Order} = require('../models/order.js')
 // get all Vendors
 //TODO: IMPLEMET LOGIN
 
