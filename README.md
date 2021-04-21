@@ -104,7 +104,7 @@ For all POST requests, navigate to the the "Headers" section and under "Keys", i
 
 **Vendor Requests**
 | Feature | Description | Access Link|  Request Type & Sample Data (if applicable) |
-| :----------- | :------: | :---: | :--------: |
+| :----------- | :------ | :---: | :-------- |
 | Setting Van Status | This section demonstrates two requests types. The first is changing the status of the van to be online and therefore ready to accept orders. The second request allows the van send information about its most recent changed location. These features can be updated separately or together. | https://project-t10-generator.herokuapp.com/vendor/Gogu Gogu refers to the name of a van, this can be changed, but for the purpose of this example, will be retained. | POST Request. In this request, the user will need to supply "isOnline" to the Boolean value of true. This will update the status of the van to online. For the second section, to send location, insert desired values for "latitude" and "longitude" as Number values. The test here has used 982347 for the latitude and 765234 for the longitude. |
 | Show Outstanding Orders | Orders that have the status "cooking" will be shown when queried with the van's ID/name. | https://project-t10-generator.herokuapp.com/vendor/orders/987/ | GET Request |
 | Mark Fulfilled Orders  |This request allows for the van to mark an order as "READY" after it has been cooked and is available for pickup. Two examples are provided in this Postman request, but they both serve the same purpose. | https://project-t10-generator.herokuapp.com/vendor/BaBVAN | POST Request. In body, set the "status" to String "READY". |
