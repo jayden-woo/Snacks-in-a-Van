@@ -1,5 +1,8 @@
-const Vendor = require('../models/vendor.js')
-const {OrderLine, Order} = require('../models/order.js')
+const mongoose = require("mongoose")
+
+const Vendor = mongoose.model("Vendor")
+const OrderLine = mongoose.model("OrderLine")
+const Order= mongoose.model("Order")
 const { restart } = require('nodemon')
 // get all Vendors
 //TODO: IMPLEMET LOGIN
