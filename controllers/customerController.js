@@ -67,7 +67,8 @@ const addSnackToOrder = async (req, res) => {
     let orderNumber = await Order.countDocuments()
     const newOrder = new Order({
         orderNumber: orderNumber,
-        customerID: req.body.customerID, //No Customer Schema; req.body.customerID = Number
+        vendorID: req.get("vendorID"),
+        customerID: req.get("customerID"), //No Customer Schema; req.body.customerID = Number
         snacks: [lineItem],
         status: "COOKING" //"PREPARING" || "READY" || "PICKED UP"
     })
