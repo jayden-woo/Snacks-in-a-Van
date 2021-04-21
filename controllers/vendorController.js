@@ -19,7 +19,7 @@ const getAllVendors = async (req, res) => {
 
 const vendorStatus = async (req, res) => {
     try {
-        const vendors = await Vendor.findOne( {"VendorId": req.params.VendorId} )
+        const vendors = await Vendor.findOne( {"vendorID": req.params.id} )
         return res.send(vendors.status)
     } catch (err) {
         res.status(400)
@@ -27,9 +27,9 @@ const vendorStatus = async (req, res) => {
     }
 }
 
-const oustandingOrders = async (req, res) => {
+const getOutstandingOrders = async (req, res) => {
     try {
-        const OutstandingOrders = await Order.find( {"VendorId": req.params.VendorId} )
+        const OutstandingOrders = await Order.find( {"vendorID": req.params.id}, {"status" : "COOKING"} )
         return (res.send(OutstandingOrders))
     } catch (err) {
         res.status(400)
@@ -40,7 +40,7 @@ const oustandingOrders = async (req, res) => {
 // find one Vendor by their id
 const getOneVendor = async (req, res) => {
     try {
-        const oneVendor = await Vendor.findOne( {"VendorId": req.params.VendorId})
+        const oneVendor = await Vendor.findOne( {"vendorID": req.params.id})
         if (oneVendor === null) { // no Vendor found in database
             res.status(404)
             return res.send("Vendor not found")
@@ -53,33 +53,23 @@ const getOneVendor = async (req, res) => {
     }
 }
 
-const getOutstandingOrders = async (req, res) => {
-    try {
-        //incomplete orders
-        const orders = await Order.find({'VendorID': req.params.VendorId} && {'status': 0})
-        return res.send(orders)
-    } catch(err) { // error occurred
-        res.status(400)
-        return res.send("Database query failed")
-    }
-
-
-}
-
 const updateVendor = async (req, res) => {
-    const new_Vendor = req.body   // construct changed Vendor object from body of POST
-  
+    
     try {
-      const Vendor = await Vendor.findOne( {"VendorId": req.body.VendorId} )  // check that an Vendor with this Id already exists
-      if (!Vendor) {    // if Vendor is not already in database, return an error
-        res.status(400)
-        return res.send("Vendor not found in database")
-      }
-  
-      Object.assign(Vendor, new_Vendor)   // replace properties that are listed in the POST body
-      let result = await Vendor.save()    // save updated Vendor to database
-      res.status(200); //OK
-      return res.send(result)             // return saved Vendor to sender
+        console.log("editing: "+req.params.id)   
+        if (req.body.status){
+        //change status 
+            console.log("changing status",req.body.status)
+            await Vendor.updateOne({vendorID:req.params.id}, {status:req.body.status}) 
+        }
+        if (req.body.latitude && req.body.longitude){
+        //change location
+            console.log("changing location to:",req.body.latitude,req.body.longitude)
+            await Vendor.updateOne({vendorID:req.params.id}, {latitude:req.body.latitude, longitude:req.body.longitude}) 
+
+        }
+        res.status(200); //OK 
+        res.send();
   
       } catch (err) {   // error detected
           res.status(400)
