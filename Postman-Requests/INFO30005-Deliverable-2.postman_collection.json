@@ -4,11 +4,9 @@
 		"name": "INFO30005-Deliverable-2",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
-	"item": [
-		{
+	"item": [{
 			"name": "2.1 Customer Features",
-			"item": [
-				{
+			"item": [{
 					"name": "2.1.1 View Customer Menu",
 					"request": {
 						"method": "GET",
@@ -17,67 +15,64 @@
 							"raw": ""
 						}
 					},
-					"response": [
-						{
-							"name": "Menu",
-							"originalRequest": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "https://project-t10-generator.herokuapp.com/customer/menu",
-									"protocol": "https",
-									"host": [
-										"project-t10-generator",
-										"herokuapp",
-										"com"
-									],
-									"path": [
-										"customer",
-										"menu"
-									]
-								}
+					"response": [{
+						"name": "Menu",
+						"originalRequest": {
+							"method": "GET",
+							"header": [],
+							"url": {
+								"raw": "https://project-t10-generator.herokuapp.com/customer/menu",
+								"protocol": "https",
+								"host": [
+									"project-t10-generator",
+									"herokuapp",
+									"com"
+								],
+								"path": [
+									"customer",
+									"menu"
+								]
+							}
+						},
+						"status": "OK",
+						"code": 200,
+						"_postman_previewlanguage": "json",
+						"header": [{
+								"key": "Server",
+								"value": "Cowboy"
 							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "json",
-							"header": [
-								{
-									"key": "Server",
-									"value": "Cowboy"
-								},
-								{
-									"key": "Connection",
-									"value": "keep-alive"
-								},
-								{
-									"key": "X-Powered-By",
-									"value": "Express"
-								},
-								{
-									"key": "Content-Type",
-									"value": "application/json; charset=utf-8"
-								},
-								{
-									"key": "Content-Length",
-									"value": "1908"
-								},
-								{
-									"key": "Etag",
-									"value": "W/\"774-suy7Hwi2R+hsWN8vRcKgRJKTpok\""
-								},
-								{
-									"key": "Date",
-									"value": "Wed, 21 Apr 2021 04:33:03 GMT"
-								},
-								{
-									"key": "Via",
-									"value": "1.1 vegur"
-								}
-							],
-							"cookie": [],
-							"body": "[\n    {\n        \"snackName\": \"cappuccino\",\n        \"image\": \"T-kJRC_xqFI\",\n        \"price\": 4,\n        \"description\": \"Fair-trade, single-origin espresso under a bed of foamed milk, topped with a layer of chocolate powder.\"\n    },\n    {\n        \"snackName\": \"latte\",\n        \"image\": \"MCp-5Hr61sw\",\n        \"price\": 4,\n        \"description\": \"A milkier alternative to a cappuccino with a generous dollop of foamed milk, layered with the same fair-trade, single-origin beans.\"\n    },\n    {\n        \"snackName\": \"flat white\",\n        \"image\": \"p5v6zAK9wUw\",\n        \"price\": 4,\n        \"description\": \"Fair-trade, single origin espresso with a thin layer of milk foam, perfect for those who love more coffee and just dash of milk.\"\n    },\n    {\n        \"snackName\": \"long black\",\n        \"image\": \"jE-27l7V3NU\",\n        \"price\": 4.5,\n        \"description\": \"Single-origin pour-over technique filter coffee with fair-trade sourced beans.\"\n    },\n    {\n        \"snackName\": \"plain biscuit\",\n        \"image\": \"dZKiXR9FYcM\",\n        \"price\": 3.5,\n        \"description\": \"A traditional, scrumptious biscuit prepared over three days and baked fresh daily. Made in house with organic ingredients.\"\n    },\n    {\n        \"snackName\": \"fancy biscuit\",\n        \"image\": \"DJUBgapyBS0\",\n        \"price\": 7,\n        \"description\": \"An upgrade to our traditional biscuit, the fancy biscuit is twice-baked seasonal special, prepared over five days and garnished with premium ingredients. Made in house with limited quantity daily, filled with nutritious and organic baking staples.\"\n    },\n    {\n        \"snackName\": \"small cake\",\n        \"image\": \"OrkEasJeY74\",\n        \"price\": 10,\n        \"description\": \"Our premium selection of small cakes, perfectly designed for one generous serving, or multiple petite servings. Prepared over the course of 7 days with each ingredient combination mastered to perfection. Limited servings available daily.\"\n    },\n    {\n        \"snackName\": \"big cake\",\n        \"image\": \"_TN1m5R1pFI\",\n        \"price\": 20,\n        \"description\": \"The best of our cakes, suitable for a serving size between 4-6. Again, prepared over 7 days, each layer decadently stacked on top of the other, with hand-made vanilla whipped cream balancing the tower. Baked fresh daily and quality checked hourly. \"\n    }\n]"
-						}
-					]
+							{
+								"key": "Connection",
+								"value": "keep-alive"
+							},
+							{
+								"key": "X-Powered-By",
+								"value": "Express"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json; charset=utf-8"
+							},
+							{
+								"key": "Content-Length",
+								"value": "1908"
+							},
+							{
+								"key": "Etag",
+								"value": "W/\"774-suy7Hwi2R+hsWN8vRcKgRJKTpok\""
+							},
+							{
+								"key": "Date",
+								"value": "Wed, 21 Apr 2021 04:33:03 GMT"
+							},
+							{
+								"key": "Via",
+								"value": "1.1 vegur"
+							}
+						],
+						"cookie": [],
+						"body": "[\n    {\n        \"snackName\": \"cappuccino\",\n        \"image\": \"T-kJRC_xqFI\",\n        \"price\": 4,\n        \"description\": \"Fair-trade, single-origin espresso under a bed of foamed milk, topped with a layer of chocolate powder.\"\n    },\n    {\n        \"snackName\": \"latte\",\n        \"image\": \"MCp-5Hr61sw\",\n        \"price\": 4,\n        \"description\": \"A milkier alternative to a cappuccino with a generous dollop of foamed milk, layered with the same fair-trade, single-origin beans.\"\n    },\n    {\n        \"snackName\": \"flat white\",\n        \"image\": \"p5v6zAK9wUw\",\n        \"price\": 4,\n        \"description\": \"Fair-trade, single origin espresso with a thin layer of milk foam, perfect for those who love more coffee and just dash of milk.\"\n    },\n    {\n        \"snackName\": \"long black\",\n        \"image\": \"jE-27l7V3NU\",\n        \"price\": 4.5,\n        \"description\": \"Single-origin pour-over technique filter coffee with fair-trade sourced beans.\"\n    },\n    {\n        \"snackName\": \"plain biscuit\",\n        \"image\": \"dZKiXR9FYcM\",\n        \"price\": 3.5,\n        \"description\": \"A traditional, scrumptious biscuit prepared over three days and baked fresh daily. Made in house with organic ingredients.\"\n    },\n    {\n        \"snackName\": \"fancy biscuit\",\n        \"image\": \"DJUBgapyBS0\",\n        \"price\": 7,\n        \"description\": \"An upgrade to our traditional biscuit, the fancy biscuit is twice-baked seasonal special, prepared over five days and garnished with premium ingredients. Made in house with limited quantity daily, filled with nutritious and organic baking staples.\"\n    },\n    {\n        \"snackName\": \"small cake\",\n        \"image\": \"OrkEasJeY74\",\n        \"price\": 10,\n        \"description\": \"Our premium selection of small cakes, perfectly designed for one generous serving, or multiple petite servings. Prepared over the course of 7 days with each ingredient combination mastered to perfection. Limited servings available daily.\"\n    },\n    {\n        \"snackName\": \"big cake\",\n        \"image\": \"_TN1m5R1pFI\",\n        \"price\": 20,\n        \"description\": \"The best of our cakes, suitable for a serving size between 4-6. Again, prepared over 7 days, each layer decadently stacked on top of the other, with hand-made vanilla whipped cream balancing the tower. Baked fresh daily and quality checked hourly. \"\n    }\n]"
+					}]
 				},
 				{
 					"name": "2.1.2 View Snack Details",
@@ -88,8 +83,7 @@
 							"raw": ""
 						}
 					},
-					"response": [
-						{
+					"response": [{
 							"name": "Small  Cake",
 							"originalRequest": {
 								"method": "GET",
@@ -112,8 +106,7 @@
 							"status": "OK",
 							"code": 200,
 							"_postman_previewlanguage": "json",
-							"header": [
-								{
+							"header": [{
 									"key": "Server",
 									"value": "Cowboy"
 								},
@@ -172,8 +165,7 @@
 							"status": "OK",
 							"code": 200,
 							"_postman_previewlanguage": "json",
-							"header": [
-								{
+							"header": [{
 									"key": "Server",
 									"value": "Cowboy"
 								},
@@ -232,8 +224,7 @@
 							"status": "OK",
 							"code": 200,
 							"_postman_previewlanguage": "json",
-							"header": [
-								{
+							"header": [{
 									"key": "Server",
 									"value": "Cowboy"
 								},
@@ -292,8 +283,7 @@
 							"status": "OK",
 							"code": 200,
 							"_postman_previewlanguage": "json",
-							"header": [
-								{
+							"header": [{
 									"key": "Server",
 									"value": "Cowboy"
 								},
@@ -352,8 +342,7 @@
 							"status": "OK",
 							"code": 200,
 							"_postman_previewlanguage": "json",
-							"header": [
-								{
+							"header": [{
 									"key": "Server",
 									"value": "Cowboy"
 								},
@@ -412,8 +401,7 @@
 							"status": "OK",
 							"code": 200,
 							"_postman_previewlanguage": "json",
-							"header": [
-								{
+							"header": [{
 									"key": "Server",
 									"value": "Cowboy"
 								},
@@ -472,8 +460,7 @@
 							"status": "OK",
 							"code": 200,
 							"_postman_previewlanguage": "json",
-							"header": [
-								{
+							"header": [{
 									"key": "Server",
 									"value": "Cowboy"
 								},
@@ -532,8 +519,7 @@
 							"status": "OK",
 							"code": 200,
 							"_postman_previewlanguage": "json",
-							"header": [
-								{
+							"header": [{
 									"key": "Server",
 									"value": "Cowboy"
 								},
@@ -578,64 +564,58 @@
 						"header": [],
 						"url": null
 					},
-					"response": [
-						{
-							"name": "Add 2 Cappuccino",
-							"originalRequest": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"value": "application/json",
-										"type": "text"
+					"response": [{
+						"name": "Add 2 Cappuccino",
+						"originalRequest": {
+							"method": "GET",
+							"header": [{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}],
+							"body": {
+								"mode": "raw",
+								"raw": "{\n    \"quantity\": 2\n}",
+								"options": {
+									"raw": {
+										"language": "json"
 									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"quantity\": 2\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "https://project-t10-generator.herokuapp.com/customer/menu/cappuccino",
-									"protocol": "https",
-									"host": [
-										"project-t10-generator",
-										"herokuapp",
-										"com"
-									],
-									"path": [
-										"customer",
-										"menu",
-										"cappuccino"
-									]
 								}
 							},
-							"_postman_previewlanguage": null,
-							"header": null,
-							"cookie": [],
-							"body": null
-						}
-					]
+							"url": {
+								"raw": "https://project-t10-generator.herokuapp.com/customer/menu/cappuccino",
+								"protocol": "https",
+								"host": [
+									"project-t10-generator",
+									"herokuapp",
+									"com"
+								],
+								"path": [
+									"customer",
+									"menu",
+									"cappuccino"
+								]
+							}
+						},
+						"_postman_previewlanguage": null,
+						"header": null,
+						"cookie": [],
+						"body": null
+					}]
 				}
 			]
 		},
 		{
 			"name": "2.2 Vendor Features",
-			"item": [
-				{
+			"item": [{
 					"name": "2.2.1 Setting Van Status",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": null
 					},
-					"response": [
-						{
+					"response": [{
 							"name": "Mark Van as Ready",
 							"originalRequest": {
 								"method": "GET",
@@ -668,20 +648,18 @@
 						"header": [],
 						"url": null
 					},
-					"response": [
-						{
-							"name": "Orders List",
-							"originalRequest": {
-								"method": "GET",
-								"header": [],
-								"url": null
-							},
-							"_postman_previewlanguage": null,
-							"header": null,
-							"cookie": [],
-							"body": null
-						}
-					]
+					"response": [{
+						"name": "Orders List",
+						"originalRequest": {
+							"method": "GET",
+							"header": [],
+							"url": null
+						},
+						"_postman_previewlanguage": null,
+						"header": null,
+						"cookie": [],
+						"body": null
+					}]
 				},
 				{
 					"name": "2.2.3 Mark Fulfilled Orders",
@@ -690,8 +668,7 @@
 						"header": [],
 						"url": null
 					},
-					"response": [
-						{
+					"response": [{
 							"name": "Order 2",
 							"originalRequest": {
 								"method": "GET",

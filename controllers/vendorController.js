@@ -1,7 +1,6 @@
 const mongoose = require("mongoose")
 
 const Vendor = mongoose.model("Vendor")
-const OrderLine = mongoose.model("OrderLine")
 const Order= mongoose.model("Order")
 const { restart } = require('nodemon')
 // get all Vendors
@@ -20,8 +19,14 @@ const getAllVendors = async (req, res) => {
 const vendorStatus = async (req, res) => {
     try {
         const vendors = await Vendor.findOne( {"vendorID": req.params.id} )
-        return res.send(vendors.status)
+        if (!vendors){res.send("Vendor: "+req.params.id+" Not Found")}
+        const payload = {
+            "status": vendors.isOnline,
+            "location": [vendors.latitude, vendors.longitude]
+        }
+        return res.send(payload)
     } catch (err) {
+        console.error(err);
         res.status(400)
         return res.send("Database query failed")
     }
@@ -69,7 +74,7 @@ const updateVendor = async (req, res) => {
 
         }
         res.status(200); //OK 
-        res.send();
+        res.send("success");
   
       } catch (err) {   // error detected
           res.status(400)

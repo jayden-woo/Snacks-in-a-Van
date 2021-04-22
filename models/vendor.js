@@ -6,7 +6,7 @@ const vendorSchema = new mongoose.Schema({
         type: String, 
         unique: true,
     },
-    status: {
+    isOnline: {
         type: Boolean,
         required : true,
     },
