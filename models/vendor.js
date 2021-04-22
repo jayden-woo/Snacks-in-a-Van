@@ -2,10 +2,11 @@ const mongoose = require("mongoose")
 
 // define the schema for menu database
 const vendorSchema = new mongoose.Schema({
-    name: { 
+    vendorID: { 
         type: String, 
+        unique: true,
     },
-    status: {
+    isOnline: {
         type: Boolean,
         required : true,
     },
