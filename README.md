@@ -11,9 +11,11 @@ Welcome!
   - [Table of contents](#table-of-contents)
   - [Team Members](#team-members)
   - [General info](#general-info)
+  - [Live Link](#live-link)
   - [Technologies](#technologies)
   - [Adding Images](#adding-images)
   - [Postman Requests](#postman-requests)
+  - [Access Details to Database](#access-details-to-database)
 
 ## Team Members
 
@@ -27,6 +29,12 @@ Welcome!
 
 ## General info
 This project is by Generator, a INFO30005 student team, based on the business requirements from Snacks in a Van, a startup company in Melbourne managing a fleet of mobile food trucks that operate as cafes. This operation involves creation of a web app for customers and vendors to use, viewable through vertical mobile devices and horizontal tablets. 
+
+## Live Link
+
+This project is hosted on Heroku. The live link can only be access here:
+
+https://project-t10-generator.herokuapp.com/
 	
 ## Technologies
 Project is created with:
@@ -93,7 +101,6 @@ For all POST requests, navigate to the the "Headers" section and under "Keys", i
 
 **Customer Features**
 
-
 | Feature | Description | Access Link|  Request Type & Sample Data (if applicable) |
 | :----------- | :------ | :---: | :--------: |
 | View customer menu | This shows a list of the menu items available, including the prices and the ID for the unsplash.com image. See above in [Adding Images](#adding-images) for more details. | https://project-t10-generator.herokuapp.com/customer/menu | GET Request  |
@@ -109,8 +116,15 @@ For all POST requests, navigate to the the "Headers" section and under "Keys", i
 | Show Outstanding Orders | Orders that have the status "cooking" will be shown when queried with the van's ID/name. | https://project-t10-generator.herokuapp.com/vendor/orders/987/ | GET Request |
 | Mark Fulfilled Orders  |This request allows for the van to mark an order as "READY" after it has been cooked and is available for pickup. Two examples are provided in this Postman request, but they both serve the same purpose. | https://project-t10-generator.herokuapp.com/vendor/BaBVAN | POST Request. In body, set the "status" to String "READY". |
 
+<br/><br/> 
 
 
+## Access Details to Database
+
+This project uses MongoDB as the database. The access details are as follows:
+
+CONNECTION_STRING = "mongodb+srv://xyz:1234@project-t10-generator.1mtcl.mongodb.net/INFO30005?retryWrites=true&w=majority"
+<br/><br/> 
 **Now Get ready to complete all the tasks:**
 
 - [x] Read the Project handouts carefully
