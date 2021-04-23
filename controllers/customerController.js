@@ -60,7 +60,7 @@ const addSnackToOrder = async (req, res) => {
 
     // construct a new order line item
     const lineItem = await new OrderLine({
-        snackId: snack._id, 
+        snackID: snack._id, 
         quantity: req.body.quantity 
     })
 

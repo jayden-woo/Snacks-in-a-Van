@@ -1,0 +1,1221 @@
+{
+	"info": {
+		"_postman_id": "ab3da78d-e0ce-405f-9bf8-a81eef61c3fa",
+		"name": "INFO30005-Deliverable-2",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "2.1 Customer Features",
+			"item": [
+				{
+					"name": "2.1.1 View Customer Menu",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://project-t10-generator.herokuapp.com/customer/menu",
+							"protocol": "https",
+							"host": [
+								"project-t10-generator",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"customer",
+								"menu"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Menu",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://project-t10-generator.herokuapp.com/customer/menu",
+									"protocol": "https",
+									"host": [
+										"project-t10-generator",
+										"herokuapp",
+										"com"
+									],
+									"path": [
+										"customer",
+										"menu"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Server",
+									"value": "Cowboy"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "1908"
+								},
+								{
+									"key": "Etag",
+									"value": "W/\"774-suy7Hwi2R+hsWN8vRcKgRJKTpok\""
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 21 Apr 2021 04:33:03 GMT"
+								},
+								{
+									"key": "Via",
+									"value": "1.1 vegur"
+								}
+							],
+							"cookie": [],
+							"body": "[\n    {\n        \"snackName\": \"cappuccino\",\n        \"image\": \"T-kJRC_xqFI\",\n        \"price\": 4,\n        \"description\": \"Fair-trade, single-origin espresso under a bed of foamed milk, topped with a layer of chocolate powder.\"\n    },\n    {\n        \"snackName\": \"latte\",\n        \"image\": \"MCp-5Hr61sw\",\n        \"price\": 4,\n        \"description\": \"A milkier alternative to a cappuccino with a generous dollop of foamed milk, layered with the same fair-trade, single-origin beans.\"\n    },\n    {\n        \"snackName\": \"flat white\",\n        \"image\": \"p5v6zAK9wUw\",\n        \"price\": 4,\n        \"description\": \"Fair-trade, single origin espresso with a thin layer of milk foam, perfect for those who love more coffee and just dash of milk.\"\n    },\n    {\n        \"snackName\": \"long black\",\n        \"image\": \"jE-27l7V3NU\",\n        \"price\": 4.5,\n        \"description\": \"Single-origin pour-over technique filter coffee with fair-trade sourced beans.\"\n    },\n    {\n        \"snackName\": \"plain biscuit\",\n        \"image\": \"dZKiXR9FYcM\",\n        \"price\": 3.5,\n        \"description\": \"A traditional, scrumptious biscuit prepared over three days and baked fresh daily. Made in house with organic ingredients.\"\n    },\n    {\n        \"snackName\": \"fancy biscuit\",\n        \"image\": \"DJUBgapyBS0\",\n        \"price\": 7,\n        \"description\": \"An upgrade to our traditional biscuit, the fancy biscuit is twice-baked seasonal special, prepared over five days and garnished with premium ingredients. Made in house with limited quantity daily, filled with nutritious and organic baking staples.\"\n    },\n    {\n        \"snackName\": \"small cake\",\n        \"image\": \"OrkEasJeY74\",\n        \"price\": 10,\n        \"description\": \"Our premium selection of small cakes, perfectly designed for one generous serving, or multiple petite servings. Prepared over the course of 7 days with each ingredient combination mastered to perfection. Limited servings available daily.\"\n    },\n    {\n        \"snackName\": \"big cake\",\n        \"image\": \"_TN1m5R1pFI\",\n        \"price\": 20,\n        \"description\": \"The best of our cakes, suitable for a serving size between 4-6. Again, prepared over 7 days, each layer decadently stacked on top of the other, with hand-made vanilla whipped cream balancing the tower. Baked fresh daily and quality checked hourly. \"\n    }\n]"
+						}
+					]
+				},
+				{
+					"name": "2.1.2 View Snack Details",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://project-t10-generator.herokuapp.com/customer/menu/plain%20biscuit",
+							"protocol": "https",
+							"host": [
+								"project-t10-generator",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"customer",
+								"menu",
+								"plain%20biscuit"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Plain Biscuit",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://project-t10-generator.herokuapp.com/customer/menu/plain%20biscuit",
+									"protocol": "https",
+									"host": [
+										"project-t10-generator",
+										"herokuapp",
+										"com"
+									],
+									"path": [
+										"customer",
+										"menu",
+										"plain%20biscuit"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Server",
+									"value": "Cowboy"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "202"
+								},
+								{
+									"key": "Etag",
+									"value": "W/\"ca-zBUifwnr2rOWL+ZFZ3seqvHjWvs\""
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 21 Apr 2021 04:44:16 GMT"
+								},
+								{
+									"key": "Via",
+									"value": "1.1 vegur"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"snackName\": \"plain biscuit\",\n    \"image\": \"dZKiXR9FYcM\",\n    \"price\": 3.5,\n    \"description\": \"A traditional, scrumptious biscuit prepared over three days and baked fresh daily. Made in house with organic ingredients.\"\n}"
+						},
+						{
+							"name": "Small  Cake",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://project-t10-generator.herokuapp.com/customer/menu/small%20cake",
+									"protocol": "https",
+									"host": [
+										"project-t10-generator",
+										"herokuapp",
+										"com"
+									],
+									"path": [
+										"customer",
+										"menu",
+										"small%20cake"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Server",
+									"value": "Cowboy"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "313"
+								},
+								{
+									"key": "Etag",
+									"value": "W/\"139-uQe2OZ6+8v3ckPcoceym2z3PnSk\""
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 21 Apr 2021 04:44:48 GMT"
+								},
+								{
+									"key": "Via",
+									"value": "1.1 vegur"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"snackName\": \"small cake\",\n    \"image\": \"OrkEasJeY74\",\n    \"price\": 10,\n    \"description\": \"Our premium selection of small cakes, perfectly designed for one generous serving, or multiple petite servings. Prepared over the course of 7 days with each ingredient combination mastered to perfection. Limited servings available daily.\"\n}"
+						},
+						{
+							"name": "Long Black",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://project-t10-generator.herokuapp.com/customer/menu/long%20black",
+									"protocol": "https",
+									"host": [
+										"project-t10-generator",
+										"herokuapp",
+										"com"
+									],
+									"path": [
+										"customer",
+										"menu",
+										"long%20black"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Server",
+									"value": "Cowboy"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "155"
+								},
+								{
+									"key": "Etag",
+									"value": "W/\"9b-/atimKPWQbvVlyYMMOqsj+5xJP8\""
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 21 Apr 2021 04:43:28 GMT"
+								},
+								{
+									"key": "Via",
+									"value": "1.1 vegur"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"snackName\": \"long black\",\n    \"image\": \"jE-27l7V3NU\",\n    \"price\": 4.5,\n    \"description\": \"Single-origin pour-over technique filter coffee with fair-trade sourced beans.\"\n}"
+						},
+						{
+							"name": "Cappuccino",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://project-t10-generator.herokuapp.com/customer/menu/cappuccino",
+									"protocol": "https",
+									"host": [
+										"project-t10-generator",
+										"herokuapp",
+										"com"
+									],
+									"path": [
+										"customer",
+										"menu",
+										"cappuccino"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Server",
+									"value": "Cowboy"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "178"
+								},
+								{
+									"key": "Etag",
+									"value": "W/\"b2-YEinjmKmBM65YR0vGmpGjBZnagI\""
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 21 Apr 2021 04:41:28 GMT"
+								},
+								{
+									"key": "Via",
+									"value": "1.1 vegur"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"snackName\": \"cappuccino\",\n    \"image\": \"T-kJRC_xqFI\",\n    \"price\": 4,\n    \"description\": \"Fair-trade, single-origin espresso under a bed of foamed milk, topped with a layer of chocolate powder.\"\n}"
+						},
+						{
+							"name": "Latte",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://project-t10-generator.herokuapp.com/customer/menu/latte",
+									"protocol": "https",
+									"host": [
+										"project-t10-generator",
+										"herokuapp",
+										"com"
+									],
+									"path": [
+										"customer",
+										"menu",
+										"latte"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Server",
+									"value": "Cowboy"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "201"
+								},
+								{
+									"key": "Etag",
+									"value": "W/\"c9-/EgGc2mx1xbDMu//+kNl8odsUB0\""
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 21 Apr 2021 04:41:43 GMT"
+								},
+								{
+									"key": "Via",
+									"value": "1.1 vegur"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"snackName\": \"latte\",\n    \"image\": \"MCp-5Hr61sw\",\n    \"price\": 4,\n    \"description\": \"A milkier alternative to a cappuccino with a generous dollop of foamed milk, layered with the same fair-trade, single-origin beans.\"\n}"
+						},
+						{
+							"name": "Flat White",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://project-t10-generator.herokuapp.com/customer/menu/flat%20white",
+									"protocol": "https",
+									"host": [
+										"project-t10-generator",
+										"herokuapp",
+										"com"
+									],
+									"path": [
+										"customer",
+										"menu",
+										"flat%20white"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Server",
+									"value": "Cowboy"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "203"
+								},
+								{
+									"key": "Etag",
+									"value": "W/\"cb-4gn5U+ZwsixQxVuCQJhUmbrAAt0\""
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 21 Apr 2021 04:42:52 GMT"
+								},
+								{
+									"key": "Via",
+									"value": "1.1 vegur"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"snackName\": \"flat white\",\n    \"image\": \"p5v6zAK9wUw\",\n    \"price\": 4,\n    \"description\": \"Fair-trade, single origin espresso with a thin layer of milk foam, perfect for those who love more coffee and just dash of milk.\"\n}"
+						},
+						{
+							"name": "Fancy Biscuit",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://project-t10-generator.herokuapp.com/customer/menu/fancy%20biscuit",
+									"protocol": "https",
+									"host": [
+										"project-t10-generator",
+										"herokuapp",
+										"com"
+									],
+									"path": [
+										"customer",
+										"menu",
+										"fancy%20biscuit"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Server",
+									"value": "Cowboy"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "325"
+								},
+								{
+									"key": "Etag",
+									"value": "W/\"145-uBpvkpvdcvEkMbLzUsnxGYWNSqE\""
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 21 Apr 2021 04:44:31 GMT"
+								},
+								{
+									"key": "Via",
+									"value": "1.1 vegur"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"snackName\": \"fancy biscuit\",\n    \"image\": \"DJUBgapyBS0\",\n    \"price\": 7,\n    \"description\": \"An upgrade to our traditional biscuit, the fancy biscuit is twice-baked seasonal special, prepared over five days and garnished with premium ingredients. Made in house with limited quantity daily, filled with nutritious and organic baking staples.\"\n}"
+						},
+						{
+							"name": "Big Cake",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://project-t10-generator.herokuapp.com/customer/menu/big%20cake",
+									"protocol": "https",
+									"host": [
+										"project-t10-generator",
+										"herokuapp",
+										"com"
+									],
+									"path": [
+										"customer",
+										"menu",
+										"big%20cake"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Server",
+									"value": "Cowboy"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "322"
+								},
+								{
+									"key": "Etag",
+									"value": "W/\"142-Vq9oTe+IM7S3Of6QnsNaY56rhVs\""
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 21 Apr 2021 04:45:36 GMT"
+								},
+								{
+									"key": "Via",
+									"value": "1.1 vegur"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"snackName\": \"big cake\",\n    \"image\": \"_TN1m5R1pFI\",\n    \"price\": 20,\n    \"description\": \"The best of our cakes, suitable for a serving size between 4-6. Again, prepared over 7 days, each layer decadently stacked on top of the other, with hand-made vanilla whipped cream balancing the tower. Baked fresh daily and quality checked hourly. \"\n}"
+						}
+					]
+				},
+				{
+					"name": "2.1.3 Start Customer Order",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "customerID",
+								"value": "2",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"quantity\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://project-t10-generator.herokuapp.com/customer/menu/big%20cake",
+							"protocol": "https",
+							"host": [
+								"project-t10-generator",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"customer",
+								"menu",
+								"big%20cake"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Add 3 Fancy Biscuit",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "customerID",
+										"value": "1",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"quantity\": 5\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://project-t10-generator.herokuapp.com/customer/menu/fancy%20biscuit",
+									"protocol": "https",
+									"host": [
+										"project-t10-generator",
+										"herokuapp",
+										"com"
+									],
+									"path": [
+										"customer",
+										"menu",
+										"fancy%20biscuit"
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": "{\n    \"status\": \"Ordering\",\n    \"_id\": \"608296048bdaed00151e4d13\",\n    \"orderNumber\": 4,\n    \"customerID\": 1,\n    \"snacks\": [\n        {\n            \"_id\": \"608296048bdaed00151e4d12\",\n            \"snackId\": \"607c290b2f2d0be57a218d29\",\n            \"quantity\": 5\n        }\n    ],\n    \"createdAt\": \"2021-04-23T09:40:20.345Z\",\n    \"updatedAt\": \"2021-04-23T09:40:20.345Z\",\n    \"__v\": 0\n}"
+						},
+						{
+							"name": "Add 2 Cappuccino",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "customerID",
+										"value": "3",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "vendorID",
+										"value": "987"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"quantity\": 2\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://project-t10-generator.herokuapp.com/customer/menu/cappuccino",
+									"protocol": "https",
+									"host": [
+										"project-t10-generator",
+										"herokuapp",
+										"com"
+									],
+									"path": [
+										"customer",
+										"menu",
+										"cappuccino"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Server",
+									"value": "Cowboy"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "284"
+								},
+								{
+									"key": "Etag",
+									"value": "W/\"11c-pH2+2iVJEB7sHN0RKY+TCtBN8Y4\""
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 21 Apr 2021 06:29:25 GMT"
+								},
+								{
+									"key": "Via",
+									"value": "1.1 vegur"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"_id\": \"6082807a941b7e00152fd174\",\n    \"status\": \"Ordering\",\n    \"orderNumber\": 2,\n    \"customerID\": 3,\n    \"snacks\": [\n        {\n            \"_id\": \"6082807a941b7e00152fd173\",\n            \"snackId\": \"607c22b32f2d0be57a218d23\",\n            \"quantity\": 4\n        }\n    ],\n    \"createdAt\": \"2021-04-23T08:08:26.345Z\",\n    \"updatedAt\": \"2021-04-23T08:08:26.345Z\",\n    \"__v\":0\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "2.2 Vendor Features",
+			"item": [
+				{
+					"name": "2.2.1 Setting Van Status",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"isOnline\": false, \r\n    \"latitude\": 53.648874264916492,\r\n    \"longitude\": -75.227364723224930\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://project-t10-generator.herokuapp.com/vendor/Jhan",
+							"protocol": "https",
+							"host": [
+								"project-t10-generator",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"vendor",
+								"Jhan"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Mark Van as Ready",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "latitude",
+										"value": "23.458579982099508",
+										"disabled": true
+									},
+									{
+										"key": "longitude",
+										"value": "-16.261539693233345",
+										"disabled": true
+									},
+									{
+										"key": "vendorID",
+										"value": "Ursula",
+										"disabled": true
+									},
+									{
+										"key": "description",
+										"value": "DIE FROM STRESS",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"isOnline\": true\r\n}"
+								},
+								"url": {
+									"raw": "https://project-t10-generator.herokuapp.com/vendor/Gogu",
+									"protocol": "https",
+									"host": [
+										"project-t10-generator",
+										"herokuapp",
+										"com"
+									],
+									"path": [
+										"vendor",
+										"Gogu"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "html",
+							"header": [
+								{
+									"key": "Server",
+									"value": "Cowboy"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "text/html; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "7"
+								},
+								{
+									"key": "Etag",
+									"value": "W/\"7-U6VofLJtxB8qtAM+l+E63v03QNY\""
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 22 Apr 2021 10:58:09 GMT"
+								},
+								{
+									"key": "Via",
+									"value": "1.1 vegur"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"_id\": \"60828ebf76c642b1ea2f605a\",\n    \"vendorName\": \"Gogu\",\n    \"isOnline\": true,\n    \"latitude\": -59.630904266914484,\n    \"longitude\": 79.71739813644228,\n    \"description\": \"\",\n    \"createdAt\": \"2021-04-23T09:09:19.684Z\",\n    \"updatedAt\": \"2021-04-23T09:42:29.039Z\",\n    \"__v\": 0\n}"
+						},
+						{
+							"name": "Send Location",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "timestamp",
+										"value": "true",
+										"type": "text",
+										"disabled": true
+									},
+									{
+										"key": "longitude",
+										"value": "-16.261539693233345",
+										"type": "text",
+										"disabled": true
+									},
+									{
+										"key": "vendorID",
+										"value": "Ursula",
+										"type": "text",
+										"disabled": true
+									},
+									{
+										"key": "description",
+										"value": "DIE FROM STRESS",
+										"type": "text",
+										"disabled": true
+									},
+									{
+										"key": "status",
+										"value": "true",
+										"type": "text",
+										"disabled": true
+									},
+									{
+										"key": "collection",
+										"value": "vendors",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"latitude\": -34.062396927640783,\r\n    \"longitude\": -174.961542284901437\r\n}"
+								},
+								"url": {
+									"raw": "https://project-t10-generator.herokuapp.com/vendor/Ursula",
+									"protocol": "https",
+									"host": [
+										"project-t10-generator",
+										"herokuapp",
+										"com"
+									],
+									"path": [
+										"vendor",
+										"Ursula"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "html",
+							"header": [
+								{
+									"key": "Server",
+									"value": "Cowboy"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "text/html; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "7"
+								},
+								{
+									"key": "Etag",
+									"value": "W/\"7-U6VofLJtxB8qtAM+l+E63v03QNY\""
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 22 Apr 2021 11:42:13 GMT"
+								},
+								{
+									"key": "Via",
+									"value": "1.1 vegur"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"_id\": \"6082911e3c1014b249bfcaab\",\n    \"vendorName\": \"Ursula\",\n    \"isOnline\": false,\n    \"latitude\": -34.06239692764078,\n    \"longitude\": -174.96154228490144,\n    \"description\": \"\",\n    \"createdAt\": \"2021-04-23T09:19:26.793Z\",\n    \"updatedAt\": \"2021-04-23T09:42:49.340Z\",\n    \"__v\": 0\n}"
+						}
+					]
+				},
+				{
+					"name": "2.2.2 Show Outstanding Orders",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://project-t10-generator.herokuapp.com/vendor/Jhan/outstanding",
+							"protocol": "https",
+							"host": [
+								"project-t10-generator",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"vendor",
+								"Jhan",
+								"outstanding"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Jhan's Outstanding Orders",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://project-t10-generator.herokuapp.com/vendor/Jhan/outstanding",
+									"protocol": "https",
+									"host": [
+										"project-t10-generator",
+										"herokuapp",
+										"com"
+									],
+									"path": [
+										"vendor",
+										"Jhan",
+										"outstanding"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": "[\n    {\n        \"status\": \"Cooking\",\n        \"_id\": \"608281d0941b7e00152fd177\",\n        \"orderNumber\": 3,\n        \"vendorName\": \"Jhan\",\n        \"customerID\": 3,\n        \"snacks\": [\n            {\n                \"_id\": \"608281d0941b7e00152fd176\",\n                \"snackId\": \"607c275f2f2d0be57a218d25\",\n                \"quantity\": 4\n            }\n        ],\n        \"createdAt\": \"2021-04-23T08:14:08.916Z\",\n        \"updatedAt\": \"2021-04-23T09:26:08.558Z\",\n        \"__v\": 0\n    }\n]"
+						},
+						{
+							"name": "Gogu's Outstanding Orders",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://project-t10-generator.herokuapp.com/vendor/Gogu/outstanding",
+									"protocol": "https",
+									"host": [
+										"project-t10-generator",
+										"herokuapp",
+										"com"
+									],
+									"path": [
+										"vendor",
+										"Gogu",
+										"outstanding"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Server",
+									"value": "Cowboy"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "287"
+								},
+								{
+									"key": "Etag",
+									"value": "W/\"11f-vzFJyHeU0YIaTZ82OPAfbViStn4\""
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 23 Apr 2021 04:00:04 GMT"
+								},
+								{
+									"key": "Via",
+									"value": "1.1 vegur"
+								}
+							],
+							"cookie": [],
+							"body": "[\n    {\n        \"status\": \"Cooking\",\n        \"_id\": \"607fc9d1cfd10538762b46be\",\n        \"orderNumber\": 0,\n        \"vendorName\": \"Gogu\",\n        \"customerID\": 1,\n        \"snacks\": [\n            {\n                \"_id\": \"607fc9d1cfd10538762b46bd\",\n                \"snackId\": \"607c275f2f2d0be57a218d25\",\n                \"quantity\": 69\n            }\n        ],\n        \"createdAt\": \"2021-04-21T06:44:33.422Z\",\n        \"updatedAt\": \"2021-04-23T03:30:32.445Z\",\n        \"__v\": 0\n    }\n]"
+						}
+					]
+				},
+				{
+					"name": "2.2.3 Mark Fulfilled Orders",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"status\": \"Fulfilled\" \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://project-t10-generator.herokuapp.com/vendor/orders/1",
+							"protocol": "https",
+							"host": [
+								"project-t10-generator",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"vendor",
+								"orders",
+								"1"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Order 1 Fulfilled",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"status\": \"Fulfilled\" \r\n}"
+								},
+								"url": {
+									"raw": "https://project-t10-generator.herokuapp.com/vendor/orders/1",
+									"protocol": "https",
+									"host": [
+										"project-t10-generator",
+										"herokuapp",
+										"com"
+									],
+									"path": [
+										"vendor",
+										"orders",
+										"1"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "html",
+							"header": [
+								{
+									"key": "Server",
+									"value": "Cowboy"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "text/html; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "37"
+								},
+								{
+									"key": "Etag",
+									"value": "W/\"25-y6PXVUu/vh/NRiIOwhfAer6k4PQ\""
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 23 Apr 2021 03:31:01 GMT"
+								},
+								{
+									"key": "Via",
+									"value": "1.1 vegur"
+								}
+							],
+							"cookie": [],
+							"body": "Changed Order 1's status to Fulfilled"
+						}
+					]
+				}
+			]
+		}
+	]
+}
