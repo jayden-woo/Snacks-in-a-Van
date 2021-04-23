@@ -32,7 +32,7 @@ This project is by Generator, a INFO30005 student team, based on the business re
 
 ## Live Link
 
-This project is hosted on Heroku. The live link can only be access here:
+This project is hosted on Heroku. The live link can be accessed here:
 
 https://project-t10-generator.herokuapp.com/
 	
