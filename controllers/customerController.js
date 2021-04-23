@@ -3,7 +3,7 @@ const mongoose = require("mongoose")
 // import the models used
 const Menu = mongoose.model("Menu")
 const OrderLine = mongoose.model("OrderLine")
-const Order= mongoose.model("Order")
+const Order = mongoose.model("Order")
 
 // handle request to get the nearest vans
 const getNearestVans = (req, res) => {

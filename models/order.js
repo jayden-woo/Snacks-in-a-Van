@@ -14,6 +14,8 @@ const orderLineSchema = new mongoose.Schema({
     }
 })
 
+status = ["Ordering", "Placed", "Cooking", "Fulfilled", "Picked-Up", "Cancelled"]
+
 // define the schema for one order in the orders database
 const orderSchema = new mongoose.Schema({
     orderNumber: { 
@@ -21,18 +23,21 @@ const orderSchema = new mongoose.Schema({
         required: true, 
         unique: true, 
         min: 0
-    },
+    }, 
     vendorID: {
-        type: Number,
-        required: true
-    },
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: 'Vendor'
+    }, 
+    // temporarily using number as the customerID as the schema doesn't exist yet
     customerID: {
-        type: Number,
+        type: Number, 
+        ref: 'Customer', 
         required: true
-    },
+    }, 
     status: {
         type: String,
-        enum: ["COOKING", "READY", "PICKED UP"],
+        enum: status,
+        default: status[0], 
         required: true
     },
     snacks: [orderLineSchema]

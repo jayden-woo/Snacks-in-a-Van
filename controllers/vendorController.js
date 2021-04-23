@@ -1,11 +1,11 @@
 const mongoose = require("mongoose")
 
 const Vendor = mongoose.model("Vendor")
-const Order= mongoose.model("Order")
-const { restart } = require('nodemon')
-// get all Vendors
+const Order = mongoose.model("Order")
+
 //TODO: IMPLEMET LOGIN
 
+// get all Vendors
 const getAllVendors = async (req, res) => {
     try {
         const vendors = await Vendor.find()
@@ -59,7 +59,6 @@ const getOneVendor = async (req, res) => {
 }
 
 const updateVendor = async (req, res) => {
-    
     try {
         console.log("editing: "+req.params.id)   
         if (req.body.status){
@@ -73,18 +72,20 @@ const updateVendor = async (req, res) => {
             await Vendor.updateOne({vendorID:req.params.id}, {latitude:req.body.latitude, longitude:req.body.longitude}) 
 
         }
-        res.status(200); //OK 
+        res.status(200);
         res.send("success");
-  
-      } catch (err) {   // error detected
-          res.status(400)
-          return res.send("Database update failed")
-      }
-  }
-  // add an Vendor (POST)
-  const addVendor = async (req, res) => {
+
+    // error detected
+    } catch (err) {
+        res.status(400)
+        return res.send("Database update failed")
+    }
+}
+
+// add an Vendor (POST)
+const addVendor = async (req, res) => {
     const vendor = new Vendor(req.body)   // construct a new Vendor object from body of POST
-  
+
     try {
         let result = await vendor.save()  // save new Vendor object to database
         res.status(200); //OK
@@ -93,9 +94,25 @@ const updateVendor = async (req, res) => {
         res.status(400)
         return res.send("Database insert failed")
     }
-  }
-  
+}
 
+const markFulfilled = async (req, res) => {
+    try {
+        console.log("editing: "+req.params.orderId) 
+        if (req.body.status) {
+            //change status 
+            console.log("changing status", req.body.status)
+            await Order.updateOne( {orderNumber:req.params.orderId}, {status:req.body.status} )
+            res.status(200); //OK 
+            res.send("marked "+req.params.id+" as READY"); 
+        }
+    }
+    catch (err) {
+            // error detected 
+            res.status(400) 
+            return res.send("Database update failed")
+    }
+}
 
 // remember to export the functions
 module.exports = {
@@ -104,5 +121,6 @@ module.exports = {
     vendorStatus,
     addVendor,
     updateVendor,
-    getOutstandingOrders
+    getOutstandingOrders, 
+    markFulfilled
 }

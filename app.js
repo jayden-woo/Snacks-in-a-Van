@@ -17,7 +17,11 @@ app.get('/', (req, res) => {
 // handler for customer requests
 // customer routes are added onto the end of '/customer'
 app.use('/customer', customerRouter)
+
+// handler for vendor requests
+// vendor routes are added onto the end of '/vendor'
 app.use('/vendor', vendorRouter)
+
 // dynamically set the port number or use static 8080 port for local testing
 const port = process.env.PORT || 8080
 
