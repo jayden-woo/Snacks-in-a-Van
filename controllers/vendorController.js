@@ -74,7 +74,6 @@ const updateVendor = async (req, res) => {
         }
         res.status(200);
         res.send("success");
-
     // error detected
     } catch (err) {
         res.status(400)
@@ -96,15 +95,14 @@ const addVendor = async (req, res) => {
     }
 }
 
-const markFulfilled = async (req, res) => {
+const updateOrderStatus = async (req, res) => {
     try {
-        console.log("editing: "+req.params.orderId) 
         if (req.body.status) {
             //change status 
             console.log("changing status", req.body.status)
-            await Order.updateOne( {orderNumber:req.params.orderId}, {status:req.body.status} )
-            res.status(200); //OK 
-            res.send("marked "+req.params.id+" as READY"); 
+            await Order.updateOne( {orderNumber: req.params.orderId}, {status: req.body.status} )
+            res.status(200) //OK 
+            res.send("Changed Order "+req.params.orderId+"'s status to "+req.body.status)
         }
     }
     catch (err) {
@@ -122,5 +120,5 @@ module.exports = {
     addVendor,
     updateVendor,
     getOutstandingOrders, 
-    markFulfilled
+    updateOrderStatus
 }

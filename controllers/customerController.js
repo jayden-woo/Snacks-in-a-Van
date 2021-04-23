@@ -69,9 +69,8 @@ const addSnackToOrder = async (req, res) => {
     const newOrder = new Order({
         orderNumber: orderNumber,
         vendorID: req.get("vendorID"),
-        customerID: req.get("customerID"), //No Customer Schema; req.body.customerID = Number
-        snacks: [lineItem],
-        status: "COOKING" //"PREPARING" || "READY" || "PICKED UP"
+        customerID: req.get("customerID"), // No Customer Schema; req.body.customerID = Number
+        snacks: [lineItem]
     })
 
     // save the new order to the orders database

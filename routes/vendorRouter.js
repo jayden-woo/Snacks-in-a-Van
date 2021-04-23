@@ -16,7 +16,7 @@ vendorRouter.get('/', (req, res) => vendorController.getAllVendors(req, res))
 // POST requests for the vendor
 vendorRouter.post('/:id/', (req, res) => vendorController.updateVendor(req, res))
 vendorRouter.post('/', (req, res) => vendorController.addVendor(req, res))
-vendorRouter.post('/orders/:orderId', (req, res) => vendorController.markFulfilled(req, res))
+vendorRouter.post('/orders/:orderId', (req, res) => vendorController.updateOrderStatus(req, res))
 
 // export the router
 module.exports = vendorRouter 
