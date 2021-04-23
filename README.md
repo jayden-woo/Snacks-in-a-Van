@@ -76,9 +76,9 @@ function myFunction() {
 
 ## Adding Images
 
-Image values contained in MongoDB are Strings. They point to images that are hosted on https://unsplash.com/. To open up the image, append the String to https://unsplash.com/photos/.
+Image values contained in MongoDB are Strings. They point to images that are hosted on https://unsplash.com/. To open up the image, append the String to https://source.unsplash.com/.
 
-For example, to access "cappucinno" photos from menu that has String "T-kJRC_xqFI" in images, visit https://unsplash.com/photos/T-kJRC_xqFI
+For example, to access "cappucinno" photos from menu that has String "T-kJRC_xqFI" in images, visit https://source.unsplash.com/T-kJRC_xqFI
 
 <!--
 Or you can add your own images from a folder in your repo with the following code. The example has a folder `Gifs` with an image file `Q1-1.gif`:
