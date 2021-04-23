@@ -35,7 +35,7 @@ const vendorStatus = async (req, res) => {
 
 const getOutstandingOrders = async (req, res) => {
     try {
-        const OutstandingOrders = await Order.find( {"vendorID": req.params.vendorId}, {"status" : "Cooking"} )
+        const OutstandingOrders = await Order.find( {"vendorID": req.params.vendorId, "status" : "Cooking"} )
         return (res.send(OutstandingOrders))
     } catch (err) {
         res.status(400)
