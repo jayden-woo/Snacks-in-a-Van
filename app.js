@@ -4,7 +4,7 @@ require('./models');
 const app = express()
 app.use(express.json())  // replaces body-parser
 
-// set up customer routes
+// set up customer and vendor routes
 const customerRouter = require('./routes/customerRouter')
 const vendorRouter =  require('./routes/vendorRouter')
 
@@ -14,11 +14,9 @@ app.get('/', (req, res) => {
     res.send('<h1>Snack in a Van</h1>')
 })
 
-// handler for customer requests
+// handler for customer and vendor requests
 // customer routes are added onto the end of '/customer'
 app.use('/customer', customerRouter)
-
-// handler for vendor requests
 // vendor routes are added onto the end of '/vendor'
 app.use('/vendor', vendorRouter)
 

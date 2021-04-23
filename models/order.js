@@ -24,18 +24,18 @@ const orderSchema = new mongoose.Schema({
         unique: true, 
         min: 0
     }, 
-    vendorID: {
+    vendorName: {
         type: String
     }, 
-    // temporarily using number as the customerID as the schema doesn't exist yet
+    // temporarily using number for the customerID as the schema doesn't exist yet
     customerID: {
         type: Number, 
         ref: 'Customer', 
         required: true
     }, 
     status: {
-        type: String,
-        enum: status,
+        type: String, 
+        enum: status, 
         default: status[0], 
         required: true
     },

@@ -4,120 +4,129 @@ const mongoose = require("mongoose")
 const Vendor = mongoose.model("Vendor")
 const Order = mongoose.model("Order")
 
-//TODO: IMPLEMET LOGIN
+// TODO: IMPLEMET LOGIN
 
-// get all Vendors
+// get all the vendors currently in the database
 const getAllVendors = async (req, res) => {
     try {
-        const vendors = await Vendor.find()
-        return res.send(vendors)
+        const vendors = await Vendor.find( {}, {_id: false} )
+        res.send(vendors)
     } catch (err) {
         res.status(400)
-        return res.send("Database query failed")
+        res.send("Database query failed")
     }
 }
 
-const vendorStatus = async (req, res) => {
+// get a vendor by their unique name
+const getVendorByName = async (req, res) => {
     try {
-        const vendors = await Vendor.findOne( {"vendorID": req.params.vendorId} )
-        if (!vendors) {res.send("Vendor: "+req.params.vendorId+" Not Found")}
-        const payload = {
-            "isOnline": vendors.isOnline,
-            "location": [vendors.latitude, vendors.longitude]
-        }
-        return res.send(payload)
-    } catch (err) {
-        console.error(err);
-        res.status(400)
-        return res.send("Database query failed")
-    }
-}
-
-const getOutstandingOrders = async (req, res) => {
-    try {
-        const OutstandingOrders = await Order.find( {"vendorID": req.params.vendorId, "status" : "Cooking"} )
-        return (res.send(OutstandingOrders))
-    } catch (err) {
-        res.status(400)
-        return res.send("Database query failed")
-    }
-}
-
-// find one Vendor by their id
-const getOneVendor = async (req, res) => {
-    try {
-        const oneVendor = await Vendor.findOne( {"vendorID": req.params.vendorId})
-        if (oneVendor === null) { // no Vendor found in database
+        const vendor = await Vendor.findOne( {"vendorName": req.params.vendorName} )
+        // no vendor was found in database
+        if (vendor === null) { 
             res.status(404)
             return res.send("Vendor not found")
         }
-        res.status(200); //OK
-        return res.send(oneVendor) // Vendor was found
-    } catch (err) { // error occurred
+        res.status(200);
+        // send back the vendor details
+        res.send(vendor)
+    // error occurred during the database query
+    } catch (err) { 
         res.status(400)
-        return res.send("Database query failed")
+        res.send("Database query failed")
     }
 }
 
-const updateVendor = async (req, res) => {
+// get the current status of a vendor 
+const getVendorStatus = async (req, res) => {
     try {
-        if ("isOnline" in req.body){
-            //change status 
-            console.log("changing status",req.body.isOnline)
-            await Vendor.updateOne({vendorID:req.params.vendorId}, {isOnline:req.body.isOnline}) 
+        const vendors = await Vendor.findOne( {"vendorName": req.params.vendorName} )
+        // no vendor was found in the database
+        if (!vendors) {res.send("Vendor: "+req.params.vendorName+" Not Found")}
+        // extract the required details for the status and send it back
+        const status = {
+            "isOnline": vendors.isOnline,
+            "location": [vendors.latitude, vendors.longitude]
         }
-        if ("latitude" in req.body && "longitude" in req.body) {
-            //change location
-            console.log("changing location to:",req.body.latitude, req.body.longitude)
-            await Vendor.updateOne({vendorID:req.params.vendorId}, {latitude:req.body.latitude, longitude:req.body.longitude}) 
-        }
-        res.status(200);
-        res.send("success");
-    // error detected
+        res.send(status)
+    } catch (err) {
+        console.error(err)
+        res.status(400)
+        res.send("Database query failed")
+    }
+}
+
+// get a list of all the outstanding orders of a vendor
+const getOutstandingOrders = async (req, res) => {
+    try {
+        // find the list of outstanding orders of a vendor and send it back
+        const OutstandingOrders = await Order.find( {"vendorName": req.params.vendorName, "status": "Cooking"} )
+        res.send(OutstandingOrders)
+    // error occurred during the database query
     } catch (err) {
         res.status(400)
-        return res.send("Database update failed")
+        res.send("Database query failed")
     }
 }
 
-// add an Vendor (POST)
+// add a new vendor
 const addVendor = async (req, res) => {
-    const vendor = new Vendor(req.body)   // construct a new Vendor object from body of POST
+    // construct a new vendor object from body of the POST request
+    const vendor = await new Vendor(req.body)
+    // save the new vendor to the vendors database
+    vendor.save( (err, result) => {
+        // error occured during saving of a new vendor
+        if (err) res.send(err)
+        // send back vendor details for checking
+        res.send(result)
+    })
+}
 
+// update the status of a vendor
+const updateVendor = async (req, res) => {
     try {
-        let result = await vendor.save()  // save new Vendor object to database
-        res.status(200); //OK
-        return res.send(result)           // return saved object to sender
-    } catch (err) {   // error detected
+        // change the status if it is in the request body
+        if ("isOnline" in req.body){
+            console.log("Changing status to",req.body.isOnline)
+            await Vendor.updateOne( {vendorName:req.params.vendorName}, {isOnline:req.body.isOnline} ) 
+        }
+        // change the location of the vendor's van if it is in the request body
+        if ("latitude" in req.body && "longitude" in req.body) {
+            console.log("Changing location to",req.body.latitude, req.body.longitude)
+            await Vendor.updateOne( {vendorName:req.params.vendorName}, {latitude:req.body.latitude, longitude:req.body.longitude} ) 
+        }
+        // send back vendor details for checking
+        res.send(await Vendor.findOne( {vendorName:req.params.vendorName}, {} ))
+    // error occurred during the database update
+    } catch (err) {
         res.status(400)
-        return res.send("Database insert failed")
+        res.send("Database update failed")
     }
 }
 
+// update the status of a current order
 const updateOrderStatus = async (req, res) => {
     try {
         if (req.body.status) {
-            //change status 
-            console.log("changing status", req.body.status)
-            await Order.updateOne( {orderNumber: req.params.orderId}, {status: req.body.status} )
-            res.status(200) //OK 
-            res.send("Changed Order "+req.params.orderId+"'s status to "+req.body.status)
+            // change the status of the order 
+            console.log("Changing status to", req.body.status)
+            await Order.updateOne( {orderNumber: req.params.orderNum}, {status: req.body.status} )
+            res.send("Changed Order "+req.params.orderNum+"'s status to "+req.body.status)
         }
     }
+    // error occurred during the database update
     catch (err) {
-            // error detected 
-            res.status(400) 
-            return res.send("Database update failed")
+        res.status(400) 
+        res.send("Database update failed")
     }
 }
 
 // remember to export the functions
 module.exports = {
-    getAllVendors,
-    getOneVendor,
-    vendorStatus,
-    addVendor,
-    updateVendor,
+    getAllVendors, 
+    getVendorByName, 
+    getVendorStatus, 
     getOutstandingOrders, 
+    addVendor, 
+    updateVendor, 
     updateOrderStatus
 }
