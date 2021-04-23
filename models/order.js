@@ -25,8 +25,7 @@ const orderSchema = new mongoose.Schema({
         min: 0
     }, 
     vendorID: {
-        type: mongoose.Schema.Types.ObjectId, 
-        ref: 'Vendor'
+        type: String
     }, 
     // temporarily using number as the customerID as the schema doesn't exist yet
     customerID: {
