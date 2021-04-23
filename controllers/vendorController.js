@@ -1,5 +1,6 @@
 const mongoose = require("mongoose")
 
+// import the models used
 const Vendor = mongoose.model("Vendor")
 const Order = mongoose.model("Order")
 
@@ -18,10 +19,10 @@ const getAllVendors = async (req, res) => {
 
 const vendorStatus = async (req, res) => {
     try {
-        const vendors = await Vendor.findOne( {"vendorID": req.params.id} )
-        if (!vendors){res.send("Vendor: "+req.params.id+" Not Found")}
+        const vendors = await Vendor.findOne( {"vendorID": req.params.vendorId} )
+        if (!vendors) {res.send("Vendor: "+req.params.vendorId+" Not Found")}
         const payload = {
-            "status": vendors.isOnline,
+            "isOnline": vendors.isOnline,
             "location": [vendors.latitude, vendors.longitude]
         }
         return res.send(payload)
@@ -34,7 +35,7 @@ const vendorStatus = async (req, res) => {
 
 const getOutstandingOrders = async (req, res) => {
     try {
-        const OutstandingOrders = await Order.find( {"vendorID": req.params.id}, {"status" : "COOKING"} )
+        const OutstandingOrders = await Order.find( {"vendorID": req.params.vendorId, "status" : "Cooking"} )
         return (res.send(OutstandingOrders))
     } catch (err) {
         res.status(400)
@@ -45,7 +46,7 @@ const getOutstandingOrders = async (req, res) => {
 // find one Vendor by their id
 const getOneVendor = async (req, res) => {
     try {
-        const oneVendor = await Vendor.findOne( {"vendorID": req.params.id})
+        const oneVendor = await Vendor.findOne( {"vendorID": req.params.vendorId})
         if (oneVendor === null) { // no Vendor found in database
             res.status(404)
             return res.send("Vendor not found")
@@ -60,17 +61,15 @@ const getOneVendor = async (req, res) => {
 
 const updateVendor = async (req, res) => {
     try {
-        console.log("editing: "+req.params.id)   
-        if (req.body.status){
-        //change status 
-            console.log("changing status",req.body.status)
-            await Vendor.updateOne({vendorID:req.params.id}, {status:req.body.status}) 
+        if ("isOnline" in req.body){
+            //change status 
+            console.log("changing status",req.body.isOnline)
+            await Vendor.updateOne({vendorID:req.params.vendorId}, {isOnline:req.body.isOnline}) 
         }
-        if (req.body.latitude && req.body.longitude){
-        //change location
-            console.log("changing location to:",req.body.latitude,req.body.longitude)
-            await Vendor.updateOne({vendorID:req.params.id}, {latitude:req.body.latitude, longitude:req.body.longitude}) 
-
+        if ("latitude" in req.body && "longitude" in req.body) {
+            //change location
+            console.log("changing location to:",req.body.latitude, req.body.longitude)
+            await Vendor.updateOne({vendorID:req.params.vendorId}, {latitude:req.body.latitude, longitude:req.body.longitude}) 
         }
         res.status(200);
         res.send("success");
