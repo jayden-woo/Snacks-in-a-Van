@@ -956,7 +956,18 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": ""
+							"raw": "https://project-t10-generator.herokuapp.com/vendor/Gogu/outstanding",
+							"protocol": "https",
+							"host": [
+								"project-t10-generator",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"vendor",
+								"Gogu",
+								"outstanding"
+							]
 						}
 					},
 					"response": [
@@ -1026,15 +1037,36 @@
 				{
 					"name": "2.2.3 Mark Fulfilled Orders",
 					"request": {
-						"method": "GET",
-						"header": [],
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n \"status\": \"fulfilled\" \r\n}"
+						},
 						"url": {
-							"raw": ""
+							"raw": "https://project-t10-generator.herokuapp.com/vendor/orders/0",
+							"protocol": "https",
+							"host": [
+								"project-t10-generator",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"vendor",
+								"orders",
+								"0"
+							]
 						}
 					},
 					"response": [
 						{
-							"name": "Order 0",
+							"name": "Order 1 Fulfilled",
 							"originalRequest": {
 								"method": "POST",
 								"header": [
@@ -1046,10 +1078,10 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n \"status\": \"READY\"   \r\n}"
+									"raw": "{\r\n \"status\": \"Fulfilled\" \r\n}"
 								},
 								"url": {
-									"raw": "https://project-t10-generator.herokuapp.com/vendor/BaBVAN",
+									"raw": "https://project-t10-generator.herokuapp.com/vendor/orders/1",
 									"protocol": "https",
 									"host": [
 										"project-t10-generator",
@@ -1058,7 +1090,8 @@
 									],
 									"path": [
 										"vendor",
-										"BaBVAN"
+										"orders",
+										"1"
 									]
 								}
 							},
@@ -1084,15 +1117,15 @@
 								},
 								{
 									"key": "Content-Length",
-									"value": "7"
+									"value": "37"
 								},
 								{
 									"key": "Etag",
-									"value": "W/\"7-U6VofLJtxB8qtAM+l+E63v03QNY\""
+									"value": "W/\"25-y6PXVUu/vh/NRiIOwhfAer6k4PQ\""
 								},
 								{
 									"key": "Date",
-									"value": "Thu, 22 Apr 2021 11:29:54 GMT"
+									"value": "Fri, 23 Apr 2021 03:31:01 GMT"
 								},
 								{
 									"key": "Via",
@@ -1100,76 +1133,7 @@
 								}
 							],
 							"cookie": [],
-							"body": "success"
-						},
-						{
-							"name": "Order 1",
-							"originalRequest": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n \"status\": \"READY\"   \r\n}"
-								},
-								"url": {
-									"raw": "https://project-t10-generator.herokuapp.com/vendor/987",
-									"protocol": "https",
-									"host": [
-										"project-t10-generator",
-										"herokuapp",
-										"com"
-									],
-									"path": [
-										"vendor",
-										"987"
-									]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "html",
-							"header": [
-								{
-									"key": "Server",
-									"value": "Cowboy"
-								},
-								{
-									"key": "Connection",
-									"value": "keep-alive"
-								},
-								{
-									"key": "X-Powered-By",
-									"value": "Express"
-								},
-								{
-									"key": "Content-Type",
-									"value": "text/html; charset=utf-8"
-								},
-								{
-									"key": "Content-Length",
-									"value": "7"
-								},
-								{
-									"key": "Etag",
-									"value": "W/\"7-U6VofLJtxB8qtAM+l+E63v03QNY\""
-								},
-								{
-									"key": "Date",
-									"value": "Thu, 22 Apr 2021 11:31:46 GMT"
-								},
-								{
-									"key": "Via",
-									"value": "1.1 vegur"
-								}
-							],
-							"cookie": [],
-							"body": "success"
+							"body": "Changed Order 1's status to Fulfilled"
 						}
 					]
 				}

@@ -28,7 +28,7 @@ Welcome!
 | Xinhui Chen  |          Back End, Database           | completed |
 
 ## General info
-This project is by Generator, a INFO30005 student team, based on the business requirements from Snacks in a Van, a startup company in Melbourne managing a fleet of mobile food trucks that operate as cafes. This operation involves creation of a web app for customers and vendors to use, viewable through vertical mobile devices and horizontal tablets. 
+This project is by Generator, a INFO30005 student team, based on the business requirements from Snacks in a Van, a startup company in Melbourne managing a fleet of mobile food trucks that operate as cafes. This operation involves the creation of a web app for customers and vendors to use, viewable through vertical mobile devices and horizontal tablets. 
 
 ## Live Link
 
@@ -104,8 +104,8 @@ For all POST requests, navigate to the the "Headers" section and under "Keys", i
 | Feature | Description | Access Link|  Request Type & Sample Data (if applicable) |
 | :----------- | :------ | :---: | :--------: |
 | View customer menu | This shows a list of the menu items available, including the prices and the ID for the unsplash.com image. See above in [Adding Images](#adding-images) for more details. | https://project-t10-generator.herokuapp.com/customer/menu | GET Request  |
-| View Snack Details | When entering the snack name, the snack details of that particular snack are displayed. The details include name, price, image and description. The access link to the right shows an example of what would display of the snack "small cake" is visited | https://project-t10-generator.herokuapp.com/customer/menu/small%20cake | GET Request |
-| Start Customer Order | This request allows a customer to add an order. In the Postman file, the example shows a customer creating an order of 2 cappuccinos. The orders begin from the page that contains the snack. In this instance, the user is required to first browse to the cappuccino page, and then select a quantity of 2. | https://project-t10-generator.herokuapp.com/customer/menu/cappuccino | POST Request. Under body, input a "quantity" of 2. In the headers section, under key, input "customerID" with value of "123", "vendorID" with value "987". |
+| View Snack Details | When entering the snack name, the snack details of that particular snack are displayed. The details include name, price, image and description. The access link to the right shows an example of what would be displayed when "small cake" snack is visited | https://project-t10-generator.herokuapp.com/customer/menu/small%20cake | GET Request |
+| Start Customer Order | This request allows a customer to add an order. In the Postman file, the example shows a customer creating an order of 2 cappuccinos. The orders begin from the page that contains the snack. In this instance, the user is required to first browse to the cappuccino page, and then select a quantity of 2. | https://project-t10-generator.herokuapp.com/customer/menu/cappuccino | POST Request. Under body, input a "quantity" of 2. In the headers section, under key, input "customerID" with value of "123", "vendorID" with value "987". When the website is implemented, the headers will already contain appropriate values and the only inputted values necessary by the customer will be the quantity. |
 
 <br/><br/> 
 
@@ -113,8 +113,9 @@ For all POST requests, navigate to the the "Headers" section and under "Keys", i
 | Feature | Description | Access Link|  Request Type & Sample Data (if applicable) |
 | :----------- | :------ | :---: | :-------- |
 | Setting Van Status | This section demonstrates two requests types. The first is changing the status of the van to be online and therefore ready to accept orders. The second request allows the van send information about its most recent changed location. These features can be updated separately or together. | https://project-t10-generator.herokuapp.com/vendor/Gogu Gogu refers to the name of a van, this can be changed, but for the purpose of this example, will be retained. | POST Request. In this request, the user will need to supply "isOnline" to the Boolean value of true. This will update the status of the van to online. For the second section, to send location, insert desired values for "latitude" and "longitude" as Number values. The test here has used 982347 for the latitude and 765234 for the longitude. |
-| Show Outstanding Orders | Orders that have the status "cooking" will be shown when queried with the van's ID/name. | https://project-t10-generator.herokuapp.com/vendor/orders/987/ | GET Request |
-| Mark Fulfilled Orders  |This request allows for the van to mark an order as "READY" after it has been cooked and is available for pickup. Two examples are provided in this Postman request, but they both serve the same purpose. | https://project-t10-generator.herokuapp.com/vendor/BaBVAN | POST Request. In body, set the "status" to String "READY". |
+| Show Outstanding Orders | Orders that have the status "cooking" will be shown when queried with the van's ID/name. This will show all outstanding orders for that particular van. | https://project-t10-generator.herokuapp.com/vendor/Gogu/outstanding | GET Request |
+| Mark Fulfilled Orders  | This request allows for the van to mark an order as "Fulfilled" after it has been cooked and is available for pickup. |
+https://project-t10-generator.herokuapp.com/vendor/orders/1 | POST Request. In body, set the "status" to String "Fulfilled". |
 
 <br/><br/> 
 
