@@ -972,12 +972,12 @@
 					},
 					"response": [
 						{
-							"name": "987 Order List",
+							"name": "Gogu Outstanding Orders",
 							"originalRequest": {
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "https://project-t10-generator.herokuapp.com/vendor/orders/987/",
+									"raw": "https://project-t10-generator.herokuapp.com/vendor/Gogu/outstanding",
 									"protocol": "https",
 									"host": [
 										"project-t10-generator",
@@ -986,9 +986,8 @@
 									],
 									"path": [
 										"vendor",
-										"orders",
-										"987",
-										""
+										"Gogu",
+										"outstanding"
 									]
 								}
 							},
@@ -1014,15 +1013,15 @@
 								},
 								{
 									"key": "Content-Length",
-									"value": "55"
+									"value": "287"
 								},
 								{
 									"key": "Etag",
-									"value": "W/\"37-iDiiJsEHBrmkvwZkoKDli9x2isg\""
+									"value": "W/\"11f-vzFJyHeU0YIaTZ82OPAfbViStn4\""
 								},
 								{
 									"key": "Date",
-									"value": "Thu, 22 Apr 2021 11:39:59 GMT"
+									"value": "Fri, 23 Apr 2021 04:00:04 GMT"
 								},
 								{
 									"key": "Via",
@@ -1030,7 +1029,7 @@
 								}
 							],
 							"cookie": [],
-							"body": "[\n    {\n        \"_id\": \"607fceaafa8e120015380332\",\n        \"status\": \"COOKING\"\n    }\n]"
+							"body": "[\n    {\n        \"status\": \"Cooking\",\n        \"_id\": \"607fc9d1cfd10538762b46be\",\n        \"orderNumber\": 0,\n        \"vendorID\": \"Gogu\",\n        \"customerID\": 1,\n        \"snacks\": [\n            {\n                \"_id\": \"607fc9d1cfd10538762b46bd\",\n                \"snackId\": \"607c275f2f2d0be57a218d25\",\n                \"quantity\": 69\n            }\n        ],\n        \"createdAt\": \"2021-04-21T06:44:33.422Z\",\n        \"updatedAt\": \"2021-04-23T03:30:32.445Z\",\n        \"__v\": 0\n    }\n]"
 						}
 					]
 				},
