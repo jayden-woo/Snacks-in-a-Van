@@ -21,8 +21,10 @@ const getNearestVans = (req, res) => {
 // handle request to get the menu
 const getMenu = async (req, res) => {
     try {
-        const result = await Menu.find( {}, {_id: false} )
-        res.send(result)
+        const result = await Menu.find( {}, {_id: false} ).lean()
+        // res.send(result)
+        // Rendering instead of returning menu
+        res.render("menulist", {"menu": result})
     // error occurred during query
     } catch (err) {
         res.status(400)

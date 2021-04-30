@@ -3,6 +3,17 @@ require('./models');
 
 const app = express()
 app.use(express.json())  // replaces body-parser
+app.use(express.static('public')) // defines where the static files are located
+
+const exphbs = require('express-handlebars') // include handlebars
+
+// Configure Handlebars template engine 
+app.engine('hbs', exphbs({
+    defaultlayout: 'main', 
+    extname: 'hbs'
+}))
+
+app.set('view engine', 'hbs') // Inform app to use template engine
 
 // set up customer routes
 const authorRouter = require('./routes/authorRouter')
