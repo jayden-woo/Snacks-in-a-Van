@@ -1,7 +1,13 @@
 const mongoose = require("mongoose")
+const User = mongoose.model("User")
 
 // define the schema for a vendor in the vendors database
 const vendorSchema = new mongoose.Schema({
+    user: {
+        type: User, 
+        required: true, 
+        unique: true
+    }, 
     vendorName: { 
         type: String, 
         unique: true, 
@@ -21,14 +27,14 @@ const vendorSchema = new mongoose.Schema({
         min: -180, 
         max: 180
     }, 
-    description: { 
+    textAddress: { 
         type: String
     }
-}, 
-{
+}, {
     timestamps: true
-}, 
-{
+}, {
+    versionKey: false
+}, {
     collection: 'vendors' 
 })
 
