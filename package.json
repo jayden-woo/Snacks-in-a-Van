@@ -4,8 +4,8 @@
   "description": "Web App Project for UniMelb INFO30005 Semester 1, 2021",
   "main": "app.js",
   "scripts": {
-    "start": "node app.js", 
-    "dev": "nodemon app.js", 
+    "start": "node app.js",
+    "dev": "nodemon app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -21,9 +21,12 @@
   "dependencies": {
     "-": "0.0.1",
     "bcrypt": "^5.0.1",
+    "cookie-parser": "^1.4.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "express-handlebars": "^5.3.0",
+    "express-session": "^1.17.1",
+    "helmet": "^4.5.0",
     "mongodb": "^3.6.6",
     "mongoose": "^5.12.4",
     "nodemon": "^2.0.7"

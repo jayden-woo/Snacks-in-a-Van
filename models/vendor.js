@@ -4,7 +4,8 @@ const User = mongoose.model("User")
 // define the schema for a vendor in the vendors database
 const vendorSchema = new mongoose.Schema({
     user: {
-        type: User, 
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: 'User', 
         required: true, 
         unique: true
     }, 

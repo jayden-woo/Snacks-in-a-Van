@@ -4,7 +4,8 @@ const User = mongoose.model("User")
 // define the schema for a customer in the customers database
 const customerSchema = new mongoose.Schema({
     user: {
-        type: User, 
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: 'User', 
         required: true, 
         unique: true
     }, 

@@ -79,3 +79,21 @@ const port = process.env.PORT || 8080
 app.listen(port, () => {
     console.log('The web app is listening on port', port)
 })
+
+
+// TO be tested
+
+// set up HTTP headers for web app security
+const helmet = require('helmet')
+app.use(helmet())
+
+// keep track of data in between pages
+var cookieParser = require('cookie-parser')
+var session = require('express-session')
+
+app.use(cookieParser())
+app.use(session({
+    secret: "INFO30005 Web-App",
+    resave: false,
+    saveUninitialized: false
+}))
