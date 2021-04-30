@@ -1,12 +1,13 @@
 const mongoose = require("mongoose")
 
 // import the models used
-const Menu = mongoose.model("Menu")
+//const Menu = mongoose.model("Menu")
 const Snack = mongoose.model("Snack")
 const OrderLine = mongoose.model("OrderLine")
 const Order = mongoose.model("Order")
 
 const Customer = mongoose.model("Customer")
+const User = mongoose.model("User")
 
 
 // regex for user input validation
@@ -128,6 +129,7 @@ const logIn = (req, res) => {
 
 // register a new customer
 const signUp = async (req, res) => {
+    /*
     // validate first name
     if (!re_name.test(req.body.firstName)) {
         console.log("firstName is invalid")
@@ -142,15 +144,17 @@ const signUp = async (req, res) => {
         req.session.save()
         return res.send("lastName invalid message in signup page")
     }
+
     // validate email
     if (!re_email.test(req.body.email)) {
         console.log("email is invalid")
         req.session.errors = 'Please enter a valid email address.'
         req.session.save()
         return res.send("email invalid message in signup page")
-    }
+    } 
+
     // validate username
-    if (!re_username.test(req.body.re_username)) {
+    if (!re_username.test(req.body.username)) {
         console.log("re_username is invalid")
         req.session.errors = 'Your username should only contain numbers, underscores, lowercase, and uppercase letters.'
         req.session.save()
@@ -163,7 +167,59 @@ const signUp = async (req, res) => {
         req.session.save()
         return res.send("password invalid message in signup page")
     }
+ 
 
+    // check if the email is already in use
+    await Customer.findOne( {user: {email: req.body.email}}, function (err, user) {
+        if (user) {
+            res.send("The email address you have entered is already associated with another account.")
+            // req.session.errors = 'The email address you have entered is already associated with another account.'
+            // req.session.save()
+            // return res.redirect("customer/signup")
+        }
+    })
+    // check if the username is already in use
+    await Customer.findOne( {user: {username: req.body.username}}, function (err, user) {
+        if (user) {
+            res.send("The username you have entered is already associated with another account.")
+            // req.session.errors = 'The username you have entered is already associated with another account.'
+            // req.session.save()
+            // return res.redirect("customer/signup")
+            return
+        }
+    })
+    */
+
+    User.findOne({"username": req.body.username, "email": req.body.email}).then((user) => {
+        if(user && Customer.findOne({"user": user._id})) {
+            res.status(409).json({error: 'Username/Email already resgistered!'});
+        } else {
+            const newUser = new User({
+                username: req.body.username, 
+                password: req.body.password, 
+                email: req.body.email
+            });
+            newUser.save((err, userPost) => {
+                if(err) {
+                    res.status(400).json({success: false, err});
+                } 
+            });
+            const newCustomer = new Customer({
+                user: newUser._id, 
+                firstName: req.body.firstName, 
+                lastName: req.body.lastName
+            });
+            newCustomer.save((err, customerPost) => {
+                if(err) {
+                    res.status(400).json({success: false, err});
+                } else {
+                    res.status(200).json({success: true, customerPost});
+                }
+            });
+        }
+    })
+
+    /*
     // check if the email is already in use
     await Customer.findOne( {user: {email: req.body.email}}, function (err, user) {
         if (user) {
@@ -210,11 +266,12 @@ const signUp = async (req, res) => {
             return res.redirect("customer/signup")
         }
     })
+    */
 
     // TODO
     // send a succesful signup msg and redirect to the login page
 
-    return res.redirect("customer/login")
+    //return res.redirect("customer/login")
 }
 
 // update the details of a customer

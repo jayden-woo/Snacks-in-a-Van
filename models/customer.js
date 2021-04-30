@@ -1,5 +1,4 @@
 const mongoose = require("mongoose")
-const User = mongoose.model("User")
 
 // define the schema for a customer in the customers database
 const customerSchema = new mongoose.Schema({
