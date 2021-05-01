@@ -13,7 +13,13 @@ app.use(cookieParser())
 app.use(session({
     secret: "INFO30005 Web-App",
     resave: false,
-    saveUninitialized: false
+    saveUninitialized: false,
+    /*
+    cookie: {
+        // 20 min before expire
+        maxAge: 30 * 60 * 1000
+    }
+    */
 }))
 
 // for reading body of requests
@@ -30,9 +36,12 @@ const vendorRouter =  require('./routes/vendorRouter')
 app.get('/', (req, res) => {
     // TODO
     // implement choosing customer or vendor app
+    // should be down in frontend as a href?
     res.send('<h1>Snack in a Van</h1>')
 });
 
+
+/*
 // check if logged in
 app.get('/isLoggedIn', (req, res) => {
     var result = {authenticate: false}
@@ -42,15 +51,16 @@ app.get('/isLoggedIn', (req, res) => {
     res.json(result)
 });
 
-//logout by destroying session
+// logout by destroying session
+// assume logout button only appears after logged in, and after logout will be redirect to ??? 
+// redirect can be down by front end maybe?
 app.get('/logout', (req, res) => {
-    console.log(req.session.user)
     req.session.destroy(function(err){
-        if(err) console.log(err);
+        if(err) res.json({sucess: false, err})
     })
-    res.json({sucess: "logout successfully"})
+    res.json({sucess: true, message: "Logged out successfully"})
 });
-
+*/
 
 // handler for customer and vendor requests
 // customer routes are added onto the end of '/customer'
