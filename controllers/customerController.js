@@ -190,34 +190,43 @@ const signUp = async (req, res) => {
     })
     */
 
-    User.findOne({"username": req.body.username, "email": req.body.email}).then((user) => {
-        if(user && Customer.findOne({"user": user._id})) {
-            res.status(409).json({error: 'Username/Email already resgistered!'});
-        } else {
-            const newUser = new User({
-                username: req.body.username, 
-                password: req.body.password, 
-                email: req.body.email
-            });
-            newUser.save((err, userPost) => {
-                if(err) {
-                    res.status(400).json({success: false, err});
-                } 
-            });
-            const newCustomer = new Customer({
-                user: newUser._id, 
-                firstName: req.body.firstName, 
-                lastName: req.body.lastName
-            });
-            newCustomer.save((err, customerPost) => {
-                if(err) {
-                    res.status(400).json({success: false, err});
-                } else {
-                    res.status(200).json({success: true, customerPost});
-                }
-            });
-        }
-    })
+    var usernameUsr = await User.findOne({"username": req.body.username})
+    var emailUsr = await User.findOne({"email": req.body.email})
+
+    emailConflict = (emailUsr && await Customer.findOne({"user": emailUsr._id}))
+    usernameConflict = (usernameUsr && await Customer.findOne({"user": usernameUsr._id}))
+    
+    if(emailConflict && usernameConflict) {
+        res.status(409).json({email: false, username: false});
+    } else if(emailConflict) {
+        res.status(409).json({email: false});
+    } else if(usernameConflict) {
+        res.status(409).json({username: false});
+    } else {
+        const newUser = await new User({
+            username: req.body.username, 
+            password: req.body.password, 
+            email: req.body.email
+        });
+        await newUser.save((err) => {
+            if(err) {
+                res.status(400).json({success: false, err});
+            } 
+        });
+        const newCustomer = await new Customer({
+            user: newUser._id, 
+            firstName: req.body.firstName, 
+            lastName: req.body.lastName
+        });
+        await newCustomer.save((err, customerPost) => {
+            if(err) {
+                res.status(400).json({success: false, err});
+            } else {
+                res.status(200).json({success: true, customerPost});
+            }
+        });
+    }
+
 
     /*
     // check if the email is already in use
