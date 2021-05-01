@@ -189,19 +189,22 @@ const signUp = async (req, res) => {
         }
     })
     */
+    const{firstName, lastName, email, username, password} = req.body
 
+    // find if there is any exsiting user that have same username or email address
     var usernameUsr = await User.findOne({"username": req.body.username})
     var emailUsr = await User.findOne({"email": req.body.email})
 
+    // If they have username or email that is alrady registered as a customer, there will be a conflict
     emailConflict = (emailUsr && await Customer.findOne({"user": emailUsr._id}))
     usernameConflict = (usernameUsr && await Customer.findOne({"user": usernameUsr._id}))
     
     if(emailConflict && usernameConflict) {
-        res.status(409).json({email: false, username: false});
+        res.status(409).json({error: 'Email and Username has already resgistered!'});
     } else if(emailConflict) {
-        res.status(409).json({email: false});
+        res.status(409).json({error: 'Email has already resgistered!'});
     } else if(usernameConflict) {
-        res.status(409).json({username: false});
+        res.status(409).json({error: 'Username has already been tooken!'});
     } else {
         const newUser = await new User({
             username: req.body.username, 
