@@ -31,7 +31,26 @@ app.get('/', (req, res) => {
     // TODO
     // implement choosing customer or vendor app
     res.send('<h1>Snack in a Van</h1>')
-})
+});
+
+// check if logged in
+app.get('/isLoggedIn', (req, res) => {
+    var result = {authenticate: false}
+    if(req.session.user) {
+        result.authenticate = true;
+    }  
+    res.json(result)
+});
+
+//logout by destroying session
+app.get('/logout', (req, res) => {
+    console.log(req.session.user)
+    req.session.destroy(function(err){
+        if(err) console.log(err);
+    })
+    res.json({sucess: "logout successfully"})
+});
+
 
 // handler for customer and vendor requests
 // customer routes are added onto the end of '/customer'
