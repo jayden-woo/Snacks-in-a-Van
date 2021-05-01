@@ -12,7 +12,7 @@ const User = mongoose.model("User")
 
 // regex for user input validation
 // a name can only be alphabetic characters
-const re_name = /^[a-zA-Z]+$/
+const re_name = /^[a-zA-Z ]+$/
 // a standard email regex
 const re_email = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
 // a username can only contain alphanumeric characters and underscores
@@ -33,6 +33,33 @@ const getNearestVans = (req, res) => {
     res.write('<li> Location 4 </li>')
     res.write('<li> Location 5 </li>')
     res.end('</ul>')
+}
+
+// get the login page
+const getLogIn = (req, res) => {
+    if (req.session.errors) {
+        console.log(req.session.errors)
+        delete req.session.errors
+        req.session.save()
+    }
+    return res.send('<h1> Log In Page <\h1>')
+}
+
+// log out a user
+const logOut = (req, res) => {
+    delete req.session.user
+    req.session.save()
+    return res.redirect('login')
+}
+
+// get the signup page
+const getSignUp = (req, res) => {
+    if (req.session.errors) {
+        console.log(req.session.errors)
+        delete req.session.errors
+        req.session.save()
+    }
+    return res.send('<h1> Sign Up Page <\h1>')
 }
 
 // handle request to get the menu
@@ -98,97 +125,153 @@ const addSnackToOrder = async (req, res) => {
 
 // sign in with either email or username and password
 const logIn = (req, res) => {
-    Customer.findOne( {$or: [
-            {user: {username: req.body.username}}, {user: {email: req.body.username}}
-        ]}, function(err, user) {
+    User.findOne( {$or: [{username: req.body.username}, {email: req.body.username}]}, async function(err, user) {
+        // couldn't find user in database
         if (!user || err) {
             console.log("User not found")
-            return res.redirect("/customer/login")
-        }
-        user.comparePassword(req.body.password, function(err, isMatch) {
-            if (err) throw err;
-            // Temp checking
-            console.log(req.body.password, isMatch)
-            // wrong password
-            if (!isMatch) {
-                console.log("Invalid password")
-                return res.redirect("/customer/login")
-            }
-            // keep track of logged in user and go back to previous page
-            req.session.user = user
-            let redirectUrl = "/customer/menu"
-            if (req.session.redirectUrl) {
-                redirectUrl = req.session.redirectUrl
-                delete req.session.redirectUrl
-            }
+            req.session.status = 401
+            req.session.errors = 'You have entered an invalid username or password'
             req.session.save()
-            return res.redirect(redirectUrl)
-        })
+            return res.redirect('login')
+        }
+        // check if the user is a customer
+        if (await Customer.exists( {user: user._id} )) {
+            user.comparePassword(req.body.password, function(err, isMatch) {
+                if (err) throw err;
+                // wrong password entered
+                if (!isMatch) {
+                    console.log("Wrong password")
+                    req.session.status = 401
+                    req.session.errors = 'You have entered an invalid username or password'
+                    req.session.save()
+                    return res.redirect('login')
+                }
+                // keep track of logged in user and go back to previous page
+                req.session.user = user
+                let redirectUrl = '/customer/menu'
+                if (req.session.redirectUrl) {
+                    redirectUrl = req.session.redirectUrl
+                    delete req.session.redirectUrl
+                }
+                delete req.session.errors
+                req.sessionstatus = 200
+                req.session.save()
+                return res.redirect(redirectUrl)
+            })
+        } else {
+            console.log("User is not a customer")
+            req.session.status = 401
+            req.session.errors = 'You have entered an invalid username or password'
+            req.session.save()
+            return res.redirect('login')
+        }
     })
 }
 
-// register a new customer
-const signUp = async (req, res) => {
-    /*
-    // validate first name
-    if (!re_name.test(req.body.firstName)) {
-        console.log("firstName is invalid")
-        req.session.errors = 'Your name should only contain lowercase and uppercase letters.'
-        req.session.save()
-        return res.send("firstName invalid message in signup page")
+const validateInput = (req) => {
+    // validate password
+    if (!re_password.test(req.body.password)) {
+        console.log("password is invalid")
+        req.session.status = 400
+        req.session.errors = 'Your password should contain at least 1 lowercase letter, 1 uppercase letter, 1 number, 1 special character, and be between 8 to 20 characters in length.'
+    }
+    // validate username
+    if (!re_username.test(req.body.username)) {
+        console.log("username is invalid")
+        req.session.status = 400
+        req.session.errors = 'Your username should only contain numbers, underscores, lowercase, and uppercase letters.'
+    }
+    // validate email
+    if (!re_email.test(req.body.email)) {
+        console.log("email is invalid")
+        req.session.status = 400
+        req.session.errors = 'Please enter a valid email address.'
     }
     // validate last name
     if (!re_name.test(req.body.lastName)) {
         console.log("lastName is invalid")
+        req.session.status = 400
         req.session.errors = 'Your name should only contain lowercase and uppercase letters.'
-        req.session.save()
-        return res.send("lastName invalid message in signup page")
     }
+    // validate first name
+    if (!re_name.test(req.body.firstName)) {
+        console.log("firstName is invalid")
+        req.session.status = 400
+        req.session.errors = 'Your name should only contain lowercase and uppercase letters.'
+    }
+    // check if any validation errors occured
+    if (req.session.status != 400) {
+        req.session.status = 200
+    }
+    req.session.save()
+    return req.session.status
+}
 
-    // validate email
-    if (!re_email.test(req.body.email)) {
-        console.log("email is invalid")
-        req.session.errors = 'Please enter a valid email address.'
-        req.session.save()
-        return res.send("email invalid message in signup page")
-    } 
+// register a new customer
+const signUp = async (req, res) => {
 
-    // validate username
-    if (!re_username.test(req.body.username)) {
-        console.log("re_username is invalid")
-        req.session.errors = 'Your username should only contain numbers, underscores, lowercase, and uppercase letters.'
-        req.session.save()
-        return res.send("re_username invalid message in signup page")
-    }
-    // validate password
-    if (!re_password.test(req.body.password)) {
-        console.log("password is invalid")
-        req.session.errors = 'Your password should contain at least 1 lowercase letter, 1 uppercase letter, 1 number, 1 special character, and be between 8 to 20 characters in length.'
-        req.session.save()
-        return res.send("password invalid message in signup page")
-    }
- 
+    // check if the input is correctly formed
+    await validateInput(req)
 
     // check if the email is already in use
-    await Customer.findOne( {user: {email: req.body.email}}, function (err, user) {
+    await User.findOne( {email: req.body.email}, function (err, user) {
         if (user) {
-            res.send("The email address you have entered is already associated with another account.")
-            // req.session.errors = 'The email address you have entered is already associated with another account.'
-            // req.session.save()
-            // return res.redirect("customer/signup")
+            req.session.status = 409
+            req.session.errors = 'The email address you have entered is already associated with another account.'
+            req.session.save()
         }
     })
     // check if the username is already in use
-    await Customer.findOne( {user: {username: req.body.username}}, function (err, user) {
+    await User.findOne( {username: req.body.username}, function (err, user) {
         if (user) {
-            res.send("The username you have entered is already associated with another account.")
-            // req.session.errors = 'The username you have entered is already associated with another account.'
-            // req.session.save()
-            // return res.redirect("customer/signup")
-            return
+            req.session.status = 409
+            req.session.errors = 'The username you have entered is already associated with another account.'
+            req.session.save()
         }
     })
-    */
+
+    // redirect user to restart signup process if any part of it has failed
+    if (req.session.status != 200) {
+        return res.redirect('signup')
+    }
+
+    // create a new user
+    const user = await new User({
+        username: req.body.username, 
+        password: req.body.password, 
+        email: req.body.email
+    })
+    // save user to database
+    await user.save((err) => {
+        if (err) {
+            req.session.errors = err
+            req.session.save()
+            return res.redirect('signup')
+        }
+    })
+
+    // create a new customer entry
+    const customer = await new Customer({
+        user: user._id, 
+        firstName: req.body.firstName, 
+        lastName: req.body.lastName
+    })
+    // save customer to database
+    await customer.save((err) => {
+        if (err) {
+            req.session.errors = err
+            req.session.save()
+            return res.redirect('signup')
+        }
+    })
+
+    // TODO
+    // send a succesful signup msg and redirect to the login page
+
+    return res.redirect('login')
+
+/* ----- Charlotte's Implementation ----------- *
+
     const{firstName, lastName, email, username, password} = req.body
 
     // find if there is any exsiting user that have same username or email address
@@ -230,72 +313,30 @@ const signUp = async (req, res) => {
         });
     }
 
-
-    /*
-    // check if the email is already in use
-    await Customer.findOne( {user: {email: req.body.email}}, function (err, user) {
-        if (user) {
-            req.session.errors = 'The email address you have entered is already associated with another account.'
-            req.session.save()
-            return res.redirect("customer/signup")
-        }
-    })
-    // check if the username is already in use
-    await Customer.findOne( {user: {username: req.body.username}}, function (err, user) {
-        if (user) {
-            req.session.errors = 'The username you have entered is already associated with another account.'
-            req.session.save()
-            return res.redirect("customer/signup")
-        }
-    })
-
-    // create a new user
-    const user = await new User({
-        username: req.body.username, 
-        password: req.body.password, 
-        email: req.body.email
-    })
-    // save user to database
-    await user.save((err) => {
-        if (err) {
-            req.session.errors = err
-            req.session.save()
-            return res.redirect("customer/signup")
-        }
-    })
-
-    // create a new customer entry
-    const customer = await new Customer({
-        user: user._id, 
-        firstName: req.body.firstName, 
-        lastName: req.body.lastName
-    })
-    // save customer to database
-    await user.save((err) => {
-        if (err) {
-            req.session.errors = err
-            req.session.save()
-            return res.redirect("customer/signup")
-        }
-    })
-    */
-
-    // TODO
-    // send a succesful signup msg and redirect to the login page
-
-    //return res.redirect("customer/login")
+ * ------------------------------------------- */
 }
 
 // update the details of a customer
 const updateDetails = (req, res) => {
+
+    // // updating password
+    // await User.findOne( {username:'testUser'}, async function(err, user) {
+    //     if (err) throw err;
+    //     await user.set('password', 'Password123')
+    //     user.save((err) => {
+    //         if (err) return err;
+    //     })
+    // })
     
+    // res.send(await User.find())
 }
-
-
 
 // export the controller functions
 module.exports = {
     getNearestVans, 
+    getLogIn, 
+    logOut, 
+    getSignUp, 
     getMenu, 
     getSnackByName, 
     addSnackToOrder, 

@@ -1,12 +1,26 @@
+// packages or schema imports
+const cookieParser = require('cookie-parser')
 const express = require('express')
-require('./models/db.js')
-
-// TEMP
-const mongoose = require("mongoose")
-const User = mongoose.model("User")
-
+const helmet = require('helmet')
+const session = require('express-session')
 const app = express()
-app.use(express.json())  // replaces body-parser
+
+// set up HTTP headers for web app security
+app.use(helmet())
+
+// for keeping track of data in between pages
+app.use(cookieParser())
+app.use(session({
+    secret: "INFO30005 Web-App",
+    resave: false,
+    saveUninitialized: false
+}))
+
+// for reading body of requests
+app.use(express.json())
+
+// set up database
+const db = require('./models/db.js')
 
 // set up customer and vendor routes
 const customerRouter = require('./routes/customerRouter')
@@ -14,56 +28,9 @@ const vendorRouter =  require('./routes/vendorRouter')
 
 // handler for GET home page
 app.get('/', (req, res) => {
-    // res.send('<h1>Snack in a Van</h1>')
-
-    // TEMP
-    // fetch user and test password verification
-    User.findOne( {username: 'testUser'}, function(err, user) {
-        if (err) throw err;
-
-        // test a matching password
-        user.comparePassword('Password123', function(err, isMatch) {
-            if (err) throw err;
-            console.log('Password123', isMatch)  // -> Password123: true
-        })
-
-        // test a failing password
-        user.comparePassword('123Password', function(err, isMatch) {
-            if (err) throw err;
-            console.log('123Password', isMatch)  // -> 123Password: false
-        })
-
-        // test another failing password
-        user.comparePassword('Password', function(err, isMatch) {
-            if (err) throw err;
-            console.log('Password', isMatch)  // -> 123Password: false
-        })
-    })
-    res.send()
-})
-
-// TEMP
-app.post('/', async (req, res) => {
-    // // create a user a new user
-    // const testUser = new User({
-    //     username: "testUser",
-    //     password: "Password123"
-    // })
-
-    // // save user to database
-    // await testUser.save((err) => {
-    //     if (err) throw err;
-    // })
-
-    await User.findOne( {username:'testUser'}, async function(err, user) {
-        if (err) throw err;
-        await user.set('password', 'Password123')
-        user.save((err) => {
-            if (err) return err;
-        })
-    })
-    
-    res.send(await User.find())
+    // TODO
+    // implement choosing customer or vendor app
+    res.send('<h1>Snack in a Van</h1>')
 })
 
 // handler for customer and vendor requests
@@ -79,21 +46,3 @@ const port = process.env.PORT || 8080
 app.listen(port, () => {
     console.log('The web app is listening on port', port)
 })
-
-
-// TO be tested
-
-// set up HTTP headers for web app security
-const helmet = require('helmet')
-app.use(helmet())
-
-// keep track of data in between pages
-var cookieParser = require('cookie-parser')
-var session = require('express-session')
-
-app.use(cookieParser())
-app.use(session({
-    secret: "INFO30005 Web-App",
-    resave: false,
-    saveUninitialized: false
-}))
