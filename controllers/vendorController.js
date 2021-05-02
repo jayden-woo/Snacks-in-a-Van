@@ -7,16 +7,17 @@ const User = mongoose.model("User")
 
 // TODO: IMPLEMET LOGIN
 
+
 // get all the vendors currently in the database
 const getAllVendors = async (req, res) => {
     try {
         const vendors = await Vendor.find( {}, {_id: false} )
-        res.send(vendors)
+        return res.send(vendors)
     } catch (err) {
-        res.status(400)
-        res.send("Database query failed")
+        return res.status(400).json({error: "Database query failed"})
     }
 }
+
 
 /*
 // get a vendor by their unique name
@@ -36,10 +37,10 @@ const getVendorByUsername = async (req, res) => {
 
 // get the current status of a vendor 
 const getVendorStatus = async (req, res) => {
-    await User.findOne({"username": userName}).then((user) => {
+    User.findOne({"username": userName}).then((user) => {
         if(user) {
             try {
-                const vendor = await Vendor.findOne({username: req.body.username})
+                const vendor = Vendor.findOne({username: req.params.username})
                 // no vendor was found in the database
                 if (!vendor) {return res.status(401).json({error: "Vendor "+user.username+" Not Found"})}
                 // extract the required details for the status and send it back

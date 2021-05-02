@@ -13,7 +13,7 @@ const vendorController = require('../controllers/vendorController.js')
 vendorRouter.get('/', vendorController.getAllVendors)
 
 // havent test
-vendorRouter.get('/:userName', vendorController.getVendorByUsername)
+//vendorRouter.get('/:userName', vendorController.getVendorByUsername)
 
 // handle the GET request for the status of a vendor
 // havent test
