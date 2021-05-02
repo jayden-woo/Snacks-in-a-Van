@@ -274,7 +274,6 @@ const signUp = async (req, res) => {
 // update the details of a customer
 /* When username in database have capitals will cause problems !!!! */
 const updateDetails = async (req, res) => {
-    var user = await User.findOne({"username":req.params.username})
     // Username case sensitive
     const {firstName, lastName} = req.body
     var result = {sucess: true, errors: []}
@@ -294,7 +293,7 @@ const updateDetails = async (req, res) => {
         return res.status(400).json(result)
     }
     try {
-        await Customer.updateOne({user:user._id}, {firstName:firstName, lastName:lastName}) 
+        await Customer.updateOne({user:req.session.user._id}, {firstName:firstName, lastName:lastName}) 
         res.status(200).json(result)
         //res.redirect('/customer/account')
     // error occurred during the database update

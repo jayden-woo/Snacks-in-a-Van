@@ -4,7 +4,7 @@ const isLoggedIn = (req, res, next) => {
         req.session.errors = 'Please log in before proceeding.'
         req.session.redirectUrl = req.url
         req.session.save()
-        return res.redirect('../login')
+        return res.redirect('login')
     }
     return next()
 }

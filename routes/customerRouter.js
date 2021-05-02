@@ -44,7 +44,7 @@ customerRouter.post('/login', customerController.logIn)
 customerRouter.post('/signup', customerController.signUp)
 
 // handle the POST request for changing the account details
-customerRouter.post('/account/:username', isLoggedIn, customerController.updateDetails)
+customerRouter.post('/account', isLoggedIn, customerController.updateDetails)
 
 // export the router
 module.exports = customerRouter
