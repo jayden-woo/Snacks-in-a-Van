@@ -90,7 +90,7 @@ const getMenu = async (req, res) => {
 const getSnackByName = async (req, res) => {
     try {
         // search for a snack by name
-        const snack = await Snack.findOne( {"snackName": req.params.snackName}, {_id: false} )
+        const snack = await Snack.findOne( {name: req.params.snackName}, {_id: false} )
         // snack not found in database
         if (snack === null) { 
             // return an error message or error page
@@ -106,33 +106,16 @@ const getSnackByName = async (req, res) => {
     }
 }
 
-// handle request to add a snack to order
-const addSnackToOrder = async (req, res) => {
-    // get the snack to be added
-    let snack = await Snack.findOne( {"snackName": req.params.snackName} )
-
-    // construct a new order line item
-    const lineItem = new OrderLine({
-        snackID: snack._id, 
-        quantity: req.body.quantity 
-    })
-
-    // construct a new order
-    let orderNumber = await Order.countDocuments()
-    const newOrder = new Order({
-        orderNumber: orderNumber, 
-        customerID: req.get("customerID"), 
-        vendorID: req.get("vendorName"), 
-        snacks: [lineItem]
-    })
-
-    // save the new order to the orders database
-    newOrder.save( (err, result) => {
-        // error occured during saving of a new order
-        if (err) res.send(err)
-        // send back order details for checking
-        res.send(result)
-    })
+// get all the submitted orders' details
+const getOrders = async (req, res) => {
+    if (req.session.errors) {
+        console.log(req.session.errors)
+        delete req.session.status
+        delete req.session.errors
+        req.session.save()
+    }
+    const customer = await Customer.findOne( {userID: req.session.user._id} )
+    return res.send(await Order.find( {customerID: customer._id, status: {$ne: 'Ordering'}} ))
 }
 
 // sign in with either email or username and password
@@ -338,6 +321,59 @@ const updateDetails = async (req, res) => {
     return res.redirect('account')
 }
 
+// handle request to add a snack to order
+const addSnackToOrder = async (req, res) => {
+    // get the snack to be added and construct the new order line item
+    const snack = await Snack.findOne( {name: req.params.snackName} )
+    const lineItem = new OrderLine({
+        snackID: snack._id, 
+        quantity: req.body.quantity 
+    })
+
+    // add to existing order if present
+    if (req.session.order) {
+        req.session.order.snacks.push(lineItem)
+        req.session.order.save()
+        return res.redirect('/customer/menu')
+    }
+    // else construct a new order
+    const customer = await Customer.findOne( {userID: req.session.user._id} )
+    const orderNumber = await Order.countDocuments()
+    const order = new Order({
+        orderNumber: orderNumber, 
+        // TEMP uses a random vendor id for now
+        // vendorID: req.session.vendor._id, 
+        vendorID: "608f102ab079282ea08c8a85", 
+        customerID: customer._id, 
+        snacks: [lineItem]
+    })
+    // save the new order to the orders database
+    order.save( (err) => {
+        // error occured during saving of a new order
+        if (err) throw err;
+    })
+
+    // save the order in the cookies
+    req.session.order = order
+    req.session.save()
+    return res.redirect('/customer/menu')
+}
+
+// confirm the current order selections
+const confirmOrder = (req, res) => {
+    if (!req.session.order) {
+        req.session.status = 400
+        req.session.errors = 'Your cart is empty / Order not found.'
+        req.session.save()
+        return res.redirect('order')
+    }
+    req.session.order.set('status', 'Placed')
+    req.session.order.save((err) => {
+        if (err) throw err;
+    })
+    return res.redirect('order')
+}
+
 // export the controller functions
 module.exports = {
     getNearestVans, 
@@ -347,8 +383,10 @@ module.exports = {
     getAccount, 
     getMenu, 
     getSnackByName, 
-    addSnackToOrder, 
+    getOrders, 
     logIn, 
     signUp,
-    updateDetails
+    updateDetails, 
+    addSnackToOrder, 
+    confirmOrder
 }

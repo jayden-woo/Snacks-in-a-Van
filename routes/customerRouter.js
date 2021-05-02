@@ -6,8 +6,9 @@ const customerRouter = express.Router()
 // add the customer controller
 const customerController = require('../controllers/customerController.js')
 
-// add the checking middleware
+// add the required middlewares
 const isLoggedIn = require('../middleware/isLoggedIn')
+const orderRequired = require('../middleware/orderRequired')
 
 /* ----- GET routes ----- */
 
@@ -32,10 +33,10 @@ customerRouter.get('/menu', customerController.getMenu)
 // handle the GET request to get details of one snack
 customerRouter.get('/menu/:snackName', customerController.getSnackByName)
 
-/* ----- POST routes ----- */
+// handle the GET request to get all the submitted orders' details
+customerRouter.get('/order', customerController.getOrders)
 
-// handle the POST request to start a new order by add a snack to order
-customerRouter.post('/menu/:snackName', isLoggedIn, customerController.addSnackToOrder)
+/* ----- POST routes ----- */
 
 // handle the POST request for the login page
 customerRouter.post('/login', customerController.logIn)
@@ -45,6 +46,14 @@ customerRouter.post('/signup', customerController.signUp)
 
 // handle the POST request for changing the account details
 customerRouter.post('/account', isLoggedIn, customerController.updateDetails)
+
+// handle the POST request to start a new order by add a snack to order
+customerRouter.post('/menu/:snackName', isLoggedIn, orderRequired, customerController.addSnackToOrder)
+
+/* ----- PUT routes ----- */
+
+// handle the PUT request 
+customerRouter.put('/order', isLoggedIn, orderRequired, customerController.confirmOrder)
 
 // export the router
 module.exports = customerRouter
