@@ -1,14 +1,11 @@
 const mongoose = require("mongoose")
 
 // import the models used
-//const Menu = mongoose.model("Menu")
 const Snack = mongoose.model("Snack")
 const OrderLine = mongoose.model("OrderLine")
 const Order = mongoose.model("Order")
-
 const Customer = mongoose.model("Customer")
 const User = mongoose.model("User")
-
 
 // regex for user input validation
 // a name can only be alphabetic characters
@@ -19,7 +16,6 @@ const re_email = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
 const re_username = /^[a-zA-Z0-9_]+$/
 // a password must contain a digit, a special character, a lowercase, an uppercase, and between 8-20 characters
 const re_password = /^(?=.*\d)(?=.*[.!@#$%^&*])(?=.*[a-z])(?=.*[A-Z])[a-zA-Z0-9!@#$%^&*]{8,20}$/
-
 
 // handle request to get the nearest vans
 const getNearestVans = (req, res) => {
@@ -39,6 +35,7 @@ const getNearestVans = (req, res) => {
 const getLogIn = (req, res) => {
     if (req.session.errors) {
         console.log(req.session.errors)
+        delete req.session.status
         delete req.session.errors
         req.session.save()
     }
@@ -48,7 +45,10 @@ const getLogIn = (req, res) => {
 // log out a user
 const logOut = (req, res) => {
     delete req.session.user
+    delete req.session.status
+    delete req.session.errors
     req.session.save()
+    console.log("Customer has successfully logged out")
     return res.redirect('login')
 }
 
@@ -56,10 +56,22 @@ const logOut = (req, res) => {
 const getSignUp = (req, res) => {
     if (req.session.errors) {
         console.log(req.session.errors)
+        delete req.session.status
         delete req.session.errors
         req.session.save()
     }
     return res.send('<h1> Sign Up Page <\h1>')
+}
+
+// get the account details page
+const getAccount = (req, res) => {
+    if (req.session.errors) {
+        console.log(req.session.errors)
+        delete req.session.status
+        delete req.session.errors
+        req.session.save()
+    }
+    return res.send('<h1> Account Details Page <\h1>')
 }
 
 // handle request to get the menu
@@ -100,14 +112,14 @@ const addSnackToOrder = async (req, res) => {
     let snack = await Snack.findOne( {"snackName": req.params.snackName} )
 
     // construct a new order line item
-    const lineItem = await new OrderLine({
+    const lineItem = new OrderLine({
         snackID: snack._id, 
         quantity: req.body.quantity 
     })
 
     // construct a new order
     let orderNumber = await Order.countDocuments()
-    const newOrder = await new Order({
+    const newOrder = new Order({
         orderNumber: orderNumber, 
         customerID: req.get("customerID"), 
         vendorID: req.get("vendorName"), 
@@ -135,7 +147,7 @@ const logIn = (req, res) => {
             return res.redirect('login')
         }
         // check if the user is a customer
-        if (await Customer.exists( {user: user._id} )) {
+        if (await Customer.exists( {userID: user._id} )) {
             user.comparePassword(req.body.password, function(err, isMatch) {
                 if (err) throw err;
                 // wrong password entered
@@ -154,8 +166,9 @@ const logIn = (req, res) => {
                     delete req.session.redirectUrl
                 }
                 delete req.session.errors
-                req.sessionstatus = 200
+                req.session.status = 200
                 req.session.save()
+                console.log("Customer has successfully logged in")
                 return res.redirect(redirectUrl)
             })
         } else {
@@ -168,7 +181,7 @@ const logIn = (req, res) => {
     })
 }
 
-const validateInput = (req) => {
+const validateInput = async (req) => {
     // validate password
     if (!re_password.test(req.body.password)) {
         console.log("password is invalid")
@@ -191,16 +204,36 @@ const validateInput = (req) => {
     if (!re_name.test(req.body.lastName)) {
         console.log("lastName is invalid")
         req.session.status = 400
-        req.session.errors = 'Your name should only contain lowercase and uppercase letters.'
+        req.session.errors = 'Your name should only contain spaces, lowercase, and uppercase letters.'
     }
     // validate first name
     if (!re_name.test(req.body.firstName)) {
         console.log("firstName is invalid")
         req.session.status = 400
-        req.session.errors = 'Your name should only contain lowercase and uppercase letters.'
+        req.session.errors = 'Your name should only contain spaces, lowercase, and uppercase letters.'
     }
+
+    // check if the email is already in use
+    if (await User.findOne( {email: req.body.email} )) {
+        // check if user is logged in
+        if (!req.session.user || req.body.email != req.session.user.email) {
+            console.log("email is taken")
+            req.session.status = 409
+            req.session.errors = 'The email address you have entered is already associated with another account.'
+        }
+    }
+    // check if the username is already in use
+    if (await User.findOne( {username: req.body.username} )) {
+        // check if user is logged in
+        if (!req.session.user || req.body.username != req.session.user.username) {
+            console.log("username is taken")
+            req.session.status = 409
+            req.session.errors = 'The username you have entered is already associated with another account.'
+        }
+    }
+
     // check if any validation errors occured
-    if (req.session.status != 400) {
+    if (!req.session.status || req.session.status != 400 && req.session.status != 409) {
         req.session.status = 200
     }
     req.session.save()
@@ -209,40 +242,19 @@ const validateInput = (req) => {
 
 // register a new customer
 const signUp = async (req, res) => {
-
-    // check if the input is correctly formed
-    await validateInput(req)
-
-    // check if the email is already in use
-    await User.findOne( {email: req.body.email}, function (err, user) {
-        if (user) {
-            req.session.status = 409
-            req.session.errors = 'The email address you have entered is already associated with another account.'
-            req.session.save()
-        }
-    })
-    // check if the username is already in use
-    await User.findOne( {username: req.body.username}, function (err, user) {
-        if (user) {
-            req.session.status = 409
-            req.session.errors = 'The username you have entered is already associated with another account.'
-            req.session.save()
-        }
-    })
-
-    // redirect user to restart signup process if any part of it has failed
-    if (req.session.status != 200) {
+    // check if the input is correctly formed and if the username or email is taken
+    if (await validateInput(req) != 200) {
         return res.redirect('signup')
     }
 
     // create a new user
-    const user = await new User({
+    const user = new User({
         username: req.body.username, 
         password: req.body.password, 
         email: req.body.email.toLowerCase()
     })
     // save user to database
-    await user.save((err) => {
+    user.save((err) => {
         if (err) {
             req.session.errors = err
             req.session.save()
@@ -251,13 +263,13 @@ const signUp = async (req, res) => {
     })
 
     // create a new customer entry
-    const customer = await new Customer({
-        user: user._id, 
+    const customer = new Customer({
+        userID: user._id, 
         firstName: req.body.firstName, 
         lastName: req.body.lastName
     })
     // save customer to database
-    await customer.save((err) => {
+    customer.save((err) => {
         if (err) {
             req.session.errors = err
             req.session.save()
@@ -271,43 +283,59 @@ const signUp = async (req, res) => {
     return res.redirect('login')
 }
 
-// update the details of a customer
-/* When username in database have capitals will cause problems !!!! */
-const updateDetails = async (req, res) => {
-    // Username case sensitive
-    const {firstName, lastName} = req.body
-    var result = {sucess: true, errors: []}
-    if(!firstName) {
-        result.errors.push("Empty first name")
-        result.sucess = false
-    }
-    if(!lastName) {
-        result.errors.push("Empty last name")
-        result.sucess = false
-    }
-    if (!result.sucess) {
-        return res.status(400).json(result)
-    } 
-    if (!re_name.test(firstName) || !re_name.test(lastName)) {
-        result.sucess = false
-        result.errors.push("Name should only contain alphabetical letters.")
-        return res.status(400).json(result)
-    }
-    try {
-        await Customer.updateOne({user:req.session.user._id}, {firstName:firstName, lastName:lastName}) 
-        res.status(200).json(result)
-        //res.redirect('/customer/account')
-    // error occurred during the database update
-    } catch (err) {
-        res.status(err.status).send(err.message)
-    }
+// // update the details of a customer
+// /* When username in database have capitals will cause problems !!!! */
+// const updateDetails = async (req, res) => {
+//     // Username case sensitive
+//     const {firstName, lastName} = req.body
+//     var result = {sucess: true, errors: []}
+//     if(!firstName) {
+//         result.errors.push("Empty first name")
+//         result.sucess = false
+//     }
+//     if(!lastName) {
+//         result.errors.push("Empty last name")
+//         result.sucess = false
+//     }
+//     if (!result.sucess) {
+//         return res.status(400).json(result)
+//     } 
+//     if (!re_name.test(firstName) || !re_name.test(lastName)) {
+//         result.sucess = false
+//         result.errors.push("Name should only contain alphabetical letters.")
+//         return res.status(400).json(result)
+//     }
+//     try {
+//         await Customer.updateOne({user:req.session.user._id}, {firstName:firstName, lastName:lastName}) 
+//         res.status(200).json(result)
+//         //res.redirect('/customer/account')
+//     // error occurred during the database update
+//     } catch (err) {
+//         res.status(err.status).send(err.message)
+//     }
     
-}
+// }
 
-/* should work for both customer and vendor */
-const updatePassword = (req,res) => {
+// update the details of a customer
+const updateDetails = async (req, res) => {
+    // check if the input is correctly formed and if the username or email is taken
+    if (await validateInput(req) != 200) {
+        if (req.session.status == 409 && username != req.session.user.username && username != req.session)
+        return res.redirect('account')
+    }
 
+    // updating username and email
+    await User.updateOne( {_id: req.session.user._id}, {username: req.body.username, email: req.body.email} )
+    // updating password
+    const user = await User.findOne( {_id: req.session.user._id} )
+    user.set('password', req.body.password)
+    user.save((err) => {
+        if (err) throw err;
+    })
+    // updating first name and last name
+    await Customer.updateOne( {userID: req.session.user._id}, {firstName: req.body.firstName, lastName: req.body.lastName} )
 
+    return res.redirect('account')
 }
 
 // export the controller functions
@@ -316,6 +344,7 @@ module.exports = {
     getLogIn, 
     logOut, 
     getSignUp, 
+    getAccount, 
     getMenu, 
     getSnackByName, 
     addSnackToOrder, 

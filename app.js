@@ -14,12 +14,12 @@ app.use(session({
     secret: "INFO30005 Web-App",
     resave: false,
     saveUninitialized: false,
-    /*
     cookie: {
-        // 30 min before expire
-        maxAge: 30 * 60 * 1000
+        // user should log in again after restarting the browser
+        expires: false, 
+        // 2 hours before cookies expire and have to log in again
+        maxAge: 2 * 60 * 60 * 1000
     }
-    */
 }))
 
 // for reading body of requests
@@ -40,20 +40,17 @@ app.get('/', (req, res) => {
     res.send('<h1>Snack in a Van</h1>')
 });
 
-
-/*
-// logout by destroying session
-// assume logout button only appears after logged in, and after logout will be redirect to ??? 
-// redirect can be down by front end maybe?
-app.get('/logout', (req, res) => {
-    // destroy session or just req.session.user = null
-    req.session.destroy(function(err){
-        if(err) res.json({sucess: false, err})
-    })
-    res.json({sucess: true, message: "Logged out successfully"})
-    //res.redirect('/')
-});
-*/
+// // logout by destroying session
+// // assume logout button only appears after logged in, and after logout will be redirect to ??? 
+// // redirect can be down by front end maybe?
+// app.get('/logout', (req, res) => {
+//     // destroy session or just req.session.user = null
+//     req.session.destroy(function(err){
+//         if(err) res.json({sucess: false, err})
+//     })
+//     res.json({sucess: true, message: "Logged out successfully"})
+//     //res.redirect('/')
+// });
 
 // handler for customer and vendor requests
 // customer routes are added onto the end of '/customer'

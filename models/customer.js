@@ -2,7 +2,7 @@ const mongoose = require("mongoose")
 
 // define the schema for a customer in the customers database
 const customerSchema = new mongoose.Schema({
-    user: {
+    userID: {
         type: mongoose.Schema.Types.ObjectId, 
         ref: 'User', 
         required: true, 
