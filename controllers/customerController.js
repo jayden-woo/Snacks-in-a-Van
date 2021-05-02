@@ -130,7 +130,7 @@ const logIn = (req, res) => {
         if (!user || err) {
             console.log("User not found")
             req.session.status = 401
-            req.session.errors = 'You have entered an invalid username'
+            req.session.errors = 'You have entered an invalid username or password'
             req.session.save()
             return res.redirect('login')
         }
@@ -142,7 +142,7 @@ const logIn = (req, res) => {
                 if (!isMatch) {
                     console.log("Wrong password")
                     req.session.status = 401
-                    req.session.errors = 'You have entered an invalid password'
+                    req.session.errors = 'You have entered an invalid username or password'
                     req.session.save()
                     return res.redirect('login')
                 }
