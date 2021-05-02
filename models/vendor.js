@@ -9,11 +9,6 @@ const vendorSchema = new mongoose.Schema({
         required: true, 
         unique: true
     }, 
-    vendorName: { 
-        type: String, 
-        unique: true, 
-        required : true
-    }, 
     isOnline: {
         type: Boolean, 
         required : true

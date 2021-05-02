@@ -18,7 +18,7 @@ const re_email = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
 // a username can only contain alphanumeric characters and underscores
 const re_username = /^[a-zA-Z0-9_]+$/
 // a password must contain a digit, a special character, a lowercase, an uppercase, and between 8-20 characters
-const re_password = /^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z])[a-zA-Z0-9!@#$%^&*]{8,20}$/
+const re_password = /^(?=.*\d)(?=.*[.!@#$%^&*])(?=.*[a-z])(?=.*[A-Z])[a-zA-Z0-9!@#$%^&*]{8,20}$/
 
 
 // handle request to get the nearest vans
@@ -130,7 +130,7 @@ const logIn = (req, res) => {
         if (!user || err) {
             console.log("User not found")
             req.session.status = 401
-            req.session.errors = 'You have entered an invalid username or password'
+            req.session.errors = 'You have entered an invalid username'
             req.session.save()
             return res.redirect('login')
         }
@@ -142,7 +142,7 @@ const logIn = (req, res) => {
                 if (!isMatch) {
                     console.log("Wrong password")
                     req.session.status = 401
-                    req.session.errors = 'You have entered an invalid username or password'
+                    req.session.errors = 'You have entered an invalid password'
                     req.session.save()
                     return res.redirect('login')
                 }
@@ -239,7 +239,7 @@ const signUp = async (req, res) => {
     const user = await new User({
         username: req.body.username, 
         password: req.body.password, 
-        email: req.body.email
+        email: req.body.email.toLowerCase()
     })
     // save user to database
     await user.save((err) => {
@@ -269,66 +269,45 @@ const signUp = async (req, res) => {
     // send a succesful signup msg and redirect to the login page
 
     return res.redirect('login')
-
-/* ----- Charlotte's Implementation ----------- *
-
-    const{firstName, lastName, email, username, password} = req.body
-
-    // find if there is any exsiting user that have same username or email address
-    var usernameUsr = await User.findOne({"username": req.body.username})
-    var emailUsr = await User.findOne({"email": req.body.email})
-
-    // If they have username or email that is alrady registered as a customer, there will be a conflict
-    emailConflict = (emailUsr && await Customer.findOne({"user": emailUsr._id}))
-    usernameConflict = (usernameUsr && await Customer.findOne({"user": usernameUsr._id}))
-    
-    if(emailConflict && usernameConflict) {
-        res.status(409).json({error: 'Email and Username has already resgistered!'});
-    } else if(emailConflict) {
-        res.status(409).json({error: 'Email has already resgistered!'});
-    } else if(usernameConflict) {
-        res.status(409).json({error: 'Username has already been tooken!'});
-    } else {
-        const newUser = await new User({
-            username: req.body.username, 
-            password: req.body.password, 
-            email: req.body.email
-        });
-        await newUser.save((err) => {
-            if(err) {
-                res.status(400).json({success: false, err});
-            } 
-        });
-        const newCustomer = await new Customer({
-            user: newUser._id, 
-            firstName: req.body.firstName, 
-            lastName: req.body.lastName
-        });
-        await newCustomer.save((err, customerPost) => {
-            if(err) {
-                res.status(400).json({success: false, err});
-            } else {
-                res.status(200).json({success: true, customerPost});
-            }
-        });
-    }
-
- * ------------------------------------------- */
 }
 
 // update the details of a customer
-const updateDetails = (req, res) => {
-
-    // // updating password
-    // await User.findOne( {username:'testUser'}, async function(err, user) {
-    //     if (err) throw err;
-    //     await user.set('password', 'Password123')
-    //     user.save((err) => {
-    //         if (err) return err;
-    //     })
-    // })
+/* When username in database have capitals will cause problems !!!! */
+const updateDetails = async (req, res) => {
+    var user = await User.findOne({"username":req.params.username})
+    // Username case sensitive
+    const {firstName, lastName} = req.body
+    var result = {sucess: true, errors: []}
+    if(!firstName) {
+        result.errors.push("Empty first name")
+        result.sucess = false
+    }
+    if(!lastName) {
+        result.errors.push("Empty last name")
+        result.sucess = false
+    }
+    if (!result.sucess) {
+        return res.status(400).json(result)
+    } 
+    if (!re_name.test(firstName) || !re_name.test(lastName)) {
+        result.errors.push("Name should only contain alphabetical letters.")
+        return res.status(400).json(result)
+    }
+    try {
+        await Customer.updateOne({user:user._id}, {firstName:firstName, lastName:lastName}) 
+        res.status(200).json(result)
+        //res.redirect('/customer/account')
+    // error occurred during the database update
+    } catch (err) {
+        res.status(err.status).send(err.message)
+    }
     
-    // res.send(await User.find())
+}
+
+/* should work for both customer and vendor */
+const updatePassword = (req,res) => {
+
+
 }
 
 // export the controller functions

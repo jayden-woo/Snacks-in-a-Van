@@ -16,7 +16,7 @@ app.use(session({
     saveUninitialized: false,
     /*
     cookie: {
-        // 20 min before expire
+        // 30 min before expire
         maxAge: 30 * 60 * 1000
     }
     */
@@ -42,23 +42,16 @@ app.get('/', (req, res) => {
 
 
 /*
-// check if logged in
-app.get('/isLoggedIn', (req, res) => {
-    var result = {authenticate: false}
-    if(req.session.user) {
-        result.authenticate = true;
-    }  
-    res.json(result)
-});
-
 // logout by destroying session
 // assume logout button only appears after logged in, and after logout will be redirect to ??? 
 // redirect can be down by front end maybe?
 app.get('/logout', (req, res) => {
+    // destroy session or just req.session.user = null
     req.session.destroy(function(err){
         if(err) res.json({sucess: false, err})
     })
     res.json({sucess: true, message: "Logged out successfully"})
+    //res.redirect('/')
 });
 */
 
