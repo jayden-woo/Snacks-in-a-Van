@@ -3,6 +3,7 @@ const mongoose = require("mongoose")
 // import the models used
 const Vendor = mongoose.model("Vendor")
 const Order = mongoose.model("Order")
+const User = mongoose.model("User")
 
 // TODO: IMPLEMET LOGIN
 
@@ -17,42 +18,45 @@ const getAllVendors = async (req, res) => {
     }
 }
 
+/*
 // get a vendor by their unique name
-const getVendorByName = async (req, res) => {
+const getVendorByUsername = async (req, res) => {
     try {
         const vendor = await Vendor.findOne( {"vendorName": req.params.vendorName} )
         // no vendor was found in database
         if (vendor === null) { 
-            res.status(404)
-            return res.send("Vendor not found")
+            return res.status(404).json({error: "Vendor not found"})
         }
-        res.status(200);
-        // send back the vendor details
-        res.send(vendor)
-    // error occurred during the database query
+        return res.status(200).send(vendor)
     } catch (err) { 
-        res.status(400)
-        res.send("Database query failed")
+        return res.status(400).json({error: "Database query failed"})
     }
 }
+*/
 
 // get the current status of a vendor 
 const getVendorStatus = async (req, res) => {
-    try {
-        const vendors = await Vendor.findOne( {"vendorName": req.params.vendorName} )
-        // no vendor was found in the database
-        if (!vendors) {res.send("Vendor: "+req.params.vendorName+" Not Found")}
-        // extract the required details for the status and send it back
-        const status = {
-            "isOnline": vendors.isOnline,
-            "location": [vendors.latitude, vendors.longitude]
+    await User.findOne({"username": userName}).then((user) => {
+        if(user) {
+            try {
+                const vendor = await Vendor.findOne({username: req.body.username})
+                // no vendor was found in the database
+                if (!vendor) {return res.status(401).json({error: "Vendor "+user.username+" Not Found"})}
+                // extract the required details for the status and send it back
+                const result = {
+                    "isOnline": vendor.isOnline,
+                    "location": [vendor.latitude, vendor.longitude],
+                    "textAddress": vendor.textAddress 
+                }
+                res.send(200).json(result)
+            } catch (err) {
+                console.error(err)
+                return res.status(400).json({error: "Database query failed"})
+            }
+        } else {
+            res.status(404).json({error: "User not found"})
         }
-        res.send(status)
-    } catch (err) {
-        console.error(err)
-        res.status(400)
-        res.send("Database query failed")
-    }
+    }) 
 }
 
 // get a list of all the outstanding orders of a vendor
@@ -68,6 +72,7 @@ const getOutstandingOrders = async (req, res) => {
     }
 }
 
+/*
 // add a new vendor
 const addVendor = async (req, res) => {
     // construct a new vendor object from body of the POST request
@@ -80,22 +85,28 @@ const addVendor = async (req, res) => {
         res.send(result)
     })
 }
+*/
 
 // update the status of a vendor
 const updateVendor = async (req, res) => {
+    const {isOnline, latitude, longitude, textAddress} = req.body
     try {
         // change the status if it is in the request body
-        if ("isOnline" in req.body){
-            console.log("Changing status to",req.body.isOnline)
-            await Vendor.updateOne( {vendorName:req.params.vendorName}, {isOnline:req.body.isOnline} ) 
+        if (isOnline){
+            console.log("Changing isOnline to :", isOnline)
+            await Vendor.updateOne({user: req.session.user._id}, {isOnline: isOnline}) 
         }
         // change the location of the vendor's van if it is in the request body
-        if ("latitude" in req.body && "longitude" in req.body) {
-            console.log("Changing location to",req.body.latitude, req.body.longitude)
-            await Vendor.updateOne( {vendorName:req.params.vendorName}, {latitude:req.body.latitude, longitude:req.body.longitude} ) 
+        if (latitude && longitude) {
+            console.log("Changing location to :",latitude, longitude)
+            await Vendor.updateOne({user: req.session.user._id}, {latitude:latitude, longitude:longitude}) 
+        }
+        if(textAddress) {
+            console.log("Changing text address to: ", textAddress)
+            await Vendor.updateOne({user: req.session.user._id}, {textAddress: textAddress}) 
         }
         // send back vendor details for checking
-        res.send(await Vendor.findOne( {vendorName:req.params.vendorName}, {} ))
+        res.status(200).send(await Vendor.findOne({user: req.session.user._id}, {} ))
     // error occurred during the database update
     } catch (err) {
         res.status(400)
@@ -123,10 +134,10 @@ const updateOrderStatus = async (req, res) => {
 // remember to export the functions
 module.exports = {
     getAllVendors, 
-    getVendorByName, 
+    //getVendorByUsername, 
     getVendorStatus, 
     getOutstandingOrders, 
-    addVendor, 
+    //addVendor, 
     updateVendor, 
     updateOrderStatus
 }

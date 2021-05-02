@@ -289,6 +289,7 @@ const updateDetails = async (req, res) => {
         return res.status(400).json(result)
     } 
     if (!re_name.test(firstName) || !re_name.test(lastName)) {
+        result.sucess = false
         result.errors.push("Name should only contain alphabetical letters.")
         return res.status(400).json(result)
     }

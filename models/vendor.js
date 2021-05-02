@@ -11,7 +11,8 @@ const vendorSchema = new mongoose.Schema({
     }, 
     isOnline: {
         type: Boolean, 
-        required : true
+        required : true,
+        default: false
     }, 
     latitude: { 
         type: Number, 
