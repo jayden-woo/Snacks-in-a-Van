@@ -44,10 +44,8 @@ const getLogIn = (req, res) => {
 
 // log out a user
 const logOut = (req, res) => {
-    delete req.session.user
-    delete req.session.status
-    delete req.session.errors
-    req.session.save()
+    // kill the current session so a new session could be created on next req
+    req.session.destroy()
     console.log("Customer has successfully logged out")
     return res.redirect('login')
 }
