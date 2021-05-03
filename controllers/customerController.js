@@ -164,69 +164,104 @@ const logIn = (req, res) => {
 
 const validateInput = async (req) => {
     // validate password
+    var result = {sucess: true, errors: []}
     if (!re_password.test(req.body.password)) {
-        console.log("password is invalid")
-        req.session.status = 400
-        req.session.errors = 'Your password should contain at least 1 lowercase letter, 1 uppercase letter, 1 number, 1 special character, and be between 8 to 20 characters in length.'
+        result.sucess = false;
+        result.errors.push("password")
+        //console.log("password is invalid")
+        //req.session.status = 400
+        //req.session.errors = 'Your password should contain at least 1 lowercase letter, 1 uppercase letter, 1 number, 1 special character, and be between 8 to 20 characters in length.'
     }
     // validate username
     if (!re_username.test(req.body.username)) {
-        console.log("username is invalid")
-        req.session.status = 400
-        req.session.errors = 'Your username should only contain numbers, underscores, lowercase, and uppercase letters.'
+        result.sucess = false;
+        result.errors.push("username")
+        //console.log("username is invalid")
+        //req.session.status = 400
+        //req.session.errors = 'Your username should only contain numbers, underscores, lowercase, and uppercase letters.'
     }
     // validate email
     if (!re_email.test(req.body.email)) {
-        console.log("email is invalid")
-        req.session.status = 400
-        req.session.errors = 'Please enter a valid email address.'
+        result.sucess = false;
+        result.errors.push("email")
+        //console.log("email is invalid")
+        //req.session.status = 400
+        //req.session.errors = 'Please enter a valid email address.'
     }
     // validate last name
     if (!re_name.test(req.body.lastName)) {
-        console.log("lastName is invalid")
-        req.session.status = 400
-        req.session.errors = 'Your name should only contain spaces, lowercase, and uppercase letters.'
+        result.sucess = false;
+        result.errors.push("lastName")
+        //console.log("lastName is invalid")
+        //req.session.status = 400
+        //req.session.errors = 'Your name should only contain spaces, lowercase, and uppercase letters.'
     }
     // validate first name
     if (!re_name.test(req.body.firstName)) {
-        console.log("firstName is invalid")
-        req.session.status = 400
-        req.session.errors = 'Your name should only contain spaces, lowercase, and uppercase letters.'
+        result.sucess = false;
+        result.errors.push("firstName")
+        //console.log("firstName is invalid")
+        //req.session.status = 400
+        //req.session.errors = 'Your name should only contain spaces, lowercase, and uppercase letters.'
     }
 
     // check if the email is already in use
-    if (await User.findOne( {email: req.body.email} )) {
-        // check if user is logged in
-        if (!req.session.user || req.body.email != req.session.user.email) {
-            console.log("email is taken")
-            req.session.status = 409
-            req.session.errors = 'The email address you have entered is already associated with another account.'
-        }
-    }
-    // check if the username is already in use
-    if (await User.findOne( {username: req.body.username} )) {
-        // check if user is logged in
-        if (!req.session.user || req.body.username != req.session.user.username) {
-            console.log("username is taken")
-            req.session.status = 409
-            req.session.errors = 'The username you have entered is already associated with another account.'
-        }
-    }
+    //if (await User.findOne( {email: req.body.email} )) {
+    //    // check if user is logged in
+    //    if (!req.session.user || req.body.email != req.session.user.email) {
+    //        console.log("email is taken")
+    //        req.session.status = 409
+    //        req.session.errors = 'The email address you have entered is already associated with another account.'
+    //    }
+    //}
+    //// check if the username is already in use
+    //if (await User.findOne( {username: req.body.username} )) {
+    //    // check if user is logged in
+    //    if (!req.session.user || req.body.username != req.session.user.username) {
+    //        console.log("username is taken")
+    //        req.session.status = 409
+    //        req.session.errors = 'The username you have entered is already associated with another account.'
+    //    }
+    //}
 
     // check if any validation errors occured
-    if (!req.session.status || req.session.status != 400 && req.session.status != 409) {
-        req.session.status = 200
-    }
-    req.session.save()
-    return req.session.status
+    //if (!req.session.status || req.session.status != 400 && req.session.status != 409) {
+    //    req.session.status = 200
+    //}
+    //req.session.save()
+    //return req.session.status
+    return result
 }
+
+const checkConflict = async (req) => {
+    var result = {sucess: true, errors: []}
+    if (await User.findOne( {email: req.body.email} )) {
+        result.sucess  = false
+        result.errors.push("email")
+    }
+    if (await User.findOne( {username: req.body.username} )) {
+        result.sucess  = false
+        result.errors.push("username")
+    }
+    return result
+}
+
 
 // register a new customer
 const signUp = async (req, res) => {
-    // check if the input is correctly formed and if the username or email is taken
-    if (await validateInput(req) != 200) {
-        return res.redirect('signup')
+    var result = {sucess: true, errors: []}
+    result = await validateInput(req)
+    if (!result.sucess) {
+        return res.status(400).json(result)
     }
+    result = await checkConflict(req)
+    if (!result.sucess) {
+        return res.status(409).json(result)
+    }
+    // check if the input is correctly formed and if the username or email is taken
+    //if (await validateInput(req) != 200) {
+    //    return res.redirect('signup')
+    //}
 
     // create a new user
     const user = new User({
@@ -237,9 +272,12 @@ const signUp = async (req, res) => {
     // save user to database
     user.save((err) => {
         if (err) {
-            req.session.errors = err
-            req.session.save()
-            return res.redirect('signup')
+            result.sucess = false
+            result.errors.push(err)
+            return res.status(400).json(result)
+            //req.session.errors = err
+            //req.session.save()
+            //return res.redirect('signup')
         }
     })
 
@@ -252,16 +290,21 @@ const signUp = async (req, res) => {
     // save customer to database
     customer.save((err) => {
         if (err) {
-            req.session.errors = err
-            req.session.save()
-            return res.redirect('signup')
+            result.sucess = false
+            result.errors.push(err)
+            return res.status(400).json(result)
+            //req.session.errors = err
+            //req.session.save()
+            //return res.redirect('signup')
         }
     })
+
+    return res.status(200).json(result)
 
     // TODO
     // send a succesful signup msg and redirect to the login page
 
-    return res.redirect('login')
+    //return res.redirect('login')
 }
 
 // // update the details of a customer
