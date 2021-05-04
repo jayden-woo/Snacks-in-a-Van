@@ -28,35 +28,31 @@ app.use(express.json())
 // set up database
 const db = require('./models/db.js')
 
+// set up the middlewares
+const resetResponse = require('./middleware/resetResponse')
+const isLoggedIn = require('./middleware/isLoggedIn')
+
 // set up customer and vendor routes
 const customerRouter = require('./routes/customerRouter')
 const vendorRouter =  require('./routes/vendorRouter')
 
 // handler for GET home page
 app.get('/', (req, res) => {
-    // TODO
-    // implement choosing customer or vendor app
-    // should be down in frontend as a href?
-    res.send('<h1>Snack in a Van</h1>')
+    res.send('<h1> Snack in a Van </h1>')
 });
-
-// // logout by destroying session
-// // assume logout button only appears after logged in, and after logout will be redirect to ??? 
-// // redirect can be down by front end maybe?
-// app.get('/logout', (req, res) => {
-//     // destroy session or just req.session.user = null
-//     req.session.destroy(function(err){
-//         if(err) res.json({sucess: false, err})
-//     })
-//     res.json({sucess: true, message: "Logged out successfully"})
-//     //res.redirect('/')
-// });
+// handler for GET request to log out a user
+app.get('/logout', isLoggedIn, (req, res) => {
+    // kill the current session so a new session could be created on next req
+    req.session.destroy()
+    console.log("User has successfully logged out")
+    return res.status(200).json({success: true, errors: []})
+})
 
 // handler for customer and vendor requests
 // customer routes are added onto the end of '/customer'
-app.use('/customer', customerRouter)
+app.use('/customer', resetResponse, customerRouter)
 // vendor routes are added onto the end of '/vendor'
-app.use('/vendor', vendorRouter)
+app.use('/vendor', resetResponse, vendorRouter)
 
 // dynamically set the port number or use static 8080 port for local testing
 const port = process.env.PORT || 8080

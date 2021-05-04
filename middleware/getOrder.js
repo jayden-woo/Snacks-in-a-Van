@@ -2,7 +2,8 @@ const mongoose = require("mongoose")
 const Order = mongoose.model("Order")
 const Customer = mongoose.model("Customer")
 
-const orderRequired = async (req, res, next) => {
+// rehydrate or get the current unfinished order from database if present
+const getOrder = async (req, res, next) => {
     // hydrate previous order data into a Mongoose document
     if (req.session.order) {
         req.session.order = Order.hydrate(req.session.order)
@@ -17,4 +18,4 @@ const orderRequired = async (req, res, next) => {
 }
 
 // export the function
-module.exports = orderRequired
+module.exports = getOrder

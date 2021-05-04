@@ -49,11 +49,8 @@ userSchema.pre('save', function(next) {
 })
 
 // compare the given password with the password stored in the database
-userSchema.methods.comparePassword = function(givenPassword, callback) {
-    bcrypt.compare(givenPassword, this.password, function(err, isMatch) {
-        if (err) return callback(err);
-        callback(null, isMatch)
-    })
+userSchema.methods.comparePassword = function(givenPassword) {
+    return bcrypt.compare(givenPassword, this.password)
 }
 
 // export the user model to be used in the customer and vendor models

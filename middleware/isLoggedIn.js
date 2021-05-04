@@ -1,10 +1,13 @@
+// check if a user is currently logged in
 const isLoggedIn = (req, res, next) => {
     if (!req.session.user) {
-        req.session.status = 401
-        req.session.errors = 'Please log in before proceeding.'
-        req.session.redirectUrl = req.url
+        req.session.response.success = false
+        // error message = 'Please log in before proceeding'
+        req.session.response.errors.push('login required')
         req.session.save()
-        return res.redirect('login')
+        // req.session.redirectUrl = req.url
+        // res.redirect('login')
+        return res.status(401).json(req.session.response)
     }
     return next()
 }

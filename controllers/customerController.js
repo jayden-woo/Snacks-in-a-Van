@@ -17,28 +17,16 @@ const re_username = /^[a-zA-Z0-9_]+$/
 // a password must contain a digit, a special character, a lowercase, an uppercase, and between 8-20 characters
 const re_password = /^(?=.*\d)(?=.*[.!@#$%^&*])(?=.*[a-z])(?=.*[A-Z])[a-zA-Z0-9!@#$%^&*]{8,20}$/
 
-// handle request to get the nearest vans
+// get the nearest vans
 const getNearestVans = (req, res) => {
-    res.setHeader("Content-Type", "text/html");
-    res.write('<h1> Nearest Vans Locations </h1>')
-    res.write('<p> List of 5 nearest vans: </p>')
-    res.write('<ul>')
-    res.write('<li> Location 1 </li>')
-    res.write('<li> Location 2 </li>')
-    res.write('<li> Location 3 </li>')
-    res.write('<li> Location 4 </li>')
-    res.write('<li> Location 5 </li>')
-    res.end('</ul>')
+    // TODO
+    // find 5 nearest van locations using geolocation and send back the list
+    const location = [{latitude: 23.6852, longitude: -24.6742}, {latitude: 20.7547, longitude: -21.8062}]
+    return res.status(req.session.status).send(location)
 }
 
 // get the login page
 const getLogIn = (req, res) => {
-    if (req.session.errors) {
-        console.log(req.session.errors)
-        delete req.session.status
-        delete req.session.errors
-        req.session.save()
-    }
     return res.send('<h1> Log In Page <\h1>')
 }
 
@@ -47,73 +35,87 @@ const logOut = (req, res) => {
     // kill the current session so a new session could be created on next req
     req.session.destroy()
     console.log("Customer has successfully logged out")
-    return res.redirect('login')
+    // res.redirect('login')
+    return res.status(200).json({success: true, errors: []})
 }
 
 // get the signup page
 const getSignUp = (req, res) => {
-    if (req.session.errors) {
-        console.log(req.session.errors)
-        delete req.session.status
-        delete req.session.errors
-        req.session.save()
-    }
     return res.send('<h1> Sign Up Page <\h1>')
 }
 
-// get the account details page
-const getAccount = (req, res) => {
-    if (req.session.errors) {
-        console.log(req.session.errors)
-        delete req.session.status
-        delete req.session.errors
+// get the account details
+const getAccount = async (req, res) => {
+    try {
+        const customer = await Customer.findOne( {userID: req.session.user._id} )
+        // gather the customer details
+        const details = {
+            firstName: customer.firstName, 
+            lastName: customer.lastName, 
+            username: req.session.user.username, 
+            email: req.session.user.email
+        }
+        return res.status(req.session.status).send(details)
+    // error occured during query
+    } catch (err) {
+        req.session.response.success = false
+        req.session.response.errors.push('failed query')
         req.session.save()
+        return res.status(400).json(req.session.response)
     }
-    return res.send('<h1> Account Details Page <\h1>')
 }
 
-// handle request to get the menu
+// get the menu from database
 const getMenu = async (req, res) => {
     try {
-        const result = await Snack.find( {}, {_id: false} )
-        return res.send(result)
+        const menu = await Snack.find()
+        return res.status(req.session.status).send(menu)
     // error occurred during query
     } catch (err) {
-        res.status(400)
-        return res.send("Database query failed!")
+        req.session.response.success = false
+        req.session.response.errors.push('failed query')
+        req.session.save()
+        return res.status(400).json(req.session.response)
     }
 }
 
-// handle request to get details of one snack
+// get details of one snack from database by its name
 const getSnackByName = async (req, res) => {
     try {
         // search for a snack by name
-        const snack = await Snack.findOne( {name: req.params.snackName}, {_id: false} )
+        const snack = await Snack.findOne( {name: req.params.snackName} )
         // snack not found in database
         if (snack === null) { 
-            // return an error message or error page
-            res.status(404)
-            return res.send('<h2> Oops! Snacks not found! </h2>')
+            req.session.response.success = false
+            req.session.response.errors.push('snack not found')
+            req.session.save()
+            return res.status(404).json(req.session.response)
         }
         // send back snack details
-        return res.send(snack)
+        return res.status(req.session.status).send(snack)
     // error occurred during query
     } catch (err) {
-        res.status(400)
-        return res.send("Database query failed!")
+        req.session.response.success = false
+        req.session.response.errors.push('failed query')
+        req.session.save()
+        return res.status(400).json(req.session.response)
     }
 }
 
 // get all the submitted orders' details
 const getOrders = async (req, res) => {
-    if (req.session.errors) {
-        console.log(req.session.errors)
-        delete req.session.status
-        delete req.session.errors
+    try {
+        const customer = await Customer.findOne( {userID: req.session.user._id} )
+        // excludes the incomplete order
+        const orders = await Order.find( {customerID: customer._id, status: {$ne: 'Ordering'}} )
+        return res.status(req.session.status).send(orders)
+    // error occurred during query
+    } catch (err) {
+        req.session.response.success = false
+        req.session.response.errors.push('failed query')
         req.session.save()
+        return res.status(400).json(req.session.response)
     }
-    const customer = await Customer.findOne( {userID: req.session.user._id} )
-    return res.send(await Order.find( {customerID: customer._id, status: {$ne: 'Ordering'}} ))
 }
 
 // sign in with either email or username and password
@@ -122,146 +124,117 @@ const logIn = (req, res) => {
         // couldn't find user in database
         if (!user || err) {
             console.log("User not found")
-            req.session.status = 401
-            req.session.errors = 'You have entered an invalid username or password'
+            req.session.response.success = false
+            // error message = 'You have entered an invalid username or password'
+            req.session.response.errors.push('username/password invalid')
             req.session.save()
-            return res.redirect('login')
+            // res.redirect('login')
+            return res.status(401).json(req.session.response)
         }
         // check if the user is a customer
         if (await Customer.exists( {userID: user._id} )) {
-            user.comparePassword(req.body.password, function(err, isMatch) {
-                if (err) throw err;
-                // wrong password entered
-                if (!isMatch) {
-                    console.log("Wrong password")
-                    req.session.status = 401
-                    req.session.errors = 'You have entered an invalid username or password'
-                    req.session.save()
-                    return res.redirect('login')
-                }
-                // keep track of logged in user and go back to previous page
-                req.session.user = user
-                let redirectUrl = '/customer/menu'
-                if (req.session.redirectUrl) {
-                    redirectUrl = req.session.redirectUrl
-                    delete req.session.redirectUrl
-                }
-                delete req.session.errors
-                req.session.status = 200
+            if (!await user.comparePassword(req.body.password)) {
+                console.log("Wrong password")
+                req.session.response.success = false
+                // error message = 'You have entered an invalid username or password'
+                req.session.response.errors.push('username/password invalid')
                 req.session.save()
-                console.log("Customer has successfully logged in")
-                return res.redirect(redirectUrl)
-            })
+                // res.redirect('login')
+                return res.status(401).json(req.session.response)
+            }
+            req.session.user = user
+            req.session.save()
+            console.log("Customer has successfully logged in")
+            // res.redirect('login')
+            return res.status(req.session.status).json(req.session.response)
         } else {
             console.log("User is not a customer")
-            req.session.status = 401
-            req.session.errors = 'You have entered an invalid username or password'
+            req.session.response.success = false
+            // error message = 'You have entered an invalid username or password'
+            req.session.response.errors.push('username/password invalid')
             req.session.save()
-            return res.redirect('login')
+            // res.redirect('login')
+            return res.status(401).json(req.session.response)
         }
     })
 }
 
+// validate the input for correct structures and unique username and email
 const validateInput = async (req) => {
     // validate password
-    var result = {sucess: true, errors: []}
     if (!re_password.test(req.body.password)) {
-        result.sucess = false;
-        result.errors.push("password")
-        //console.log("password is invalid")
-        //req.session.status = 400
-        //req.session.errors = 'Your password should contain at least 1 lowercase letter, 1 uppercase letter, 1 number, 1 special character, and be between 8 to 20 characters in length.'
+        console.log("Password is invalid")
+        // error message = 'Your password should contain at least 1 lowercase letter, 1 uppercase letter, 1 number, 1 special character, and be between 8 to 20 characters in length.'
+        req.session.response.errors.push("password invalid")
     }
     // validate username
     if (!re_username.test(req.body.username)) {
-        result.sucess = false;
-        result.errors.push("username")
-        //console.log("username is invalid")
-        //req.session.status = 400
-        //req.session.errors = 'Your username should only contain numbers, underscores, lowercase, and uppercase letters.'
+        console.log("Username is invalid")
+        // error message = 'Your username should only contain numbers, underscores, lowercase, and uppercase letters.'
+        req.session.response.errors.push("username invalid")
     }
     // validate email
     if (!re_email.test(req.body.email)) {
-        result.sucess = false;
-        result.errors.push("email")
-        //console.log("email is invalid")
-        //req.session.status = 400
-        //req.session.errors = 'Please enter a valid email address.'
+        console.log("Email is invalid")
+        // error message = 'Please enter a valid email address.'
+        req.session.response.errors.push("email invalid")
     }
     // validate last name
     if (!re_name.test(req.body.lastName)) {
-        result.sucess = false;
-        result.errors.push("lastName")
-        //console.log("lastName is invalid")
-        //req.session.status = 400
-        //req.session.errors = 'Your name should only contain spaces, lowercase, and uppercase letters.'
+        console.log("LastName is invalid")
+        // error message = 'Your name should only contain spaces, lowercase, and uppercase letters.'
+        req.session.response.errors.push("lastName invalid")
     }
     // validate first name
     if (!re_name.test(req.body.firstName)) {
-        result.sucess = false;
-        result.errors.push("firstName")
-        //console.log("firstName is invalid")
-        //req.session.status = 400
-        //req.session.errors = 'Your name should only contain spaces, lowercase, and uppercase letters.'
+        console.log("FirstName is invalid")
+        // error message = 'Your name should only contain spaces, lowercase, and uppercase letters.'
+        req.session.response.errors.push("firstName invalid")
     }
-
-    // check if the email is already in use
-    //if (await User.findOne( {email: req.body.email} )) {
-    //    // check if user is logged in
-    //    if (!req.session.user || req.body.email != req.session.user.email) {
-    //        console.log("email is taken")
-    //        req.session.status = 409
-    //        req.session.errors = 'The email address you have entered is already associated with another account.'
-    //    }
-    //}
-    //// check if the username is already in use
-    //if (await User.findOne( {username: req.body.username} )) {
-    //    // check if user is logged in
-    //    if (!req.session.user || req.body.username != req.session.user.username) {
-    //        console.log("username is taken")
-    //        req.session.status = 409
-    //        req.session.errors = 'The username you have entered is already associated with another account.'
-    //    }
-    //}
 
     // check if any validation errors occured
-    //if (!req.session.status || req.session.status != 400 && req.session.status != 409) {
-    //    req.session.status = 200
-    //}
-    //req.session.save()
-    //return req.session.status
-    return result
-}
-
-const checkConflict = async (req) => {
-    var result = {sucess: true, errors: []}
+    if (req.session.response.errors.length != 0) {
+        req.session.status = 400
+        req.session.response.success = false
+        req.session.save()
+        return req.session.response.success
+    }
+    
+    // check if the email is already in use
     if (await User.findOne( {email: req.body.email} )) {
-        result.sucess  = false
-        result.errors.push("email")
+        // check if user is logged in
+        if (!req.session.user || req.body.email != req.session.user.email) {
+            console.log("Email is taken")
+            // error message = 'The email address you have entered is already associated with another account.'
+            req.session.response.errors.push("email conflict")
+        }
     }
+    // check if the username is already in use
     if (await User.findOne( {username: req.body.username} )) {
-        result.sucess  = false
-        result.errors.push("username")
+        // check if user is logged in
+        if (!req.session.user || req.body.username != req.session.user.username) {
+            console.log("Username is taken")
+            // error message = 'The username you have entered is already associated with another account.'
+            req.session.response.errors.push("username conflict")
+        }
     }
-    return result
-}
 
+    // check if any conflicts occured
+    if (req.session.response.errors.length != 0) {
+        req.session.status = 409
+        req.session.response.success = false
+    }
+    req.session.save()
+    return req.session.response.success
+}
 
 // register a new customer
 const signUp = async (req, res) => {
-    var result = {sucess: true, errors: []}
-    result = await validateInput(req)
-    if (!result.sucess) {
-        return res.status(400).json(result)
-    }
-    result = await checkConflict(req)
-    if (!result.sucess) {
-        return res.status(409).json(result)
-    }
     // check if the input is correctly formed and if the username or email is taken
-    //if (await validateInput(req) != 200) {
-    //    return res.redirect('signup')
-    //}
+    if (!await validateInput(req)) {
+        // res.redirect('signup')
+        return res.status(req.session.status).json(req.session.response)
+    }
 
     // create a new user
     const user = new User({
@@ -272,12 +245,11 @@ const signUp = async (req, res) => {
     // save user to database
     user.save((err) => {
         if (err) {
-            result.sucess = false
-            result.errors.push(err)
-            return res.status(400).json(result)
-            //req.session.errors = err
-            //req.session.save()
-            //return res.redirect('signup')
+            req.session.response.success = false
+            req.session.response.errors.push(err)
+            req.session.save()
+            // res.redirect('signup')
+            return res.status(400).json(req.session.response)
         }
     })
 
@@ -290,79 +262,55 @@ const signUp = async (req, res) => {
     // save customer to database
     customer.save((err) => {
         if (err) {
-            result.sucess = false
-            result.errors.push(err)
-            return res.status(400).json(result)
-            //req.session.errors = err
-            //req.session.save()
-            //return res.redirect('signup')
+            req.session.response.success = false
+            req.session.response.errors.push(err)
+            req.session.save()
+            // res.redirect('signup')
+            return res.status(400).json(req.session.response)
         }
     })
 
-    return res.status(200).json(result)
-
-    // TODO
-    // send a succesful signup msg and redirect to the login page
-
-    //return res.redirect('login')
+    // res.redirect('login')
+    return res.status(req.session.status).json(req.session.response)
 }
-
-// // update the details of a customer
-// /* When username in database have capitals will cause problems !!!! */
-// const updateDetails = async (req, res) => {
-//     // Username case sensitive
-//     const {firstName, lastName} = req.body
-//     var result = {sucess: true, errors: []}
-//     if(!firstName) {
-//         result.errors.push("Empty first name")
-//         result.sucess = false
-//     }
-//     if(!lastName) {
-//         result.errors.push("Empty last name")
-//         result.sucess = false
-//     }
-//     if (!result.sucess) {
-//         return res.status(400).json(result)
-//     } 
-//     if (!re_name.test(firstName) || !re_name.test(lastName)) {
-//         result.sucess = false
-//         result.errors.push("Name should only contain alphabetical letters.")
-//         return res.status(400).json(result)
-//     }
-//     try {
-//         await Customer.updateOne({user:req.session.user._id}, {firstName:firstName, lastName:lastName}) 
-//         res.status(200).json(result)
-//         //res.redirect('/customer/account')
-//     // error occurred during the database update
-//     } catch (err) {
-//         res.status(err.status).send(err.message)
-//     }
-    
-// }
 
 // update the details of a customer
 const updateDetails = async (req, res) => {
     // check if the input is correctly formed and if the username or email is taken
-    if (await validateInput(req) != 200) {
-        if (req.session.status == 409 && username != req.session.user.username && username != req.session)
-        return res.redirect('account')
+    if (!await validateInput(req)) {
+        // res.redirect('account')
+        return res.status(req.session.status).json(req.session.response)
+    }
+
+    const user = await User.findOne( {_id: req.session.user._id} )
+    // check if old password is supplied
+    if (req.body.oldPassword) {
+        // check if old password matches
+        if (!await user.comparePassword(req.body.oldPassword)) {
+            console.log("Wrong old password")
+            req.session.response.success = false
+            req.session.response.errors.push('old password invalid')
+            req.session.save()
+            return res.status(401).json(req.session.response)
+        }
+        // updating password
+        user.set('password', req.body.password)
+        user.save( (err) => {
+            if (err) throw err;
+        })
     }
 
     // updating username and email
     await User.updateOne( {_id: req.session.user._id}, {username: req.body.username, email: req.body.email} )
-    // updating password
-    const user = await User.findOne( {_id: req.session.user._id} )
-    user.set('password', req.body.password)
-    user.save((err) => {
-        if (err) throw err;
-    })
+
     // updating first name and last name
     await Customer.updateOne( {userID: req.session.user._id}, {firstName: req.body.firstName, lastName: req.body.lastName} )
 
-    return res.redirect('account')
+    // res.redirect('account')
+    return res.status(req.session.status).json(req.session.response)
 }
 
-// handle request to add a snack to order
+// add a snack to a new or unsubmitted order
 const addSnackToOrder = async (req, res) => {
     // get the snack to be added and construct the new order line item
     const snack = await Snack.findOne( {name: req.params.snackName} )
@@ -375,7 +323,8 @@ const addSnackToOrder = async (req, res) => {
     if (req.session.order) {
         req.session.order.snacks.push(lineItem)
         req.session.order.save()
-        return res.redirect('/customer/menu')
+        // res.redirect('/customer/menu')
+        return res.status(req.session.status).json(req.session.response)
     }
     // else construct a new order
     const customer = await Customer.findOne( {userID: req.session.user._id} )
@@ -390,29 +339,33 @@ const addSnackToOrder = async (req, res) => {
     })
     // save the new order to the orders database
     order.save( (err) => {
-        // error occured during saving of a new order
         if (err) throw err;
     })
 
     // save the order in the cookies
     req.session.order = order
     req.session.save()
-    return res.redirect('/customer/menu')
+    // res.redirect('/customer/menu')
+    return res.status(req.session.status).json(req.session.response)
 }
 
 // confirm the current order selections
 const confirmOrder = (req, res) => {
+    // order is missing or not created yet
     if (!req.session.order) {
-        req.session.status = 400
-        req.session.errors = 'Your cart is empty / Order not found.'
-        req.session.save()
-        return res.redirect('order')
+        req.session.response.success = false
+        // error message 'Your cart is empty / Order not found.'
+        req.session.response.errors.push('order not found')
+        // res.redirect('order')
+        return res.status(400).json(req.session.response)
     }
+    // update the status to 'Placed'
     req.session.order.set('status', 'Placed')
-    req.session.order.save((err) => {
+    req.session.order.save( (err) => {
         if (err) throw err;
     })
-    return res.redirect('order')
+    // res.redirect('order')
+    return res.status(req.session.status).json(req.session.response)
 }
 
 // export the controller functions
