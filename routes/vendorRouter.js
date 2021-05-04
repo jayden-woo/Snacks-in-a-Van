@@ -9,27 +9,22 @@ const isLoggedIn = require('../middleware/isLoggedIn')
 // add the vendor controller
 const vendorController = require('../controllers/vendorController.js')
 
-// handle the GET requests for one or all the vendors
+// handle the GET requests for all the vendors
 vendorRouter.get('/', vendorController.getAllVendors)
 
-// havent test
-//vendorRouter.get('/:userName', vendorController.getVendorByUsername)
-
-// handle the GET request for the status of a vendor
-// havent test
-vendorRouter.get('/:userName/status', vendorController.getVendorStatus)
+// GET requests by userid to find one vendor 
+vendorRouter.get('/:userID', vendorController.getVendorByUserID)
 
 // handle the GET request for the outstanding orders of a vendor
-// required login, use session
-vendorRouter.get('/:vendorName/outstanding', vendorController.getOutstandingOrders)
+// emmmmmmmmm
+vendorRouter.get('/:vendorID/outstanding', vendorController.getOutstandingOrders)
 
 
 // handle the POST request to add a new vendor
 //vendorRouter.post('/', vendorController.addVendor)
 
 // handle the POST request to update the status of a vendor
-// havent tested yet
-//vendorRouter.post('/account', isLoggedIn, vendorController.updateVendor)
+vendorRouter.post('/account', isLoggedIn, vendorController.updateVendor)
 
 // handle the POST request to update the status of an order
 // havent test
