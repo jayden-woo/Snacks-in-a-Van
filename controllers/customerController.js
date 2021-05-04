@@ -163,42 +163,43 @@ const logIn = (req, res) => {
 }
 
 const validateInput = async (req) => {
+    const {password, username, lastName, firstName, email} = req.body
     // validate password
-    var result = {sucess: true, errors: []}
-    if (!re_password.test(req.body.password)) {
-        result.sucess = false;
+    var result = {success: true, errors: []}
+    if (password && !re_password.test(password)) {
+        result.success = false;
         result.errors.push("password")
         //console.log("password is invalid")
         //req.session.status = 400
         //req.session.errors = 'Your password should contain at least 1 lowercase letter, 1 uppercase letter, 1 number, 1 special character, and be between 8 to 20 characters in length.'
     }
     // validate username
-    if (!re_username.test(req.body.username)) {
-        result.sucess = false;
+    if (username && !re_username.test(username)) {
+        result.success = false;
         result.errors.push("username")
         //console.log("username is invalid")
         //req.session.status = 400
         //req.session.errors = 'Your username should only contain numbers, underscores, lowercase, and uppercase letters.'
     }
     // validate email
-    if (!re_email.test(req.body.email)) {
-        result.sucess = false;
+    if (email && !re_email.test(email)) {
+        result.success = false;
         result.errors.push("email")
         //console.log("email is invalid")
         //req.session.status = 400
         //req.session.errors = 'Please enter a valid email address.'
     }
     // validate last name
-    if (!re_name.test(req.body.lastName)) {
-        result.sucess = false;
+    if (lastName && !re_name.test(lastName)) {
+        result.success = false;
         result.errors.push("lastName")
         //console.log("lastName is invalid")
         //req.session.status = 400
         //req.session.errors = 'Your name should only contain spaces, lowercase, and uppercase letters.'
     }
     // validate first name
-    if (!re_name.test(req.body.firstName)) {
-        result.sucess = false;
+    if (firstName && !re_name.test(firstName)) {
+        result.success = false;
         result.errors.push("firstName")
         //console.log("firstName is invalid")
         //req.session.status = 400
@@ -234,13 +235,13 @@ const validateInput = async (req) => {
 }
 
 const checkConflict = async (req) => {
-    var result = {sucess: true, errors: []}
+    var result = {success: true, errors: []}
     if (await User.findOne( {email: req.body.email} )) {
-        result.sucess  = false
+        result.success  = false
         result.errors.push("email")
     }
     if (await User.findOne( {username: req.body.username} )) {
-        result.sucess  = false
+        result.success  = false
         result.errors.push("username")
     }
     return result
@@ -249,13 +250,13 @@ const checkConflict = async (req) => {
 
 // register a new customer
 const signUp = async (req, res) => {
-    var result = {sucess: true, errors: []}
+    var result = {success: true, errors: []}
     result = await validateInput(req)
-    if (!result.sucess) {
+    if (!result.success) {
         return res.status(400).json(result)
     }
     result = await checkConflict(req)
-    if (!result.sucess) {
+    if (!result.success) {
         return res.status(409).json(result)
     }
     // check if the input is correctly formed and if the username or email is taken
@@ -272,7 +273,7 @@ const signUp = async (req, res) => {
     // save user to database
     user.save((err) => {
         if (err) {
-            result.sucess = false
+            result.success = false
             result.errors.push(err)
             return res.status(400).json(result)
             //req.session.errors = err
@@ -290,7 +291,7 @@ const signUp = async (req, res) => {
     // save customer to database
     customer.save((err) => {
         if (err) {
-            result.sucess = false
+            result.success = false
             result.errors.push(err)
             return res.status(400).json(result)
             //req.session.errors = err
@@ -307,54 +308,41 @@ const signUp = async (req, res) => {
     //return res.redirect('login')
 }
 
-// // update the details of a customer
-// /* When username in database have capitals will cause problems !!!! */
-// const updateDetails = async (req, res) => {
-//     // Username case sensitive
-//     const {firstName, lastName} = req.body
-//     var result = {sucess: true, errors: []}
-//     if(!firstName) {
-//         result.errors.push("Empty first name")
-//         result.sucess = false
-//     }
-//     if(!lastName) {
-//         result.errors.push("Empty last name")
-//         result.sucess = false
-//     }
-//     if (!result.sucess) {
-//         return res.status(400).json(result)
-//     } 
-//     if (!re_name.test(firstName) || !re_name.test(lastName)) {
-//         result.sucess = false
-//         result.errors.push("Name should only contain alphabetical letters.")
-//         return res.status(400).json(result)
-//     }
-//     try {
-//         await Customer.updateOne({user:req.session.user._id}, {firstName:firstName, lastName:lastName}) 
-//         res.status(200).json(result)
-//         //res.redirect('/customer/account')
-//     // error occurred during the database update
-//     } catch (err) {
-//         res.status(err.status).send(err.message)
-//     }
-    
-// }
-
 // update the details of a customer
 const updateDetails = async (req, res) => {
-    // check if the input is correctly formed and if the username or email is taken
-    if (await validateInput(req) != 200) {
-        if (req.session.status == 409 && username != req.session.user.username && username != req.session)
-        return res.redirect('account')
+    //check if the input is correctly formed and if the username or email is taken
+    // if (await validateInput(req) != 200) {
+    //   if (req.session.status == 409 && username != req.session.user.username && username != req.session)
+    //   return res.redirect('account')
+    // }
+    const {password, username, lastName, firstName, email} = req.body
+    var result = {success: true, errors: []}
+    result = await validateInput(req)
+    if (!result.success) {
+      return res.status(400).json(result)
+    }
+    result = await checkConflict(req)
+    if (!result.success) { 
+        if(username === req.session.user.username && result.errors.includes("username")) {
+            result.errors = result.errors.filter(e => e !== 'username')  
+        }
+        if(email === req.session.user.email && result.errors.includes("email")) {
+            result.errors = result.errors.filter(e => e !== 'email')       
+        }
+        if(result.errors.length != 0){
+            return res.status(409).json(result)
+        } else {
+            result.success = true
+        }
     }
 
     // updating username and email
     await User.updateOne( {_id: req.session.user._id}, {username: req.body.username, email: req.body.email} )
-    // updating password
+    //updating password
     const user = await User.findOne( {_id: req.session.user._id} )
     user.set('password', req.body.password)
     user.save((err) => {
-        if (err) throw err;
+       if (err) throw err;
     })
     // updating first name and last name
     await Customer.updateOne( {userID: req.session.user._id}, {firstName: req.body.firstName, lastName: req.body.lastName} )
