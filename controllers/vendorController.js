@@ -37,7 +37,7 @@ const getVendorByUserID = async (req, res) => {
 const getOutstandingOrders = async (req, res) => {
     try {
         // find the list of outstanding orders of a vendor and send it back
-        const OutstandingOrders = await Order.find( {"vendorID": req.params.vendorID, $or:[{"status": "Cooking"}, {"status": "Ordering"}, {"status": "Placed"}]} )
+        const OutstandingOrders = await Order.find( {"vendorID": req.params.vendorID, $or:[{"status": "Cooking"}, {"status": "Ordering"}, {"status": "Fulfilled"}]} )
         res.send(OutstandingOrders)
     // error occurred during the database query
     } catch (err) {
