@@ -107,7 +107,7 @@ const getOrders = async (req, res) => {
     try {
         const customer = await Customer.findOne( {userID: req.session.user._id} )
         // excludes the incomplete order
-        const orders = await Order.find( {customerID: customer._id, status: {$ne: 'Ordering'}} )
+        const orders = await Order.find( {customerID: customer._id, status: {$ne: 'Ordering'}} ).populate("vendorID")
         return res.status(req.session.status).send(orders)
     // error occurred during query
     } catch (err) {
