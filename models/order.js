@@ -2,9 +2,9 @@ const mongoose = require("mongoose")
 
 // define the schema for one line of snacks to be usedd in the order schema
 const orderLineSchema = new mongoose.Schema({
-    snackId: {
+    snackID: {
         type: mongoose.Schema.Types.ObjectId, 
-        ref: 'Menu', 
+        ref: 'Snack', 
         required: true
     }, 
     quantity: {
@@ -24,12 +24,13 @@ const orderSchema = new mongoose.Schema({
         unique: true, 
         min: 0
     }, 
-    vendorName: {
-        type: String
+    vendorID: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Vendor',
+        required: true
     }, 
-    // temporarily using number for the customerID as the schema doesn't exist yet
     customerID: {
-        type: Number, 
+        type: mongoose.Schema.Types.ObjectId, 
         ref: 'Customer', 
         required: true
     }, 
@@ -39,12 +40,26 @@ const orderSchema = new mongoose.Schema({
         default: status[0], 
         required: true
     },
-    snacks: [orderLineSchema]
-}, 
-{
+    snacks: 
+        [orderLineSchema]
+    , 
+    duration: {
+        type: Number, 
+        min: 0
+    }, 
+    rating: {
+        type: Number, 
+        min: 1, 
+        max: 5
+    }, 
+    comment: {
+        type: String
+    }
+}, {
     timestamps: true
-}, 
-{
+}, {
+    versionKey: false
+}, {
     collection: 'orders' 
 })
 

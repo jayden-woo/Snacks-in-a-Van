@@ -1,8 +1,8 @@
 const mongoose = require("mongoose")
 
-// define the schema for menu database
-const menuSchema = new mongoose.Schema({
-    snackName: { 
+// define the schema for a snack in the snacks database
+const snackSchema = new mongoose.Schema({
+    name: { 
         type: String, 
         required: true, 
         unique: true
@@ -18,13 +18,14 @@ const menuSchema = new mongoose.Schema({
     description: { 
         type: String
     }
-}, 
-{
-    collection: 'menu' 
+}, {
+    versionKey: false
+}, {
+    collection: 'snacks' 
 })
 
-// export the menu model to be used by the controllers
-const Menu = mongoose.model("Menu", menuSchema)
+// export the snack model to be used by the controllers
+const Snack = mongoose.model("Snack", snackSchema)
 module.exports = {
-    Menu
+    Snack
 }
