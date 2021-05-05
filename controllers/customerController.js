@@ -140,6 +140,23 @@ const getOrders = async (req, res) => {
     }
 }
 
+// select a vendor to order from
+const selectVendor = async (req, res) => {
+    Vendor.findOne( { userID: req.body.userID } )
+        .populate('userID')
+        .exec( (err, result) => {
+            // error occurred during query
+            if (err) {
+                req.session.response.success = false
+                req.session.response.errors.push(err)
+                req.session.save()
+                return res.status(400).json(req.session.response)
+            }
+            req.session.vendor = result
+            return res.status(req.session.status).json(req.session.response)
+        })
+}
+
 // sign in with either email or username and password
 const logIn = (req, res) => {
     User.findOne( {$or: [{username: req.body.username}, {email: req.body.username}]}, async function(err, user) {
@@ -400,6 +417,7 @@ module.exports = {
     getMenu, 
     getSnackByName, 
     getOrders, 
+    selectVendor, 
     logIn, 
     signUp,
     updateDetails, 

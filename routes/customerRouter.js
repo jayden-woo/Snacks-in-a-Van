@@ -38,6 +38,9 @@ customerRouter.get('/order', isLoggedIn, customerController.getOrders)
 
 /* ----- POST routes ----- */
 
+// handle the POST request to select a vendor
+customerRouter.post('/', customerController.selectVendor)
+
 // handle the POST request for the login page
 customerRouter.post('/login', customerController.logIn)
 

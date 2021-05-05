@@ -53,6 +53,9 @@ userSchema.methods.comparePassword = function(givenPassword) {
     return bcrypt.compare(givenPassword, this.password)
 }
 
+// TODO
+// implement user lockout for too many wrong password attempts
+
 // export the user model to be used in the customer and vendor models
 const User = mongoose.model("User", userSchema)
 module.exports = User
