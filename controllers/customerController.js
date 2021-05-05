@@ -161,11 +161,17 @@ const logIn = (req, res) => {
 
 // validate the input for correct structures and unique username and email
 const validateInput = async (req) => {
-    // validate password
-    if (!re_password.test(req.body.password)) {
-        console.log("Password is invalid")
-        // error message = 'Your password should contain at least 1 lowercase letter, 1 uppercase letter, 1 number, 1 special character, and be between 8 to 20 characters in length.'
-        req.session.response.errors.push("password invalid")
+    // validate first name
+    if (!re_name.test(req.body.firstName)) {
+        console.log("FirstName is invalid")
+        // error message = 'Your name should only contain spaces, lowercase, and uppercase letters.'
+        req.session.response.errors.push("firstName invalid")
+    }
+    // validate last name
+    if (!re_name.test(req.body.lastName)) {
+        console.log("LastName is invalid")
+        // error message = 'Your name should only contain spaces, lowercase, and uppercase letters.'
+        req.session.response.errors.push("lastName invalid")
     }
     // validate username
     if (!re_username.test(req.body.username)) {
@@ -179,17 +185,11 @@ const validateInput = async (req) => {
         // error message = 'Please enter a valid email address.'
         req.session.response.errors.push("email invalid")
     }
-    // validate last name
-    if (!re_name.test(req.body.lastName)) {
-        console.log("LastName is invalid")
-        // error message = 'Your name should only contain spaces, lowercase, and uppercase letters.'
-        req.session.response.errors.push("lastName invalid")
-    }
-    // validate first name
-    if (!re_name.test(req.body.firstName)) {
-        console.log("FirstName is invalid")
-        // error message = 'Your name should only contain spaces, lowercase, and uppercase letters.'
-        req.session.response.errors.push("firstName invalid")
+    // validate password
+    if (!re_password.test(req.body.password)) {
+        console.log("Password is invalid")
+        // error message = 'Your password should contain at least 1 lowercase letter, 1 uppercase letter, 1 number, 1 special character, and be between 8 to 20 characters in length.'
+        req.session.response.errors.push("password invalid")
     }
 
     // check if any validation errors occured
