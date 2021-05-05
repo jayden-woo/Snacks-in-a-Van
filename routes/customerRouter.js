@@ -12,8 +12,8 @@ const getOrder = require('../middleware/getOrder')
 
 /* ----- GET routes ----- */
 
-// handle the GET request to get the nearest vans
-customerRouter.get('/', customerController.getNearestVans)
+// handle the GET request to get the closest vendors
+customerRouter.get('/', customerController.getVendorsList)
 
 // handle the GET request for the login page
 customerRouter.get('/login', customerController.getLogIn)

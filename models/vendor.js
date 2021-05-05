@@ -10,18 +10,19 @@ const vendorSchema = new mongoose.Schema({
     }, 
     isOnline: {
         type: Boolean, 
-        required : true,
+        required : true, 
         default: false
     }, 
-    latitude: { 
-        type: Number, 
-        min: -90, 
-        max: 90
-    }, 
-    longitude: { 
-        type: Number, 
-        min: -180, 
-        max: 180
+    location: {
+        type: {
+            type: String, 
+            enum: ['Point'], 
+            required : true, 
+            default: 'Point' 
+        }, 
+        // format: [ longitude (-180 to 180), latitude (-90 to 90) ]
+        coordinates: 
+            [Number]
     }, 
     textAddress: { 
         type: String
@@ -33,6 +34,8 @@ const vendorSchema = new mongoose.Schema({
 }, {
     collection: 'vendors' 
 })
+// create an index for distance querying in the future
+vendorSchema.index({location: '2dsphere'})
 
 // export the vendor model to be used by the controllers
 const Vendor = mongoose.model("Vendor", vendorSchema)
