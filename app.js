@@ -4,6 +4,16 @@ const express = require('express')
 const helmet = require('helmet')
 const session = require('express-session')
 const app = express()
+const path = require('path')
+
+// set up cors
+const cors = require('cors');
+const corsOptions ={
+    origin:'http://localhost:3000', 
+    credentials:true,            //access-control-allow-credentials:true
+    optionSuccessStatus:200
+}
+app.use(cors(corsOptions))
 
 // set up HTTP headers for web app security
 app.use(helmet())
@@ -61,3 +71,13 @@ const port = process.env.PORT || 8080
 app.listen(port, () => {
     console.log('The web app is listening on port', port)
 })
+
+// Serve static assets if in production
+if (process.env.NODE_ENV === 'production') {
+    // Set static folder
+    app.use(express.static('client/build'));
+
+    app.get('*', (req, res) => {
+        res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'))
+    })
+}
