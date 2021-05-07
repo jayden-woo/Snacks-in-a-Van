@@ -9,7 +9,7 @@ const app = express()
 
 // set up cors
 app.use(cors({
-    origin: 'http://localhost:3000', 
+    origin: 'https://snacksinavan-generator.herokuapp.com/', 
     //access-control-allow-credentials:true
     credentials: true, 
     optionSuccessStatus: 200
