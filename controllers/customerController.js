@@ -344,7 +344,7 @@ const addSnackToOrder = async (req, res) => {
         orderNumber: orderNumber, 
         // TEMP uses a random vendor id for now
         // vendorID: req.session.vendor._id, 
-        vendorID: "608f102ab079282ea08c8a85", 
+        vendorID: "6090ad1b432359dbb986ed79", 
         customerID: customer._id, 
         snacks: [lineItem]
     })
