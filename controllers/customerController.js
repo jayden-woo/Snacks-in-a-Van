@@ -107,8 +107,20 @@ const getOrders = async (req, res) => {
     try {
         const customer = await Customer.findOne( {userID: req.session.user._id} )
         // excludes the incomplete order
-        const orders = await Order.find( {customerID: customer._id, status: {$ne: 'Ordering'}} ).populate("vendorID")
-        return res.status(req.session.status).json({success: true, allOrders: orders})
+        const orders = await Order.find( {customerID: customer._id, status: {$ne: 'Ordering'}} ).populate({
+            path: "vendorID",
+            populate: {
+                path: "userID", 
+                model: "User"
+            }, 
+        }).populate({
+            path: "snacks.snackID"
+        }).exec( (err, result) => {
+            if (err) throw err;
+            console.log(result)
+            return res.status(req.session.status).json({success: true, allOrders: result})
+        })
+        // return res.status(req.session.status).json({success: true, allOrders: orders})
     // error occurred during query
     } catch (err) {
         req.session.response.success = false
