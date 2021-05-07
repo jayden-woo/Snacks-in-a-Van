@@ -7,12 +7,14 @@ const session = require('express-session')
 const app = express()
 
 // set up cors
+var whitelist = ['https://snacksinavan-generator.herokuapp.com','http://localhost:3000']
 app.use(cors({
-    origin: 'https://snacksinavan-generator.herokuapp.com/', 
-    // access-control-allow-credentials:true
-    credentials: true, 
-    optionSuccessStatus: 200
-}))
+       origin: whitelist,
+       // access-control-allow-credentials:true
+       credentials: true, 
+       optionSuccessStatus: 200
+   }    
+))
 
 // set up HTTP headers for web app security
 app.use(helmet())
