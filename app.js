@@ -1,19 +1,19 @@
 // packages or schema imports
 const cookieParser = require('cookie-parser')
+const cors = require('cors')
 const express = require('express')
 const helmet = require('helmet')
+const path = require('path')
 const session = require('express-session')
 const app = express()
-const path = require('path')
 
 // set up cors
-const cors = require('cors');
-const corsOptions ={
-    origin:'http://localhost:3000', 
-    credentials:true,            //access-control-allow-credentials:true
-    optionSuccessStatus:200
-}
-app.use(cors(corsOptions))
+app.use(cors({
+    origin: 'http://localhost:3000', 
+    //access-control-allow-credentials:true
+    credentials: true, 
+    optionSuccessStatus: 200
+}))
 
 // set up HTTP headers for web app security
 app.use(helmet())
@@ -49,7 +49,7 @@ const vendorRouter =  require('./routes/vendorRouter')
 // handler for GET home page
 app.get('/', (req, res) => {
     res.send('<h1> Snack in a Van </h1>')
-});
+})
 // handler for GET request to log out a user
 app.get('/logout', isLoggedIn, (req, res) => {
     // kill the current session so a new session could be created on next req
@@ -57,6 +57,15 @@ app.get('/logout', isLoggedIn, (req, res) => {
     console.log("User has successfully logged out")
     return res.status(200).json({success: true, errors: []})
 })
+
+// Serve static assets if in production
+if (process.env.NODE_ENV === 'production') {
+    // Set static folder
+    app.use(express.static('client/build'))
+    app.get('*', (req, res) => {
+        res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'))
+    })
+}
 
 // handler for customer and vendor requests
 // customer routes are added onto the end of '/customer'
@@ -71,13 +80,3 @@ const port = process.env.PORT || 8080
 app.listen(port, () => {
     console.log('The web app is listening on port', port)
 })
-
-// Serve static assets if in production
-if (process.env.NODE_ENV === 'production') {
-    // Set static folder
-    app.use(express.static('client/build'));
-
-    app.get('*', (req, res) => {
-        res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'))
-    })
-}

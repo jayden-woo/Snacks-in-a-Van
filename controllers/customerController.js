@@ -117,8 +117,8 @@ const getOrders = async (req, res) => {
         }).populate({
             path: "snacks.snackID"
         }).exec( (err, result) => {
-            if (err) throw err;
-            return res.status(req.session.status).json({success: true, allOrders: result})
+            req.session.response.allOrders = result
+            return res.status(req.session.status).json(req.session.response)
         })
     // error occurred during query
     } catch (err) {
