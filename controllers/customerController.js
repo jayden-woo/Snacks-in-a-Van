@@ -390,7 +390,7 @@ module.exports = {
     getSnackByName, 
     getOrders, 
     logIn, 
-    signUp,
+    signUp, 
     updateDetails, 
     addSnackToOrder, 
     confirmOrder
