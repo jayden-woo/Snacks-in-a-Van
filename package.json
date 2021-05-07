@@ -4,11 +4,7 @@
   "description": "Web App Project for UniMelb INFO30005 Semester 1, 2021",
   "main": "app.js",
   "scripts": {
-    "client-install": "npm install --prefix client",
-    "client": "npm start --prefix client",
-    "dev": "concurrently \"npm run server\" \"npm run client\"",
     "start": "node app.js",
-    "server": "nodemon server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -23,7 +19,6 @@
   "homepage": "https://github.com/INFO30005-2021-SM1/project-t10-generator#readme",
   "dependencies": {
     "bcrypt": "^5.0.1",
-    "concurrently": "^6.0.2",
     "cookie-parser": "^1.4.5",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
