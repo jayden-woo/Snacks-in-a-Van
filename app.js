@@ -3,16 +3,15 @@ const cookieParser = require('cookie-parser')
 const cors = require('cors')
 const express = require('express')
 const helmet = require('helmet')
-const path = require('path')
 const session = require('express-session')
 const app = express()
 
 // set up cors
 app.use(cors({
-    //origin: 'https://snacksinavan-generator.herokuapp.com/', 
-    ////access-control-allow-credentials:true
-    //credentials: true, 
-    //optionSuccessStatus: 200
+    origin: 'https://snacksinavan-generator.herokuapp.com/', 
+    //access-control-allow-credentials:true
+    credentials: true, 
+    optionSuccessStatus: 200
 }))
 
 // set up HTTP headers for web app security
@@ -31,14 +30,6 @@ app.use(session({
         maxAge: 2 * 60 * 60 * 1000
     }
 }))
-
-if(process.env.NODE_ENV === 'production') {
-    app.use(express.static('client/build'));
-
-    app.get('*', (req, res) => {
-        res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
-    })
-}
 
 // for reading body of requests
 app.use(express.json())
