@@ -58,15 +58,6 @@ app.get('/logout', isLoggedIn, (req, res) => {
     return res.status(200).json({success: true, errors: []})
 })
 
-// Serve static assets if in production
-if (process.env.NODE_ENV === 'production') {
-    // Set static folder
-    app.use(express.static('client/build'))
-    app.get('*', (req, res) => {
-        res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'))
-    })
-}
-
 // handler for customer and vendor requests
 // customer routes are added onto the end of '/customer'
 app.use('/customer', resetResponse, customerRouter)
