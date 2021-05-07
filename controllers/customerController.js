@@ -118,10 +118,8 @@ const getOrders = async (req, res) => {
             path: "snacks.snackID"
         }).exec( (err, result) => {
             if (err) throw err;
-            console.log(result)
-            return res.status(req.session.status).json({success: true, orders: result})
+            return res.status(req.session.status).json({success: true, allOrders: result})
         })
-        // return res.status(req.session.status).json({success: true, allOrders: orders})
     // error occurred during query
     } catch (err) {
         req.session.response.success = false
