@@ -22,7 +22,8 @@ const getNearestVans = (req, res) => {
     // TODO
     // find 5 nearest van locations using geolocation and send back the list
     const location = [{latitude: 23.6852, longitude: -24.6742}, {latitude: 20.7547, longitude: -21.8062}]
-    return res.status(req.session.status).send(location)
+    //return res.status(req.session.status).send(location)
+    res.render("map")
 }
 
 // get the login page
@@ -68,13 +69,14 @@ const getAccount = async (req, res) => {
 // get the menu from database
 const getMenu = async (req, res) => {
     try {
-        const menu = await Snack.find()
-        return res.status(req.session.status).send(menu)
+        const menu = await Snack.find().lean()
+        //return res.status(req.session.status).send(menu)
+        return res.render("menu", {"snacks": menu})
     // error occurred during query
     } catch (err) {
-        req.session.response.success = false
-        req.session.response.errors.push('failed query')
-        req.session.save()
+        //req.session.response.success = false
+        //req.session.response.errors.push('failed query')
+        //req.session.save()
         return res.status(400).json(req.session.response)
     }
 }
@@ -83,7 +85,7 @@ const getMenu = async (req, res) => {
 const getSnackByName = async (req, res) => {
     try {
         // search for a snack by name
-        const snack = await Snack.findOne( {name: req.params.snackName} )
+        const snack = await Snack.findOne( {name: req.params.snackName} ).lean()
         // snack not found in database
         if (snack === null) { 
             req.session.response.success = false
@@ -92,7 +94,8 @@ const getSnackByName = async (req, res) => {
             return res.status(404).json(req.session.response)
         }
         // send back snack details
-        return res.status(req.session.status).send(snack)
+        return res.render("oneSnack", {"oneSnack": snack})
+        //return res.status(req.session.status).send(snack)
     // error occurred during query
     } catch (err) {
         req.session.response.success = false

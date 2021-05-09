@@ -1,0 +1,17 @@
+<ul>
+    {{#each orders}}
+    <li>
+        Order Number: {{this.orderNumber}}<br>
+        Status: {{this.status}}<br>
+        Van Name: {{this.vendorName}}<br>
+        Customer Id: {{this.customerId}}<br>
+        {{#each this.snacks}}
+            SnackId: {{this.snackId}}<br>
+            Quantity: {{this.quantity}}<br>
+        {{/each}}
+        Created at: {{this.createdAt}}<br>
+        Updated at: {{this.updatedAt}}<br>
+    </li>
+    <br>
+    {{/each}}
+</ul>
