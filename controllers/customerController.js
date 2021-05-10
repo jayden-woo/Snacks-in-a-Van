@@ -254,7 +254,7 @@ const signUp = async (req, res) => {
         email: req.body.email.toLowerCase()
     })
     // save user to database
-    user.save((err) => {
+    await user.save((err) => {
         if (err) {
             req.session.response.success = false
             req.session.response.errors.push(err)
@@ -271,7 +271,7 @@ const signUp = async (req, res) => {
         lastName: req.body.lastName
     })
     // save customer to database
-    customer.save((err) => {
+    await customer.save((err) => {
         if (err) {
             req.session.response.success = false
             req.session.response.errors.push(err)
