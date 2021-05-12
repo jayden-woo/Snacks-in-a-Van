@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Vendor App</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <!-- Bootstrap 4.5 Docs: https://getbootstrap.com/docs/4.5/components/alerts/  -->
+
+  <!-- Bootstrap 4 Icons:  https://icons.getbootstrap.com/ -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css">
+
+  <link rel="stylesheet" href="vendor-app.css">
+  <!-- BEM CSS Naming Methodology: http://getbem.com/introduction/ -->
+</head>
+<body>
+
+<div class="container-fluid v-orders__container">
+  <div class="row v-orders__row">
+    
+    <!-- Left Pane: Orders -->
+    <div class="col-sm-5 v-orders">
+      <!-- Sidebar Menu -->
+      <div class="v-menu__container">
+        <nav class="navbar navbar-dark">
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#vSidebar" aria-controls="vSidebar" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+        </nav>
+        <div class="collapse navbar-collapse" id="vSidebar">
+          <ul class="v-menu-list">
+            <li><a href=""><i class="bi bi-geo-alt-fill"></i>VAN LOCATION</a></li>
+            <li><a href=""><i class="bi bi-stopwatch"></i>ORDERS</a></li>
+            <li><a href=""><i class="bi bi-person-fill"></i>ACCOUNT</a></li>
+            <li><a href=""><i class="bi bi-box-arrow-left"></i>LOGOUT</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Orders -->
+      <div class="v-orders-summary">
+        <div class="v-order">
+          <div class="v-order__number">
+            <span class="v-order__number-top">1330</span>
+            <span class="v-order__number-bot">3 orders - Adrian</span>
+          </div>
+          <div class="v-order__time">
+            <div class="v-order__time-ring">
+              <span class="v-order__min">3</span>
+              <span class="v-order__label">mins</span>
+            </div>
+          </div>
+        </div>
+        <div class="v-order">
+          <div class="v-order__number">
+            <span class="v-order__number-top">1330</span>
+            <span class="v-order__number-bot">3 orders - Adrian</span>
+          </div>
+          <div class="v-order__time">
+            <div class="v-order__time-ring">
+              <span class="v-order__min">3</span>
+              <span class="v-order__label">mins</span>
+            </div>
+          </div>
+        </div>
+        <div class="v-order">
+          <div class="v-order__number">
+            <span class="v-order__number-top">1330</span>
+            <span class="v-order__number-bot">3 orders - Adrian</span>
+          </div>
+          <div class="v-order__time">
+            <div class="v-order__time-ring">
+              <span class="v-order__min">3</span>
+              <span class="v-order__label">mins</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Pane: Orders List -->
+    <div class="col-sm-7 v-orders-list">
+      test
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

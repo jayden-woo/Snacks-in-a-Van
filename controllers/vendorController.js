@@ -46,6 +46,18 @@ const getOutstandingOrders = async (req, res) => {
     }
 }
 
+// get order information using orderID
+const getVendorOrderDetails = async (req, res) => {
+    try {
+        // use vendorID and orderID to get details
+        // use order models to look for the order
+        const vendorOrderDetails = await Order.find( {"vendorID": req.params.vendorID, "orderNumber": req.params.orderID} )
+        res.send(vendorOrderDetails)
+    } catch (err) {  
+        res.status(400)
+        res.send("No order found")
+    }
+}
 
 // add a new vendor
 const addVendor = async (req, res) => {
@@ -111,5 +123,6 @@ module.exports = {
     getOutstandingOrders, 
     //addVendor, 
     updateVendor, 
-    updateOrderStatus
+    updateOrderStatus,
+    getVendorOrderDetails
 }

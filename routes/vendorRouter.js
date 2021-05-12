@@ -19,6 +19,11 @@ vendorRouter.get('/:userID', vendorController.getVendorByUserID)
 // emmmmmmmmm
 vendorRouter.get('/:vendorID/outstanding', vendorController.getOutstandingOrders)
 
+// handle GET request to present the details of (outstanding) order
+// this should be presented in the view of the vendor 
+// does not matter if the order is outstanding or not
+// this route requires vendorID as stipulated in models/order
+vendorRouter.get('/:vendorID/:orderID', vendorController.getVendorOrderDetails)
 
 // handle the POST request to add a new vendor
 //vendorRouter.post('/', vendorController.addVendor)
