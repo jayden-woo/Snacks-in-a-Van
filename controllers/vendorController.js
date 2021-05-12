@@ -52,7 +52,8 @@ const getVendorOrderDetails = async (req, res) => {
         // use vendorID and orderID to get details
         // use order models to look for the order
         const vendorOrderDetails = await Order.find( {"vendorID": req.params.vendorID, "orderNumber": req.params.orderID} )
-        res.send(vendorOrderDetails)
+        // res.send(vendorOrderDetails)
+        res.render("vendorOrderDetails")
     } catch (err) {  
         res.status(400)
         res.send("No order found")
