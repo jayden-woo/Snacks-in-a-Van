@@ -52,12 +52,15 @@ const getVendorOrderDetails = async (req, res) => {
         // use vendorID and orderID to get details
         // use order models to look for the order
         const oneOrderDetail = await Order.find( {"vendorID": req.params.vendorID, "orderNumber": req.params.orderID} )
+            // populate allows us to use relational data by "populating" the schema with its relevant data
+            .populate("customerID")
+            // to reference additional schemas, just use another populate() function
+            // to populate within another nested array, simply use array.id
+            .populate("snacks.snackID")
             .lean()
-            .populate("Customer")
-            .exec()
-        res.send(oneOrderDetail)
+        // res.send(oneOrderDetail)
         // renders the hdb page and assigns results of array to variabla "orders"
-        // res.render("vendorOrderDetails", {"orders": oneOrderDetail})
+        res.render("vendorOrderDetails", {"orders": oneOrderDetail})
     } catch (err) {  
         res.status(400)
         res.send("No order found")
