@@ -42,6 +42,22 @@ var register = function(Handlebars) {
                 "</section>"
             return ret;
         },
+
+        // write function for vendorOrderDetails showing the details of (outstanding) orders
+        // requires: order number, customer's first name, items ordered, how manymore minutes
+        orderDetail: function(orders) {
+            ret = 
+                console.log("orderNumber")
+                "<h1> Order Details </h1>" +
+                
+                "<section id=\"detail\">" +
+                "<div id=\"detailOrderNumber\">" + "<h1>" + orders.orderNumber + "</h1>" + "</div>" +
+                // retrieve customer name from customer ID "<div id=\"customerFirstName\">" + orderOrderDetail.
+                // quantity from array length
+                // "<div id=\"detailQuantity\">" + oneOrderDetail.snacks.length + "</div>" +
+                "</section>"
+            return ret;
+        }
     };
   
     if (Handlebars && typeof Handlebars.registerHelper === "function") {

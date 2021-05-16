@@ -14,6 +14,18 @@ const orderLineSchema = new mongoose.Schema({
     }
 })
 
+// define the schema for customer information - this is the embedded method
+const customerLineSchema = new mongoose.Schema({
+    userID: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true
+    },
+    first_name: {
+        type: String,
+        required: true
+    }
+})
+
 status = ["Ordering", "Placed", "Cooking", "Fulfilled", "Picked-Up", "Cancelled"]
 
 // define the schema for one order in the orders database
@@ -33,7 +45,8 @@ const orderSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId, 
         ref: 'Customer', 
         required: true
-    }, 
+        // [customerLineSchema],
+    },
     status: {
         type: String, 
         enum: status, 

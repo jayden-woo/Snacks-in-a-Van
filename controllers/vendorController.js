@@ -37,8 +37,8 @@ const getVendorByUserID = async (req, res) => {
 const getOutstandingOrders = async (req, res) => {
     try {
         // find the list of outstanding orders of a vendor and send it back
-        const OutstandingOrders = await Order.find( {"vendorID": req.params.vendorID, $or:[{"status": "Cooking"}, {"status": "Ordering"}, {"status": "Fulfilled"}]} )
-        res.send(OutstandingOrders)
+        const outstandingOrders = await Order.find( {"vendorID": req.params.vendorID, $or:[{"status": "Cooking"}, {"status": "Ordering"}]} )
+        res.render("outstandingOrders", {"orders": outstandingOrders})
     // error occurred during the database query
     } catch (err) {
         res.status(400)
@@ -51,9 +51,13 @@ const getVendorOrderDetails = async (req, res) => {
     try {
         // use vendorID and orderID to get details
         // use order models to look for the order
-        const vendorOrderDetails = await Order.find( {"vendorID": req.params.vendorID, "orderNumber": req.params.orderID} )
-        // res.send(vendorOrderDetails)
-        res.render("vendorOrderDetails")
+        const oneOrderDetail = await Order.find( {"vendorID": req.params.vendorID, "orderNumber": req.params.orderID} )
+            .lean()
+            .populate("Customer")
+            .exec()
+        res.send(oneOrderDetail)
+        // renders the hdb page and assigns results of array to variabla "orders"
+        // res.render("vendorOrderDetails", {"orders": oneOrderDetail})
     } catch (err) {  
         res.status(400)
         res.send("No order found")
