@@ -1,8 +1,3 @@
-{{!-- <section id='detailVendorOrder'>
-    {{#orderDetail orders}}{{/orderDetail}}
-</section> --}}
-
-
 <h1>Details of Order</h1>
 
 {{#each orders}}
@@ -17,6 +12,7 @@
         <div id="orderList">
             {{!-- snacks are contained in an array - print out the array --}}
             Items Ordered: <br/>
+            
             {{#each this.snacks}}
                     <ul>
 
@@ -30,7 +26,5 @@
         </div>
     </div>
   
-      
-
 {{/each}}
 

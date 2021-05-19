@@ -67,6 +67,19 @@ const getVendorOrderDetails = async (req, res) => {
     }
 }
 
+// get vendor account details by rendering vendorAccount page
+// this retrives from the database relevant information
+const getVendorAccount = async (req, res) => {
+    try {
+        const vendorAccount = await Vendor.find( {"userID": req.params.vendorID} )
+            .lean()
+        res.render("vendorAccount", {"account": vendorAccount})
+    } catch (err) {
+        res.status(400)
+        res.send("Vendor information not available")
+    }
+}
+
 // add a new vendor
 const addVendor = async (req, res) => {
     // construct a new vendor object from body of the POST request
@@ -83,7 +96,7 @@ const addVendor = async (req, res) => {
 
 // update the status of a vendor
 const updateVendor = async (req, res) => {
-    const {isOnline, latitude, longitude, textAddress} = req.body
+    var {isOnline, latitude, longitude, textAddress} = req.body
     try {
         // change the status if it is in the request body
         if ("isOnline" in req.body){
@@ -124,6 +137,7 @@ const updateOrderStatus = async (req, res) => {
     }
 }
 
+
 // remember to export the functions
 module.exports = {
     getAllVendors, 
@@ -132,5 +146,6 @@ module.exports = {
     //addVendor, 
     updateVendor, 
     updateOrderStatus,
-    getVendorOrderDetails
+    getVendorOrderDetails, 
+    getVendorAccount
 }
