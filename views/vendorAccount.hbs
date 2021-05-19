@@ -9,11 +9,21 @@
 
     {{!-- below is the form for entering details and changing address --}}
     <form action="/vendor/{{this._id}}/account" method="post">
-        <label for="textAddress">Enter new address: </label>
-        <input id="textAddress" type="text" name="textAddress">
-        {{!-- <label for "userID">Enter userID: </label>
-        <input id="userID" type="text" name="userID"> --}}
-        <button type="submit">Submit New Address</button>
+
+        <label for="textAddress">Enter new address: 
+            <input id="textAddress" type="text" name="textAddress">
+        </label>
+
+        <label for="isOnline">I am online
+            <input id="isOnline" type="radio" name="isOnline" value="true">
+        </label>
+
+        <label for="isOnline">I am offline
+            <input id="isOnline" type="radio" name="isOnline" value="false">
+        </label>
+
+        <button type="submit">Update Information</button>
+
     </form>
 
 {{/each}}

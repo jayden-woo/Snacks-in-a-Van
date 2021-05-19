@@ -43,8 +43,8 @@ vendorRouter.get('/:vendorID/:orderID', vendorController.getVendorOrderDetails)
 
 // handle the POST request to update the status of a vendor
 // vendorRouter.post('/account', isLoggedIn, vendorController.updateVendor)
-// use below route to rest 
-vendorRouter.post('/:vendorID/account', vendorController.updateVendor)
+// use below route to test 
+vendorRouter.post('/:vendorID/account', vendorController.updateVendor) 
 
 // handle the POST request to update the status of an order
 // havent test

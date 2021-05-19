@@ -101,7 +101,8 @@ const updateVendor = async (req, res) => {
         // change the status if it is in the request body
         if ("isOnline" in req.body){
             console.log("Changing isOnline to :", isOnline)
-            await Vendor.updateOne({userID: req.session.user._id}, {isOnline: isOnline}) 
+            // await Vendor.updateOne({userID: req.session.user._id}, {isOnline: isOnline}) 
+            await Vendor.updateOne({isOnline: isOnline})
         }
         // change the location of the vendor's van if it is in the request body
         if (latitude && longitude) {
@@ -110,12 +111,15 @@ const updateVendor = async (req, res) => {
         }
         if(textAddress) {
             console.log("Changing text address to: ", textAddress)
-            await Vendor.updateOne({userID: req.session.user._id}, {textAddress: textAddress}) 
+            // await Vendor.updateOne({userID: req.session.user._id}, {textAddress: textAddress}) 
+            await Vendor.updateOne({textAddress: textAddress})
         }
         // send back vendor details for checking
-        res.status(200).send(await Vendor.findOne({userID: req.session.user._id}))
+        // res.status(200).send(await Vendor.findOne({userID: req.session.user._id}))
+        res.status(200).send("address updated successfully!")
     // error occurred during the database update
     } catch (err) {
+        console.log(err)
         res.status(400).json({error: "Database update failed"})
     }
 }
