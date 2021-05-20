@@ -47,17 +47,55 @@ const getOutstandingOrders = async (req, res) => {
 }
 
 
-// add a new vendor
+// // add a new vendor
+// const addVendor = async (req, res) => {
+//     // construct a new vendor object from body of the POST request
+//     const vendor = await new Vendor(req.body)
+//     // save the new vendor to the vendors database
+//     vendor.save( (err, result) => {
+//         // error occured during saving of a new vendor
+//         if (err) res.send(err)
+//         // send back vendor details for checking
+//         res.send(result)
+//     })
+// }
+
+
+// TEMP create 10 vendors with random locations and ids
+// create random mongoIDs
+const mongoObjectId = function () {
+    var timestamp = (new Date().getTime() / 1000 | 0).toString(16)
+    return timestamp + 'xxxxxxxxxxxxxxxx'.replace(/[x]/g, function() {
+        return (Math.random() * 16 | 0).toString(16);
+    }).toLowerCase()
+}
 const addVendor = async (req, res) => {
-    // construct a new vendor object from body of the POST request
-    const vendor = await new Vendor(req.body)
-    // save the new vendor to the vendors database
-    vendor.save( (err, result) => {
-        // error occured during saving of a new vendor
-        if (err) res.send(err)
-        // send back vendor details for checking
-        res.send(result)
-    })
+    const coordinates = [
+        [144.953552, -37.816904],   // Location 1
+        [144.967131, -37.817651],   //          2
+        [144.960535, -37.802159],   //          3
+        [144.956983, -37.813893],   //          4
+        [144.955188, -37.808538],   //          5
+        [144.960482, -37.804329],   //          6
+        [144.962324, -37.799144],   //          7
+        [144.970075, -37.785843],   //          8
+        [144.987312, -37.790795],   //          9
+        [144.971927, -37.811552]    //          10
+    ]
+    for (let i=1; i<=10; i++) {
+        let vendor = new Vendor({
+            userID: mongoObjectId(), 
+            isOnline: [3,6,9].includes(i) ? false : true, 
+            location: {
+                coordinates: coordinates[i-1]
+            }, 
+            textAddress: "Location " + i
+        })
+        vendor.save( (err) => {
+            if (err) throw err;
+        })
+    }
+    return res.send(await Vendor.find())
 }
 
 
@@ -109,7 +147,7 @@ module.exports = {
     getAllVendors, 
     getVendorByUserID, 
     getOutstandingOrders, 
-    //addVendor, 
+    addVendor, 
     updateVendor, 
     updateOrderStatus
 }

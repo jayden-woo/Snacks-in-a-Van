@@ -21,7 +21,8 @@ vendorRouter.get('/:vendorID/outstanding', vendorController.getOutstandingOrders
 
 
 // handle the POST request to add a new vendor
-//vendorRouter.post('/', vendorController.addVendor)
+// temporarily keeping to quickly add test vendors to database
+vendorRouter.post('/', vendorController.addVendor)
 
 // handle the POST request to update the status of a vendor
 vendorRouter.post('/account', isLoggedIn, vendorController.updateVendor)
