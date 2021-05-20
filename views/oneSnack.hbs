@@ -1,0 +1,36 @@
+<nav>
+    <div id="mySidenav" class="sidenav">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+        <a href="#">Map</a>
+        <a href="/customer/menu">Menu</a>
+        <a href="#">Order</a>
+        <a href="#">Account</a>
+    </div>
+    <span style="font-size:25px;cursor:pointer" onclick="openNav()">&#9776;</span>
+    <script>
+        function openNav() {
+            document.getElementById("mySidenav").style.width = "250px";
+        }
+        function closeNav() {
+            document.getElementById("mySidenav").style.width = "0";
+        }
+    </script>
+    {{!-- <hr size="30"> --}}
+</nav>
+
+<section id="oneFood">
+    {{#onesnack oneSnack}}{{/onesnack}}
+</section>
+
+{{!-- <a href="/customer/menu"> <h1> {{oneSnack.snackName}} </h1> </a> --}}
+{{!-- <section id="oneFood-details"> --}}
+    {{!-- <section id="oneFood-picture"> --}}
+        {{!-- <img class="detailsPage" src="https://source.unsplash.com/{{oneSnack.image}}" alt="hosted by Unsplash"> --}}
+    {{!-- </section> --}}
+    {{!-- <section id="oneFood-text"> --}}
+            {{!-- <p id="description"> --}}
+                {{!-- {{oneSnack.description}}<br><br> --}}
+                {{!-- Price: ${{oneSnack.price}} --}}
+            {{!-- </p> --}}
+    {{!-- </section> --}}
+{{!-- </section> --}}

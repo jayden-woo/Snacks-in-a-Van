@@ -69,7 +69,8 @@ const getAccount = async (req, res) => {
 const getMenu = async (req, res) => {
     try {
         const menu = await Snack.find()
-        return res.status(req.session.status).send(menu)
+        //return res.status(req.session.status).send(menu)
+        return res.render("menu", {"snacks": menu})
     // error occurred during query
     } catch (err) {
         req.session.response.success = false
@@ -92,7 +93,8 @@ const getSnackByName = async (req, res) => {
             return res.status(404).json(req.session.response)
         }
         // send back snack details
-        return res.status(req.session.status).send(snack)
+        // return res.status(req.session.status).send(snack)
+        return res.render("oneSnack", {"oneSnack": snack})
     // error occurred during query
     } catch (err) {
         req.session.response.success = false

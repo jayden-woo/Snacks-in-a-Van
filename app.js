@@ -7,17 +7,32 @@ const session = require('express-session')
 const app = express()
 
 // set up cors
-var whitelist = ['https://snacksinavan-generator.herokuapp.com','http://localhost:3000']
-app.use(cors({
-       origin: whitelist,
-       // access-control-allow-credentials:true
-       credentials: true, 
-       optionSuccessStatus: 200
-   }    
-))
+// var whitelist = ['https://snacksinavan-generator.herokuapp.com','http://localhost:3000']
+// app.use(cors({
+//        origin: whitelist,
+//        // access-control-allow-credentials:true
+//        credentials: true, 
+//        optionSuccessStatus: 200
+//    }    
+// ))
+
+app.use(cors())
 
 // set up HTTP headers for web app security
-app.use(helmet())
+// app.use(helmet())
+
+
+app.use(express.static('public')) // define where static assets live
+
+const exphbs = require('express-handlebars')
+
+app.engine('hbs', exphbs({
+    defaultlayout: 'main',
+    extname: 'hbs',
+    helpers: require(__dirname + "/public/js/helpers.js").helpers
+}))
+
+app.set('view engine', 'hbs')
 
 // for keeping track of data in between pages
 app.use(cookieParser())
@@ -49,7 +64,7 @@ const vendorRouter =  require('./routes/vendorRouter')
 
 // handler for GET home page
 app.get('/', (req, res) => {
-    res.send('<h1> Snack in a Van </h1>')
+    res.render("index");
 })
 // handler for GET request to log out a user
 app.get('/logout', isLoggedIn, (req, res) => {
