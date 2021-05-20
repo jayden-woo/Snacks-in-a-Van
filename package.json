@@ -19,8 +19,7 @@
   },
   "homepage": "https://github.com/INFO30005-2021-SM1/project-t10-generator#readme",
   "dependencies": {
-    "-": "0.0.1",
-    "bcrypt": "^5.0.1",
+    "bcryptjs": "^2.4.3",
     "cookie-parser": "^1.4.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",

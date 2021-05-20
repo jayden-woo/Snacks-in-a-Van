@@ -1,5 +1,5 @@
 const mongoose = require("mongoose")
-const bcrypt = require("bcrypt")
+const bcrypt = require("bcryptjs")
 const SALT_WORK_FACTOR = 10
 
 // define the schema for a user which could be a customer or vendor
