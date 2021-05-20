@@ -4,8 +4,9 @@ const mongoose = require("mongoose")
 const Snack = mongoose.model("Snack")
 const OrderLine = mongoose.model("OrderLine")
 const Order = mongoose.model("Order")
-const Customer = mongoose.model("Customer")
 const User = mongoose.model("User")
+const Customer = mongoose.model("Customer")
+const Vendor = mongoose.model("Vendor")
 
 // regex for user input validation
 // a name can only be alphabetic characters
@@ -17,17 +18,38 @@ const re_username = /^[a-zA-Z0-9_]+$/
 // a password must contain a digit, a special character, a lowercase, an uppercase, and between 8-20 characters
 const re_password = /^(?=.*\d)(?=.*[.!@#$%^&*])(?=.*[a-z])(?=.*[A-Z])[a-zA-Z0-9!@#$%^&*]{8,20}$/
 
-// get the nearest vans
-const getNearestVans = (req, res) => {
-    // TODO
-    // find 5 nearest van locations using geolocation and send back the list
-    const location = [{latitude: 23.6852, longitude: -24.6742}, {latitude: 20.7547, longitude: -21.8062}]
-    return res.status(req.session.status).send(location)
+// global constants to be tweaked in the future if needed
+// number of vendors to be displayed
+const N_VENDORS = 5
+
+// get a list of the closest vendors
+const getVendorsList = (req, res) => {
+    Vendor.aggregate([
+        { 
+            $geoNear: {
+                near: req.body.location, 
+                distanceField: 'distance', 
+                spherical: true, 
+                query: { isOnline: true }
+            }
+        }, {
+            $limit: N_VENDORS
+        }
+    ]).exec( (err, result) => {
+        // error occured during query
+        if (err) {
+            req.session.response.success = false
+            req.session.response.errors.push(err)
+            req.session.save()
+            return res.status(400).json(req.session.response)
+        }
+        return res.status(req.session.status).send(result)
+    })
 }
 
 // get the login page
 const getLogIn = (req, res) => {
-    return res.send('<h1> Log In Page <\h1>')
+    return res.status(req.session.status).send('<h1> Log In Page <\h1>')
 }
 
 // log out a user
@@ -41,7 +63,7 @@ const logOut = (req, res) => {
 
 // get the signup page
 const getSignUp = (req, res) => {
-    return res.send('<h1> Sign Up Page <\h1>')
+    return res.status(req.session.status).send('<h1> Sign Up Page <\h1>')
 }
 
 // get the account details
@@ -127,6 +149,23 @@ const getOrders = async (req, res) => {
         req.session.save()
         return res.status(400).json(req.session.response)
     }
+}
+
+// select a vendor to order from
+const selectVendor = async (req, res) => {
+    Vendor.findOne( { userID: req.body.userID } )
+        .populate('userID')
+        .exec( (err, result) => {
+            // error occurred during query
+            if (err) {
+                req.session.response.success = false
+                req.session.response.errors.push(err)
+                req.session.save()
+                return res.status(400).json(req.session.response)
+            }
+            req.session.vendor = result
+            return res.status(req.session.status).json(req.session.response)
+        })
 }
 
 // sign in with either email or username and password
@@ -381,7 +420,7 @@ const confirmOrder = (req, res) => {
 
 // export the controller functions
 module.exports = {
-    getNearestVans, 
+    getVendorsList, 
     getLogIn, 
     logOut, 
     getSignUp, 
@@ -389,6 +428,7 @@ module.exports = {
     getMenu, 
     getSnackByName, 
     getOrders, 
+    selectVendor, 
     logIn, 
     signUp, 
     updateDetails, 
