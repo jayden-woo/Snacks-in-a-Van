@@ -94,6 +94,7 @@ const getOrderByNumber = async (req, res) => {
     try {
         const order = await Order
             .findOne({
+                customerID: req.user._id, 
                 orderNumber: req.params.orderNumber
             }).populate({
                 path: "vendorID",
@@ -169,8 +170,11 @@ const confirmOrder = async (req, res) => {
 //
 const updateOrder = async (req, res) => {
     try {
-        const order = await Order.findOne({ _id: req.params.orderNumber })
-        // snack not found in database
+        const order = await Order.findOne({
+            customerID: req.user._id, 
+            orderNumber: req.params.orderNumber
+        })
+        // order not found in database
         if (order === null) {
             return res.status(404).send("Order does not exist.")
         }
@@ -199,7 +203,10 @@ const updateOrder = async (req, res) => {
 // cancel an order by changing its status
 const cancelOrder = async (req, res) => {
     try {
-        const order = await Order.findOne({ _id: req.params.orderNumber })
+        const order = await Order.findOne({
+            customerID: req.user._id, 
+            orderNumber: req.params.orderNumber
+        })
         // snack not found in database
         if (order === null) {
             return res.status(404).send("Order does not exist.")
@@ -222,7 +229,10 @@ const submitFeedback = async (req, res) => {
             comment: req.body.comment
         })
         // search for the order to place the feedback for
-        const order = await Order.findOne({ _id: req.params.orderNumber })
+        const order = await Order.findOne({
+            customerID: req.user._id, 
+            orderNumber: req.params.orderNumber
+        })
         // order not found in database
         if (order === null) {
             return res.status(404).send("Order not found.")
