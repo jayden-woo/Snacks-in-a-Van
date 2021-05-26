@@ -27,7 +27,7 @@ const feedbackSchema = new mongoose.Schema({
     }
 })
 
-status = ["Ordering", "Placed", "Cooking", "Fulfilled", "Picked-Up", "Cancelled"]
+status = ["Placed", "Fulfilled", "Picked-Up", "Cancelled"]
 
 // define the schema for one order in the orders database
 const orderSchema = new mongoose.Schema({
