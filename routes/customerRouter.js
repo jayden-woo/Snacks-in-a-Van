@@ -11,6 +11,7 @@ const customerController = require('../controllers/customerController.js')
 // add the required middlewares
 const isLoggedIn = require('../middleware/isLoggedIn')
 const isLoggedOut = require('../middleware/isLoggedOut')
+const withinTimeLimit = require('../middleware/withinTimeLimit')
 
 /* ----- GET routes ----- */
 
@@ -39,10 +40,10 @@ customerRouter.get('/cart', isLoggedIn, customerController.getCart)
 customerRouter.get('/order', isLoggedIn, customerController.getOrders)
 
 // handle the GET request to get details of one order
-customerRouter.get('/order/:id', isLoggedIn, customerController.getOrderByID)
+customerRouter.get('/order/:orderNumber', isLoggedIn, customerController.getOrderByID)
 
 // handle the GET request to get the feedback page
-customerRouter.get('/order/:id/feedback', isLoggedIn, customerController.getSnackByName)
+customerRouter.get('/order/:orderNumber/feedback', isLoggedIn, customerController.getSnackByName)
 
 /* ----- POST routes ----- */
 
@@ -76,11 +77,14 @@ customerRouter.post('/menu/order', isLoggedIn, customerController.confirmOrder)
 
 /* ----- PUT routes ----- */
 
+// handle the PUT request to update an order
+customerRouter.put('/order/:orderNumber/update', isLoggedIn, withinTimeLimit, customerController.updateOrder)
+
 // handle the PUT request to cancel an order
-customerRouter.put('/order/:id', isLoggedIn, customerController.cancelOrder)
+customerRouter.put('/order/:orderNumber/cancel', isLoggedIn, withinTimeLimit, customerController.cancelOrder)
 
 // handle the PUT request to submit a feedback for the order
-customerRouter.put('/order/:id/feedback', isLoggedIn, customerController.submitFeedback)
+customerRouter.put('/order/:orderNumber/feedback', isLoggedIn, customerController.submitFeedback)
 
 // export the router
 module.exports = customerRouter

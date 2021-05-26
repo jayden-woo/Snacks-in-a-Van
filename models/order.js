@@ -56,9 +56,14 @@ const orderSchema = new mongoose.Schema({
     snacks: 
         [orderLineSchema]
     , 
-    duration: {
+    total: {
         type: Number, 
-        min: 0
+        min: 0, 
+        required: true
+    }, 
+    discountApplied: {
+        type: Boolean, 
+        default: false
     }, 
     feedback: feedbackSchema
 }, {
