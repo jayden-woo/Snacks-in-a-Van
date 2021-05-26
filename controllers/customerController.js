@@ -29,14 +29,14 @@ const getVendorsList = (req, res) => {
         if (err) {
             return res.status(400).send("Oops! Something went wrong.")
         }
-        return res.status(200).send(result)
+        return res.status(200).send(result.lean())
     })
 }
 
 // get the menu from database
 const getMenu = async (req, res) => {
     try {
-        const menu = await Snack.find()
+        const menu = await Snack.find().lean()
         return res.status(200).send(menu)
     // error occurred during query
     } catch (err) {
@@ -48,7 +48,7 @@ const getMenu = async (req, res) => {
 const getSnackByName = async (req, res) => {
     try {
         // search for a snack by name
-        const snack = await Snack.findOne( {name: req.params.snackName} )
+        const snack = await Snack.findOne( {name: req.params.snackName} ).lean()
         // snack not found in database
         if (snack === null) { 
             return res.status(404).send("Oops! Snack not found.")
@@ -59,6 +59,11 @@ const getSnackByName = async (req, res) => {
     } catch (err) {
         return res.status(400).send("Oops! Something went wrong.")
     }
+}
+
+//
+const getCart = (req, res) => {
+    return res.status(200).send("<h1> Cart <\h1>")
 }
 
 // get all the orders' details
@@ -140,12 +145,29 @@ const confirmOrder = async (req, res) => {
             snacks: lineItems, 
             total: req.body.price
         })
-        order.save()
+        await order.save()
 
         req.flash("orderMessage", "Order successfully placed.")
         return res.status(200).redirect("/customer/order")
     // error occurred during saving
     } catch {
+        return res.status(400).send("Oops! Something went wrong.")
+    }
+}
+
+// cancel an order by changing its status
+const cancelOrder = async (req, res) => {
+    try {
+        const order = await Order.findOne( {_id: req.params.id} )
+        // snack not found in database
+        if (order === null) {
+            return res.status(404).send("Order does not exist.")
+        }
+        // change the order status to cancelled and save it
+        order.status = "Cancelled"
+        await order.save()
+        return res.status(200).send("Order has been successfully cancelled.")
+    } catch (err) {
         return res.status(400).send("Oops! Something went wrong.")
     }
 }
@@ -166,8 +188,7 @@ const submitFeedback = async (req, res) => {
         }
         // add the feedback to the order and save it
         order.feedback = feedback
-        order.save()
-        
+        await order.save()
         return res.status(200).redirect("/customer/order")
     // error occured during saving
     } catch (err) {
@@ -180,9 +201,11 @@ module.exports = {
     getVendorsList, 
     getMenu, 
     getSnackByName, 
+    getCart, 
     getOrders, 
     getOrderByID, 
     selectVendor, 
     confirmOrder, 
+    cancelOrder, 
     submitFeedback
 }

@@ -32,11 +32,17 @@ customerRouter.get('/menu', customerController.getMenu)
 // handle the GET request to get details of one snack
 customerRouter.get('/menu/:snackName', customerController.getSnackByName)
 
+// handle the GET request to get the current cart
+customerRouter.get('/cart', isLoggedIn, customerController.getCart)
+
 // handle the GET request to get all the orders' details
 customerRouter.get('/order', isLoggedIn, customerController.getOrders)
 
 // handle the GET request to get details of one order
 customerRouter.get('/order/:id', isLoggedIn, customerController.getOrderByID)
+
+// handle the GET request to get the feedback page
+customerRouter.get('/order/:id/feedback', isLoggedIn, customerController.getSnackByName)
 
 /* ----- POST routes ----- */
 
@@ -69,6 +75,9 @@ customerRouter.post('/account', isLoggedIn, userController.customerUpdate)
 customerRouter.post('/menu/order', isLoggedIn, customerController.confirmOrder)
 
 /* ----- PUT routes ----- */
+
+// handle the PUT request to cancel an order
+customerRouter.put('/order/:id', isLoggedIn, customerController.cancelOrder)
 
 // handle the PUT request to submit a feedback for the order
 customerRouter.put('/order/:id', isLoggedIn, customerController.submitFeedback)
