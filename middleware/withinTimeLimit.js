@@ -5,13 +5,13 @@ const Order = mongoose.model("Order")
 // time limit for changing or cancelling order (10 mins) 
 const TIME_LIMIT = 10 * 60 * 1000
 
-// check the order is still within the time limit
+// check if the order is still within the time limit
 const withinTimeLimit = async (req, res, next) => {
     // find the order from database
     const order = await Order.findOne( {_id: req.body.orderId} )
     // calculate the time passed since last updated
     const diff = new Date() - new Date(order.updatedAt)
-    // find the redirect url if order can't be modified
+    // find the redirect url if the order can't be modified
     const urlSections = req.orginalUrl.split()
     const redirectUrl = `/${urlSections[1]}/${urlSections[2]}/${urlSections[3]}`
     // check if the order has been fulfilled

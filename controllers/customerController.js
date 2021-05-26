@@ -29,7 +29,8 @@ const getVendorsList = (req, res) => {
         if (err) {
             return res.status(400).send("Oops! Something went wrong.")
         }
-        return res.status(200).send(result.lean())
+        // don't need to use lean as pipeline output is already js object
+        return res.status(200).send(result)
     })
 }
 
@@ -48,7 +49,7 @@ const getMenu = async (req, res) => {
 const getSnackByName = async (req, res) => {
     try {
         // search for a snack by name
-        const snack = await Snack.findOne( {name: req.params.snackName} ).lean()
+        const snack = await Snack.findOne({ name: req.params.snackName }).lean()
         // snack not found in database
         if (snack === null) { 
             return res.status(404).send("Oops! Snack not found.")
@@ -61,22 +62,29 @@ const getSnackByName = async (req, res) => {
     }
 }
 
-//
+// render the cart page for the client
 const getCart = (req, res) => {
     return res.status(200).send("<h1> Cart <\h1>")
 }
 
-// get all the orders' details
+// get all the orders details
 const getOrders = async (req, res) => {
     try {
-        const orders = await Order.find( {customerID: req.user._id} )
-            .populate({
+        const orders = await Order
+            // find orders associated with the current customer
+            .find({
+                customerID: req.user._id
+            // add the vendor van name
+            }).populate({
                 path: "vendorID",
                 select: "username"
+            // add the snack details
             }).populate({
                 path: "snacks.snackID"
+            // sort by newest order first
             }).sort({
                 updatedAt: -1
+            // convert to a js object
             }).lean()
         return res.status(200).send(orders)
     // error occurred during query
@@ -85,15 +93,22 @@ const getOrders = async (req, res) => {
     }
 }
 
-// get details of one order by its ID
-const getOrderByID = async (req, res) => {
+// get details of one order by its order number
+const getOrderByNumber = async (req, res) => {
     try {
-        const order = await Order.findById(req.params.id)
-            .populate({
+        const order = await Order
+            // find the given order that is associated with the current customer
+            .findOne({
+                customerID: req.user._id, 
+                orderNumber: req.params.orderNumber
+            // add the vendor van name
+            }).populate({
                 path: "vendorID",
                 select: "username"
+            // add the snack details
             }).populate({
                 path: "snacks.snackID"
+            // convert to a js object
             }).lean()
         return res.status(200).send(order)
     // error occurred during query
@@ -102,20 +117,21 @@ const getOrderByID = async (req, res) => {
     }
 }
 
-//
+// render the feedback page for the client
 const getFeedback = (req, res) => {
     return res.status(200).send("<h1> Feedback Page <\h1>")
 }
 
-// select a vendor to order from
+// select a vendor to start the order from
 const selectVendor = async (req, res) => {
     try {
         // search for the vendor
-        const vendor = await Vendor.findOne( { userID: req.body.userID } )
+        const vendor = await Vendor.findOne({ userID: req.body.userID })
         // vendor not found in database
         if (vendor === null) {
             return res.status(404).send("Oops! Vendor not found.")
         }
+        // store the vendor in session to be added during order confirmation
         req.session.vendor = vendor
         return res.status(200).send("Vendor selected.")
     // error occurred during query
@@ -123,7 +139,6 @@ const selectVendor = async (req, res) => {
         return res.status(400).send("Oops! Something went wrong.")
     }
 }
-
 
 // confirm the current order selections
 const confirmOrder = async (req, res) => {
@@ -160,11 +175,15 @@ const confirmOrder = async (req, res) => {
     }
 }
 
-//
+// update the previously confirmed order with new items or quantities
 const updateOrder = async (req, res) => {
     try {
-        const order = await Order.findOne( {_id: req.params.orderNumber} )
-        // snack not found in database
+        // find the order from the database
+        const order = await Order.findOne({
+            customerID: req.user._id, 
+            orderNumber: req.params.orderNumber
+        })
+        // order not found in database
         if (order === null) {
             return res.status(404).send("Order does not exist.")
         }
@@ -193,30 +212,40 @@ const updateOrder = async (req, res) => {
 // cancel an order by changing its status
 const cancelOrder = async (req, res) => {
     try {
-        const order = await Order.findOne( {_id: req.params.orderNumber} )
+        // find the order from the database
+        const order = await Order.findOne({
+            customerID: req.user._id, 
+            orderNumber: req.params.orderNumber
+        })
         // snack not found in database
         if (order === null) {
             return res.status(404).send("Order does not exist.")
         }
-        // change the order status to cancelled and save it
+        // change the order status to "cancelled" and save it
         order.status = "Cancelled"
         await order.save()
+
+        req.flash("orderMessage", "Order successfully cancelled.")
         return res.status(200).send("Order has been successfully cancelled.")
+    // error occurred during saving
     } catch (err) {
         return res.status(400).send("Oops! Something went wrong.")
     }
 }
 
-// 
+// submit a feedback for a previous order
 const submitFeedback = async (req, res) => {
     try {
-        // construct a new feedback for an order
+        // construct a new feedback for the order
         const feedback = new Feedback({
             rating: req.body.rating, 
             comment: req.body.comment
         })
-        // search for the order to place the feedback for
-        const order = await Order.findOne( {_id: req.params.orderNumber})
+        // search for the order to place the feedback in
+        const order = await Order.findOne({
+            customerID: req.user._id, 
+            orderNumber: req.params.orderNumber
+        })
         // order not found in database
         if (order === null) {
             return res.status(404).send("Order not found.")
@@ -224,6 +253,8 @@ const submitFeedback = async (req, res) => {
         // add the feedback to the order and save it
         order.feedback = feedback
         await order.save()
+
+        req.flash("feedbackMessage", "Feedback successfully added.")
         return res.status(200).redirect("/customer/order")
     // error occured during saving
     } catch (err) {
@@ -238,7 +269,7 @@ module.exports = {
     getSnackByName, 
     getCart, 
     getOrders, 
-    getOrderByID, 
+    getOrderByNumber, 
     getFeedback, 
     selectVendor, 
     confirmOrder, 

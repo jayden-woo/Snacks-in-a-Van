@@ -23,9 +23,7 @@ const vendorSchema = new mongoose.Schema({
     location: {
         type: {
             type: String, 
-            enum: ['Point'], 
-            required : true, 
-            default: 'Point' 
+            enum: ['Point']
         }, 
         // format: [ longitude (-180 to 180), latitude (-90 to 90) ]
         coordinates: 
@@ -41,6 +39,7 @@ const vendorSchema = new mongoose.Schema({
 }, {
     collection: 'vendors' 
 })
+
 // create an index for distance querying in the future
 vendorSchema.index({location: '2dsphere'})
 
