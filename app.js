@@ -1,6 +1,5 @@
 // packages or schema imports
 const cookieParser = require('cookie-parser')
-const cors = require('cors')
 const express = require('express')
 const flash = require('connect-flash-plus')
 const helmet = require('helmet')
