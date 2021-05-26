@@ -29,7 +29,8 @@ const getVendorsList = (req, res) => {
         if (err) {
             return res.status(400).send("Oops! Something went wrong.")
         }
-        return res.status(200).send(result.lean())
+        // don't need to use lean as pipeline output is already js object
+        return res.status(200).send(result)
     })
 }
 
@@ -66,15 +67,18 @@ const getCart = (req, res) => {
     return res.status(200).send("<h1> Cart <\h1>")
 }
 
-// get all the orders' details
+// get all the orders details
 const getOrders = async (req, res) => {
     try {
-        const orders = await Order.find( {customerID: req.user._id} )
-            .populate({
+        const orders = await Order
+            .find({
+                customerID: req.user._id
+            }).populate({
                 path: "vendorID",
                 select: "username"
             }).populate({
                 path: "snacks.snackID"
+            // sort by newest order first
             }).sort({
                 updatedAt: -1
             }).lean()
@@ -85,11 +89,13 @@ const getOrders = async (req, res) => {
     }
 }
 
-// get details of one order by its ID
-const getOrderByID = async (req, res) => {
+// get details of one order by its order number
+const getOrderByNumber = async (req, res) => {
     try {
-        const order = await Order.findById(req.params.id)
-            .populate({
+        const order = await Order
+            .findOne({
+                orderNumber: req.params.orderNumber
+            }).populate({
                 path: "vendorID",
                 select: "username"
             }).populate({
@@ -111,7 +117,7 @@ const getFeedback = (req, res) => {
 const selectVendor = async (req, res) => {
     try {
         // search for the vendor
-        const vendor = await Vendor.findOne( { userID: req.body.userID } )
+        const vendor = await Vendor.findOne({ userID: req.body.userID })
         // vendor not found in database
         if (vendor === null) {
             return res.status(404).send("Oops! Vendor not found.")
@@ -163,7 +169,7 @@ const confirmOrder = async (req, res) => {
 //
 const updateOrder = async (req, res) => {
     try {
-        const order = await Order.findOne( {_id: req.params.orderNumber} )
+        const order = await Order.findOne({ _id: req.params.orderNumber })
         // snack not found in database
         if (order === null) {
             return res.status(404).send("Order does not exist.")
@@ -193,7 +199,7 @@ const updateOrder = async (req, res) => {
 // cancel an order by changing its status
 const cancelOrder = async (req, res) => {
     try {
-        const order = await Order.findOne( {_id: req.params.orderNumber} )
+        const order = await Order.findOne({ _id: req.params.orderNumber })
         // snack not found in database
         if (order === null) {
             return res.status(404).send("Order does not exist.")
@@ -216,7 +222,7 @@ const submitFeedback = async (req, res) => {
             comment: req.body.comment
         })
         // search for the order to place the feedback for
-        const order = await Order.findOne( {_id: req.params.orderNumber})
+        const order = await Order.findOne({ _id: req.params.orderNumber })
         // order not found in database
         if (order === null) {
             return res.status(404).send("Order not found.")
@@ -238,7 +244,7 @@ module.exports = {
     getSnackByName, 
     getCart, 
     getOrders, 
-    getOrderByID, 
+    getOrderByNumber, 
     getFeedback, 
     selectVendor, 
     confirmOrder, 
