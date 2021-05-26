@@ -18,21 +18,26 @@ const getFrontPage = (req, res) => {
 // get all the outstanding order details
 const getOrders = (req, res) => {
     Order.aggregate()
+        // find the outstanding orders associated with the current vendor
         .match({
             vendorID: req.user._id, 
             status: { $in: ["Placed", "Fulfilled"] }
+        // add the customer given name
         }).lookup({
             from: "customers", 
             localField: "customerID", 
             foreignField: "_id", 
             as: "customerID"
+        // unpack it from an array of one item
         }).unwind(
             "customerID"
+        // add the snack details
         ).lookup({
             from: "snacks", 
             localField: "snacks.snackID", 
             foreignField: "_id", 
             as: "snacks"
+        // remove unnecessary fields
         }).project({
             _id: 0, 
             customerID: {
@@ -44,7 +49,7 @@ const getOrders = (req, res) => {
                 updatedAt: 0,
                 __v: 0
             }
-        // add the duration left before discount need to be applied (in milliseconds)
+        // add the duration left before discount must be given (in milliseconds)
         }).addFields({
             duration: {
                 $subtract: [
@@ -55,11 +60,12 @@ const getOrders = (req, res) => {
                     ] }
                 ]
             }
-        // sort by oldest order first then "placed" order before "fulfilled"
+        // sort by oldest order first then "placed" order comes before "fulfilled"
         }).sort({
             updatedAt: "asc", 
             status: "desc"
         })
+        // execute the pipeline
         .exec( (err, result) => {
             if (err) {
                 return res.status(400).send("Oops! Something went wrong.")
@@ -69,42 +75,53 @@ const getOrders = (req, res) => {
         })
 }
 
-//
+// get details of one order by its order number
 const getOrderByNumber = async (req, res) => {
     try {
         const order = await Order
+            // find the given order that is associated with the current vendor
             .findOne({
                 vendorID: req.user._id, 
                 orderNumber: req.params.orderNumber
+            // add the customer given name
             }).populate({
                 path: "customerID", 
                 select: "firstName"
+            // add the snack details
             }).populate({
                 path: "snacks.snackID"
+            // convert to a js object
             }).lean()
+        // add the duration left before discount must be given (in milliseconds)
         order.duration = DISCOUNT_TIME - (new Date() - new Date(order.updatedAt))
         return res.status(200).send(order)
+    // error occurred during query
     } catch (err) {
         return res.status(400).send("Oops! Something went wrong.")
     }
 }
 
-//
+// get the order history with picked-up and cancelled orders
 const getOrderHistory = async (req, res) => {
     try {
         const orders = await Order
+            // find the previous orders associated with the current vendor
             .find({
                 vendorID: req.user._id, status: {$in: ["Picked-Up", "Cancelled"]}
+            // add the customer given name
             }).populate({
                 path: "customerID", 
                 select: "firstName"
+            // add the snack details
             }).populate({
                 path: "snacks.snackID"
             // sort by newest order first
             }).sort({
                 updatedAt: -1
+            // convert to a js object
             }).lean()
         return res.status(200).send(orders)
+    // error occurred during query
     } catch (err) {
         return res.status(400).send("Oops! Something went wrong.")
     }
@@ -149,7 +166,7 @@ const getOrderHistory = async (req, res) => {
 // }
 
 
-//
+// mark an order as fulfilled and apply discount if time limit passed
 const markFulfilled = async (req, res) => {
     try {
         // search for the order from the database
@@ -171,15 +188,17 @@ const markFulfilled = async (req, res) => {
         if ((new Date() - new Date(order.updatedAt)) >= DISCOUNT_TIME) {
             order.discountApplied = true
         }
+        // mark the order as fulfilled and save it in the database
         order.status = "Fulfilled"
         await order.save()
         return res.status(200).send("Order has been fulfilled.")
+    // error occurred during saving
     } catch (err) {
         return res.status(400).send("Oops! Something went wrong.")
     }
 }
 
-//
+// mark an order as picked up
 const markPickedUp = async (req, res) => {
     try {
         // search for the order from the database
@@ -197,15 +216,17 @@ const markPickedUp = async (req, res) => {
             req.flash("updateMessage", "Order could not be picked up.")
             return res.status(400).send("Sorry, the order could not be picked up.")
         }
+        // mark an order as picked up and save it in the database
         order.status = "Picked-Up"
         await order.save()
         return res.status(200).send("Order has been picked up.")
+    // error occurred during saving
     } catch (err) {
         return res.status(400).send("Oops! Something went wrong.")
     }
 }
 
-// remember to export the functions
+// export the controller functions
 module.exports = {
     getFrontPage,
     getOrders, 

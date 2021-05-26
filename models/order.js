@@ -27,6 +27,7 @@ const feedbackSchema = new mongoose.Schema({
     }
 })
 
+// the possible status of an order
 status = ["Placed", "Fulfilled", "Picked-Up", "Cancelled"]
 
 // define the schema for one order in the orders database

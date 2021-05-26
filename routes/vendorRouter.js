@@ -37,7 +37,7 @@ vendorRouter.get('/history', isVendor, vendorController.getOrderHistory)
 
 /* ----- POST routes ----- */
 
-// handle the POST request for the login page
+// handle the POST request to log in
 vendorRouter.post('/login', isLoggedOut, passport.authenticate('vendor-login', {
     successRedirect: '/vendor', 
     failureRedirect: '/vendor/login', 
@@ -45,7 +45,7 @@ vendorRouter.post('/login', isLoggedOut, passport.authenticate('vendor-login', {
     successFlash: true
 }))
 
-// handle the POST request for the signup page
+// handle the POST request to sign up
 vendorRouter.post('/signup', isLoggedOut, passport.authenticate('vendor-signup', {
     successRedirect: '/vendor/login', 
     failureRedirect: '/vendor/signup', 
@@ -53,18 +53,18 @@ vendorRouter.post('/signup', isLoggedOut, passport.authenticate('vendor-signup',
     successFlash: true
 }))
 
-// handle the POST request for logging out
+// handle the POST request to log out
 vendorRouter.post('/logout', isVendor, userController.logOut)
 
-// handle the POST request for changing the account details
+// handle the POST request to change the account details
 vendorRouter.post('/account', isVendor, userController.vendorUpdate)
 
 /* ----- PUT routes ----- */
 
-// // handle the PUT request for marking an order as fulfilled
+// handle the PUT request for marking an order as fulfilled
 vendorRouter.put('/order/:orderNumber/fulfilled', isVendor, vendorController.markFulfilled)
 
-// // handle the PUT request for marking an order as picked up
+// handle the PUT request for marking an order as picked up
 vendorRouter.put('/order/:orderNumber/pickedup', isVendor, vendorController.markPickedUp)
 
 // export the router

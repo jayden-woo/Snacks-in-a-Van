@@ -50,7 +50,7 @@ customerRouter.get('/order/:orderNumber/feedback', isCustomer, customerControlle
 // handle the POST request to select a vendor
 customerRouter.post('/', customerController.selectVendor)
 
-// handle the POST request for the login page
+// handle the POST request to log in
 customerRouter.post('/login', isLoggedOut, passport.authenticate('customer-login', {
     successRedirect: '/customer', 
     failureRedirect: '/customer/login', 
@@ -58,7 +58,7 @@ customerRouter.post('/login', isLoggedOut, passport.authenticate('customer-login
     successFlash: true
 }))
 
-// handle the POST request for the signup page
+// handle the POST request to sign up
 customerRouter.post('/signup', isLoggedOut, passport.authenticate('customer-signup', {
     successRedirect: '/customer/login', 
     failureRedirect: '/customer/signup', 
@@ -66,10 +66,10 @@ customerRouter.post('/signup', isLoggedOut, passport.authenticate('customer-sign
     successFlash: true
 }))
 
-// handle the POST request for logging out
+// handle the POST request to log out
 customerRouter.post('/logout', isCustomer, userController.logOut)
 
-// handle the POST request for changing the account details
+// handle the POST request to change the account details
 customerRouter.post('/account', isCustomer, userController.customerUpdate)
 
 // handle the POST request to confirm the current order selections

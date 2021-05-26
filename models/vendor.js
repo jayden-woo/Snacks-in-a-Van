@@ -39,6 +39,7 @@ const vendorSchema = new mongoose.Schema({
 }, {
     collection: 'vendors' 
 })
+
 // create an index for distance querying in the future
 vendorSchema.index({location: '2dsphere'})
 
