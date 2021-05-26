@@ -1,14 +1,42 @@
 // packages or schema imports
 const cookieParser = require('cookie-parser')
 const express = require('express')
+const flash = require('connect-flash-plus')
 const helmet = require('helmet')
+const passport = require('passport')
 const session = require('express-session')
 const app = express()
 
-// set up HTTP headers for web app security
-app.use(helmet())
+// app.use(express.static('public')) // define where static assets live
 
-// for keeping track of data in between pages
+// const exphbs = require('express-handlebars')
+
+// app.engine('hbs', exphbs({
+//     defaultlayout: 'main',
+//     extname: 'hbs',
+//     helpers: require(__dirname + "/public/js/helpers.js").helpers
+// }))
+
+// app.set('view engine', 'hbs')
+
+app.use(helmet())
+// set up HTTP headers for web app security
+// app.use(helmet({
+//     directives: {
+//         "img-src": ['self', 'https://source.unsplash.com/']
+//     }
+// }))
+// app.use(helmet({
+//     contentSecurityPolicy: {
+//         directives: {
+//             ...helmet.contentSecurityPolicy.getDefaultDirectives(),
+//             // "img-src": ["'self'", "data:", "https://source.unsplash.com/", "https://images.unsplash.com/"], 
+//             // "script-src": ["'self'", "data:", "'unsafe-inline'"]
+//         }
+//     }
+// }))
+
+// set up session to keep track of user data in between requests
 app.use(cookieParser())
 app.use(session({
     secret: "INFO30005 Web-App",
@@ -22,15 +50,21 @@ app.use(session({
     }
 }))
 
-// for reading body of requests
-app.use(express.json())
-
 // set up database
 const db = require('./models/db.js')
 
-// set up the middlewares
-const resetResponse = require('./middleware/resetResponse')
-const isLoggedIn = require('./middleware/isLoggedIn')
+// use flash to store messages
+app.use(flash())
+
+// configure the passport to handle authentication
+app.use(passport.initialize())
+app.use(passport.session())
+
+// set up the passport strategies
+require('./config/passport').configPassport(passport)
+
+// for reading body of requests
+app.use(express.json())
 
 // set up customer and vendor routes
 const customerRouter = require('./routes/customerRouter')
@@ -40,19 +74,12 @@ const vendorRouter =  require('./routes/vendorRouter')
 app.get('/', (req, res) => {
     res.send('<h1> Snack in a Van </h1>')
 });
-// handler for GET request to log out a user
-app.get('/logout', isLoggedIn, (req, res) => {
-    // kill the current session so a new session could be created on next req
-    req.session.destroy()
-    console.log("User has successfully logged out")
-    return res.status(200).json({success: true, errors: []})
-})
 
 // handler for customer and vendor requests
 // customer routes are added onto the end of '/customer'
-app.use('/customer', resetResponse, customerRouter)
+app.use('/customer', customerRouter)
 // vendor routes are added onto the end of '/vendor'
-app.use('/vendor', resetResponse, vendorRouter)
+app.use('/vendor', vendorRouter)
 
 // dynamically set the port number or use static 8080 port for local testing
 const port = process.env.PORT || 8080

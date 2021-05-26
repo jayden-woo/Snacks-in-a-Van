@@ -24,8 +24,10 @@ const snackSchema = new mongoose.Schema({
     collection: 'snacks' 
 })
 
-// export the snack model to be used by the controllers
+// compile the schema into a model
 const Snack = mongoose.model("Snack", snackSchema)
+
+// export the model to be used by other files
 module.exports = {
     Snack
 }
