@@ -28,5 +28,4 @@ db.once("open", async () => {
 require("./customer")
 require("./order")
 require("./snack")
-require("./user")
 require("./vendor")
