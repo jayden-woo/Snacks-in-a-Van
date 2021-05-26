@@ -152,7 +152,7 @@ const confirmOrder = async (req, res) => {
         })
         await order.save()
 
-        req.flash("orderMessage", "Order successfully placed.")
+        req.flash("orderMessage", "Order has been successfully placed.")
         return res.status(200).redirect("/customer/order")
     // error occurred during saving
     } catch {
@@ -160,10 +160,40 @@ const confirmOrder = async (req, res) => {
     }
 }
 
+//
+const updateOrder = async (req, res) => {
+    try {
+        const order = await Order.findOne( {_id: req.params.orderNumber} )
+        // snack not found in database
+        if (order === null) {
+            return res.status(404).send("Order does not exist.")
+        }
+        // create a new list containing all the snacks and quantity
+        const orderList = req.body.orderList
+        const lineItems = []
+        for (i=0; i<req.body.list.length; i++) {
+            lineItems.push(new OrderLine({
+                snackID: orderList[i]._id, 
+                quantity: orderList[i].quantity 
+            }))
+        }
+        // change the items and the price in the order and save it
+        order.snacks = lineItems
+        order.total = req.body.price
+        await order.save()
+
+        req.flash("orderMessage", "Order successfully updated.")
+        return res.status(200).send("Order has been successfully cancelled.")
+    // error occurred during saving
+    } catch (err) {
+        return res.status(400).send("Oops! Something went wrong.")
+    }
+}
+
 // cancel an order by changing its status
 const cancelOrder = async (req, res) => {
     try {
-        const order = await Order.findOne( {_id: req.params.id} )
+        const order = await Order.findOne( {_id: req.params.orderNumber} )
         // snack not found in database
         if (order === null) {
             return res.status(404).send("Order does not exist.")
@@ -186,7 +216,7 @@ const submitFeedback = async (req, res) => {
             comment: req.body.comment
         })
         // search for the order to place the feedback for
-        const order = await Order.findOne( {_id: req.params.id})
+        const order = await Order.findOne( {_id: req.params.orderNumber})
         // order not found in database
         if (order === null) {
             return res.status(404).send("Order not found.")
@@ -212,6 +242,7 @@ module.exports = {
     getFeedback, 
     selectVendor, 
     confirmOrder, 
+    updateOrder, 
     cancelOrder, 
     submitFeedback
 }
