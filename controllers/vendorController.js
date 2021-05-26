@@ -3,7 +3,6 @@ const mongoose = require("mongoose")
 // import the models used
 const Vendor = mongoose.model("Vendor")
 const Order = mongoose.model("Order")
-const User = mongoose.model("User")
 
 // TODO: IMPLEMET LOGIN
 

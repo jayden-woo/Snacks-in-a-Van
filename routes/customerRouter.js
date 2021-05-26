@@ -1,14 +1,16 @@
 const express = require('express')
+const passport = require('passport')
 
 // add the customer router 
 const customerRouter = express.Router()
 
-// add the customer controller
+// add the user and customer controller
+const userController = require('../controllers/userController.js')
 const customerController = require('../controllers/customerController.js')
 
 // add the required middlewares
 const isLoggedIn = require('../middleware/isLoggedIn')
-const getOrder = require('../middleware/getOrder')
+const isLoggedOut = require('../middleware/isLoggedOut')
 
 /* ----- GET routes ----- */
 
@@ -16,16 +18,13 @@ const getOrder = require('../middleware/getOrder')
 customerRouter.get('/', customerController.getVendorsList)
 
 // handle the GET request for the login page
-customerRouter.get('/login', customerController.getLogIn)
-
-// handle the GET request for the logging out
-customerRouter.get('/logout', isLoggedIn, customerController.logOut)
+customerRouter.get('/login', isLoggedOut, userController.getCustomerLogIn)
 
 // handle the GET request for the signup page
-customerRouter.get('/signup', customerController.getSignUp)
+customerRouter.get('/signup', isLoggedOut, userController.getCustomerSignUp)
 
 // handle the GET request for the account details page
-customerRouter.get('/account', isLoggedIn, customerController.getAccount)
+customerRouter.get('/account', isLoggedIn, userController.getAccount)
 
 // handle the GET request to get the menu
 customerRouter.get('/menu', customerController.getMenu)
@@ -33,8 +32,17 @@ customerRouter.get('/menu', customerController.getMenu)
 // handle the GET request to get details of one snack
 customerRouter.get('/menu/:snackName', customerController.getSnackByName)
 
-// handle the GET request to get all the submitted orders' details
+// handle the GET request to get the current cart
+customerRouter.get('/cart', isLoggedIn, customerController.getCart)
+
+// handle the GET request to get all the orders' details
 customerRouter.get('/order', isLoggedIn, customerController.getOrders)
+
+// handle the GET request to get details of one order
+customerRouter.get('/order/:id', isLoggedIn, customerController.getOrderByID)
+
+// handle the GET request to get the feedback page
+customerRouter.get('/order/:id/feedback', isLoggedIn, customerController.getSnackByName)
 
 /* ----- POST routes ----- */
 
@@ -42,21 +50,37 @@ customerRouter.get('/order', isLoggedIn, customerController.getOrders)
 customerRouter.post('/', customerController.selectVendor)
 
 // handle the POST request for the login page
-customerRouter.post('/login', customerController.logIn)
+customerRouter.post('/login', isLoggedOut, passport.authenticate('customer-login', {
+    successRedirect: '/', 
+    failureRedirect: '/customer/login', 
+    failureFlash: true, 
+    successFlash: true
+}))
 
 // handle the POST request for the signup page
-customerRouter.post('/signup', customerController.signUp)
+customerRouter.post('/signup', isLoggedOut, passport.authenticate('customer-signup', {
+    successRedirect: '/customer/login', 
+    failureRedirect: '/customer/signup', 
+    failureFlash: true, 
+    successFlash: true
+}))
+
+// handle the POST request for the logging out
+customerRouter.post('/logout', isLoggedIn, userController.logOut)
 
 // handle the POST request for changing the account details
-customerRouter.post('/account', isLoggedIn, customerController.updateDetails)
+customerRouter.post('/account', isLoggedIn, userController.customerUpdate)
 
-// handle the POST request to start a new order by add a snack to order
-customerRouter.post('/menu/:snackName', isLoggedIn, getOrder, customerController.addSnackToOrder)
+// handle the POST request to confirm the current order selections
+customerRouter.post('/menu/order', isLoggedIn, customerController.confirmOrder)
 
 /* ----- PUT routes ----- */
 
-// handle the PUT request to confirm and submit the current order
-customerRouter.put('/order', isLoggedIn, getOrder, customerController.confirmOrder)
+// handle the PUT request to cancel an order
+customerRouter.put('/order/:id', isLoggedIn, customerController.cancelOrder)
+
+// handle the PUT request to submit a feedback for the order
+customerRouter.put('/order/:id/feedback', isLoggedIn, customerController.submitFeedback)
 
 // export the router
 module.exports = customerRouter

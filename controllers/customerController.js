@@ -3,20 +3,9 @@ const mongoose = require("mongoose")
 // import the models used
 const Snack = mongoose.model("Snack")
 const OrderLine = mongoose.model("OrderLine")
+const Feedback = mongoose.model("Feedback")
 const Order = mongoose.model("Order")
-const User = mongoose.model("User")
-const Customer = mongoose.model("Customer")
 const Vendor = mongoose.model("Vendor")
-
-// regex for user input validation
-// a name can only be alphabetic characters
-const re_name = /^[a-zA-Z ]+$/
-// a standard email regex
-const re_email = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
-// a username can only contain alphanumeric characters and underscores
-const re_username = /^[a-zA-Z0-9_]+$/
-// a password must contain a digit, a special character, a lowercase, an uppercase, and between 8-20 characters
-const re_password = /^(?=.*\d)(?=.*[.!@#$%^&*])(?=.*[a-z])(?=.*[A-Z])[a-zA-Z0-9!@#$%^&*]{8,20}$/
 
 // global constants to be tweaked in the future if needed
 // number of vendors to be displayed
@@ -38,66 +27,20 @@ const getVendorsList = (req, res) => {
     ]).exec( (err, result) => {
         // error occured during query
         if (err) {
-            req.session.response.success = false
-            req.session.response.errors.push(err)
-            req.session.save()
-            return res.status(400).json(req.session.response)
+            return res.status(400).send("Oops! Something went wrong.")
         }
-        return res.status(req.session.status).send(result)
+        return res.status(200).send(result.lean())
     })
-}
-
-// get the login page
-const getLogIn = (req, res) => {
-    return res.status(req.session.status).send('<h1> Log In Page <\h1>')
-}
-
-// log out a user
-const logOut = (req, res) => {
-    // kill the current session so a new session could be created on next req
-    req.session.destroy()
-    console.log("Customer has successfully logged out")
-    // res.redirect('login')
-    return res.status(200).json({success: true, errors: []})
-}
-
-// get the signup page
-const getSignUp = (req, res) => {
-    return res.status(req.session.status).send('<h1> Sign Up Page <\h1>')
-}
-
-// get the account details
-const getAccount = async (req, res) => {
-    try {
-        const customer = await Customer.findOne( {userID: req.session.user._id} )
-        // gather the customer details
-        const details = {
-            firstName: customer.firstName, 
-            lastName: customer.lastName, 
-            username: req.session.user.username, 
-            email: req.session.user.email
-        }
-        return res.status(req.session.status).send(details)
-    // error occured during query
-    } catch (err) {
-        req.session.response.success = false
-        req.session.response.errors.push('failed query')
-        req.session.save()
-        return res.status(400).json(req.session.response)
-    }
 }
 
 // get the menu from database
 const getMenu = async (req, res) => {
     try {
-        const menu = await Snack.find()
-        return res.status(req.session.status).send(menu)
+        const menu = await Snack.find().lean()
+        return res.status(200).send(menu)
     // error occurred during query
     } catch (err) {
-        req.session.response.success = false
-        req.session.response.errors.push('failed query')
-        req.session.save()
-        return res.status(400).json(req.session.response)
+        return res.status(400).send("Oops! Something went wrong.")
     }
 }
 
@@ -105,333 +48,170 @@ const getMenu = async (req, res) => {
 const getSnackByName = async (req, res) => {
     try {
         // search for a snack by name
-        const snack = await Snack.findOne( {name: req.params.snackName} )
+        const snack = await Snack.findOne( {name: req.params.snackName} ).lean()
         // snack not found in database
         if (snack === null) { 
-            req.session.response.success = false
-            req.session.response.errors.push('snack not found')
-            req.session.save()
-            return res.status(404).json(req.session.response)
+            return res.status(404).send("Oops! Snack not found.")
         }
         // send back snack details
-        return res.status(req.session.status).send(snack)
+        return res.status(200).send(snack)
     // error occurred during query
     } catch (err) {
-        req.session.response.success = false
-        req.session.response.errors.push('failed query')
-        req.session.save()
-        return res.status(400).json(req.session.response)
+        return res.status(400).send("Oops! Something went wrong.")
     }
 }
 
-// get all the submitted orders' details
+//
+const getCart = (req, res) => {
+    return res.status(200).send("<h1> Cart <\h1>")
+}
+
+// get all the orders' details
 const getOrders = async (req, res) => {
     try {
-        const customer = await Customer.findOne( {userID: req.session.user._id} )
-        // excludes the incomplete order
-        Order.find( {customerID: customer._id, status: {$ne: 'Ordering'}} ).populate({
-            path: "vendorID",
-            populate: {
-                path: "userID", 
-                model: "User", 
+        const orders = await Order.find( {customerID: req.user._id} )
+            .populate({
+                path: "vendorID",
                 select: "username"
-            }, 
-        }).populate({
-            path: "snacks.snackID"
-        }).exec( (err, result) => {
-            req.session.response.allOrders = result
-            return res.status(req.session.status).json(req.session.response)
-        })
+            }).populate({
+                path: "snacks.snackID"
+            }).sort({
+                updatedAt: -1
+            }).lean()
+        return res.status(200).send(orders)
     // error occurred during query
     } catch (err) {
-        req.session.response.success = false
-        req.session.response.errors.push('failed query')
-        req.session.save()
-        return res.status(400).json(req.session.response)
+        return res.status(400).send("Oops! Something went wrong.")
     }
+}
+
+// get details of one order by its ID
+const getOrderByID = async (req, res) => {
+    try {
+        const order = await Order.findById(req.params.id)
+            .populate({
+                path: "vendorID",
+                select: "username"
+            }).populate({
+                path: "snacks.snackID"
+            }).lean()
+        return res.status(200).send(order)
+    // error occurred during query
+    } catch (err) {
+        return res.status(400).send("Oops! Something went wrong.")
+    }
+}
+
+//
+const getFeedback = (req, res) => {
+    return res.status(200).send("<h1> Feedback Page <\h1>")
 }
 
 // select a vendor to order from
 const selectVendor = async (req, res) => {
-    Vendor.findOne( { userID: req.body.userID } )
-        .populate('userID')
-        .exec( (err, result) => {
-            // error occurred during query
-            if (err) {
-                req.session.response.success = false
-                req.session.response.errors.push(err)
-                req.session.save()
-                return res.status(400).json(req.session.response)
-            }
-            req.session.vendor = result
-            return res.status(req.session.status).json(req.session.response)
-        })
+    try {
+        // search for the vendor
+        const vendor = await Vendor.findOne( { userID: req.body.userID } )
+        // vendor not found in database
+        if (vendor === null) {
+            return res.status(404).send("Oops! Vendor not found.")
+        }
+        req.session.vendor = vendor
+        return res.status(200).send("Vendor selected.")
+    // error occurred during query
+    } catch (err) {
+        return res.status(400).send("Oops! Something went wrong.")
+    }
 }
 
-// sign in with either email or username and password
-const logIn = (req, res) => {
-    User.findOne( {$or: [{username: req.body.username}, {email: req.body.username}]}, async function(err, user) {
-        // couldn't find user in database
-        if (!user || err) {
-            console.log("User not found")
-            req.session.response.success = false
-            // error message = 'You have entered an invalid username or password'
-            req.session.response.errors.push('username/password invalid')
-            req.session.save()
-            // res.redirect('login')
-            return res.status(401).json(req.session.response)
-        }
-        // check if the user is a customer
-        if (await Customer.exists( {userID: user._id} )) {
-            if (!await user.comparePassword(req.body.password)) {
-                console.log("Wrong password")
-                req.session.response.success = false
-                // error message = 'You have entered an invalid username or password'
-                req.session.response.errors.push('username/password invalid')
-                req.session.save()
-                // res.redirect('login')
-                return res.status(401).json(req.session.response)
-            }
-            req.session.user = user
-            req.session.save()
-            console.log("Customer has successfully logged in")
-            // res.redirect('login')
-            return res.status(req.session.status).json(req.session.response)
-        } else {
-            console.log("User is not a customer")
-            req.session.response.success = false
-            // error message = 'You have entered an invalid username or password'
-            req.session.response.errors.push('username/password invalid')
-            req.session.save()
-            // res.redirect('login')
-            return res.status(401).json(req.session.response)
-        }
-    })
-}
-
-// validate the input for correct structures and unique username and email
-const validateInput = async (req) => {
-    // validate first name
-    if (!re_name.test(req.body.firstName)) {
-        console.log("FirstName is invalid")
-        // error message = 'Your name should only contain spaces, lowercase, and uppercase letters.'
-        req.session.response.errors.push("firstName invalid")
-    }
-    // validate last name
-    if (!re_name.test(req.body.lastName)) {
-        console.log("LastName is invalid")
-        // error message = 'Your name should only contain spaces, lowercase, and uppercase letters.'
-        req.session.response.errors.push("lastName invalid")
-    }
-    // validate username
-    if (!re_username.test(req.body.username)) {
-        console.log("Username is invalid")
-        // error message = 'Your username should only contain numbers, underscores, lowercase, and uppercase letters.'
-        req.session.response.errors.push("username invalid")
-    }
-    // validate email
-    if (!re_email.test(req.body.email)) {
-        console.log("Email is invalid")
-        // error message = 'Please enter a valid email address.'
-        req.session.response.errors.push("email invalid")
-    }
-    // validate password
-    if (!re_password.test(req.body.password)) {
-        console.log("Password is invalid")
-        // error message = 'Your password should contain at least 1 lowercase letter, 1 uppercase letter, 1 number, 1 special character, and be between 8 to 20 characters in length.'
-        req.session.response.errors.push("password invalid")
-    }
-
-    // check if any validation errors occured
-    if (req.session.response.errors.length != 0) {
-        req.session.status = 400
-        req.session.response.success = false
-        req.session.save()
-        return req.session.response.success
-    }
-    
-    // check if the email is already in use
-    if (await User.findOne( {email: req.body.email} )) {
-        // check if user is logged in
-        if (!req.session.user || req.body.email != req.session.user.email) {
-            console.log("Email is taken")
-            // error message = 'The email address you have entered is already associated with another account.'
-            req.session.response.errors.push("email conflict")
-        }
-    }
-    // check if the username is already in use
-    if (await User.findOne( {username: req.body.username} )) {
-        // check if user is logged in
-        if (!req.session.user || req.body.username != req.session.user.username) {
-            console.log("Username is taken")
-            // error message = 'The username you have entered is already associated with another account.'
-            req.session.response.errors.push("username conflict")
-        }
-    }
-
-    // check if any conflicts occured
-    if (req.session.response.errors.length != 0) {
-        req.session.status = 409
-        req.session.response.success = false
-    }
-    req.session.save()
-    return req.session.response.success
-}
-
-// register a new customer
-const signUp = async (req, res) => {
-    // check if the input is correctly formed and if the username or email is taken
-    if (!await validateInput(req)) {
-        // res.redirect('signup')
-        return res.status(req.session.status).json(req.session.response)
-    }
-
-    // create a new user
-    const user = new User({
-        username: req.body.username, 
-        password: req.body.password, 
-        email: req.body.email.toLowerCase()
-    })
-    // save user to database
-    await user.save((err) => {
-        if (err) {
-            req.session.response.success = false
-            req.session.response.errors.push(err)
-            req.session.save()
-            // res.redirect('signup')
-            return res.status(400).json(req.session.response)
-        }
-    })
-
-    // create a new customer entry
-    const customer = new Customer({
-        userID: user._id, 
-        firstName: req.body.firstName, 
-        lastName: req.body.lastName
-    })
-    // save customer to database
-    await customer.save((err) => {
-        if (err) {
-            req.session.response.success = false
-            req.session.response.errors.push(err)
-            req.session.save()
-            // res.redirect('signup')
-            return res.status(400).json(req.session.response)
-        }
-    })
-
-    // res.redirect('login')
-    return res.status(req.session.status).json(req.session.response)
-}
-
-// update the details of a customer
-const updateDetails = async (req, res) => {
-    // check if the input is correctly formed and if the username or email is taken
-    if (!await validateInput(req)) {
-        // res.redirect('account')
-        return res.status(req.session.status).json(req.session.response)
-    }
-
-    const user = await User.findOne( {_id: req.session.user._id} )
-    // check if old password is supplied
-    if (req.body.oldPassword) {
-        // check if old password matches
-        if (!await user.comparePassword(req.body.oldPassword)) {
-            console.log("Wrong old password")
-            req.session.response.success = false
-            req.session.response.errors.push('old password invalid')
-            req.session.save()
-            return res.status(401).json(req.session.response)
-        }
-        // updating password
-        user.set('password', req.body.password)
-        user.save( (err) => {
-            if (err) throw err;
-        })
-    }
-
-    // updating username and email
-    await User.updateOne( {_id: req.session.user._id}, {username: req.body.username, email: req.body.email} )
-
-    // updating first name and last name
-    await Customer.updateOne( {userID: req.session.user._id}, {firstName: req.body.firstName, lastName: req.body.lastName} )
-
-    // res.redirect('account')
-    return res.status(req.session.status).json(req.session.response)
-}
-
-// add a snack to a new or unsubmitted order
-const addSnackToOrder = async (req, res) => {
-    // get the snack to be added and construct the new order line item
-    const snack = await Snack.findOne( {name: req.params.snackName} )
-    const lineItem = new OrderLine({
-        snackID: snack._id, 
-        quantity: req.body.quantity 
-    })
-
-    // add to existing order if present
-    if (req.session.order) {
-        req.session.order.snacks.push(lineItem)
-        req.session.order.save()
-        // res.redirect('/customer/menu')
-        return res.status(req.session.status).json(req.session.response)
-    }
-    // else construct a new order
-    const customer = await Customer.findOne( {userID: req.session.user._id} )
-    const orderNumber = await Order.countDocuments()
-    const order = new Order({
-        orderNumber: orderNumber, 
-        // TEMP uses a random vendor id for now
-        // vendorID: req.session.vendor._id, 
-        vendorID: "6090ad1b432359dbb986ed79", 
-        customerID: customer._id, 
-        snacks: [lineItem]
-    })
-    // save the new order to the orders database
-    order.save( (err) => {
-        if (err) throw err;
-    })
-
-    // save the order in the cookies
-    req.session.order = order
-    req.session.save()
-    // res.redirect('/customer/menu')
-    return res.status(req.session.status).json(req.session.response)
-}
 
 // confirm the current order selections
-const confirmOrder = (req, res) => {
-    // order is missing or not created yet
-    if (!req.session.order) {
-        req.session.response.success = false
-        // error message 'Your cart is empty / Order not found.'
-        req.session.response.errors.push('order not found')
-        // res.redirect('order')
-        return res.status(400).json(req.session.response)
+const confirmOrder = async (req, res) => {
+    try {
+        // check if a vendor has been selected before
+        if (!req.session.vendor) {
+            return res.status(422).send("Please chose a vendor first.")
+        }
+        // create a list containing all the snacks and quantity
+        const orderList = req.body.orderList
+        const lineItems = []
+        for (i=0; i<req.body.list.length; i++) {
+            lineItems.push(new OrderLine({
+                snackID: orderList[i]._id, 
+                quantity: orderList[i].quantity 
+            }))
+        }
+        // construct a new order and save it to database
+        const orderNumber = await Order.countDocuments()
+        const order = new Order({
+            orderNumber: orderNumber, 
+            vendorID: req.session.vendor._id, 
+            customerID: req.user._id, 
+            snacks: lineItems, 
+            total: req.body.price
+        })
+        await order.save()
+
+        req.flash("orderMessage", "Order successfully placed.")
+        return res.status(200).redirect("/customer/order")
+    // error occurred during saving
+    } catch {
+        return res.status(400).send("Oops! Something went wrong.")
     }
-    // update the status to 'Placed'
-    req.session.order.set('status', 'Placed')
-    req.session.order.save( (err) => {
-        if (err) throw err;
-    })
-    // res.redirect('order')
-    return res.status(req.session.status).json(req.session.response)
+}
+
+// cancel an order by changing its status
+const cancelOrder = async (req, res) => {
+    try {
+        const order = await Order.findOne( {_id: req.params.id} )
+        // snack not found in database
+        if (order === null) {
+            return res.status(404).send("Order does not exist.")
+        }
+        // change the order status to cancelled and save it
+        order.status = "Cancelled"
+        await order.save()
+        return res.status(200).send("Order has been successfully cancelled.")
+    } catch (err) {
+        return res.status(400).send("Oops! Something went wrong.")
+    }
+}
+
+// 
+const submitFeedback = async (req, res) => {
+    try {
+        // construct a new feedback for an order
+        const feedback = new Feedback({
+            rating: req.body.rating, 
+            comment: req.body.comment
+        })
+        // search for the order to place the feedback for
+        const order = await Order.findOne( {_id: req.params.id})
+        // order not found in database
+        if (order === null) {
+            return res.status(404).send("Order not found.")
+        }
+        // add the feedback to the order and save it
+        order.feedback = feedback
+        await order.save()
+        return res.status(200).redirect("/customer/order")
+    // error occured during saving
+    } catch (err) {
+        return res.status(400).send("Oops! Something went wrong.")
+    }
 }
 
 // export the controller functions
 module.exports = {
     getVendorsList, 
-    getLogIn, 
-    logOut, 
-    getSignUp, 
-    getAccount, 
     getMenu, 
     getSnackByName, 
+    getCart, 
     getOrders, 
+    getOrderByID, 
+    getFeedback, 
     selectVendor, 
-    logIn, 
-    signUp, 
-    updateDetails, 
-    addSnackToOrder, 
-    confirmOrder
+    confirmOrder, 
+    cancelOrder, 
+    submitFeedback
 }

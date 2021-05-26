@@ -1,12 +1,21 @@
 const mongoose = require("mongoose")
+const bcrypt = require("bcryptjs")
+const SALT_WORK_FACTOR = 10
 
 // define the schema for a customer in the customers database
 const customerSchema = new mongoose.Schema({
-    userID: {
-        type: mongoose.Schema.Types.ObjectId, 
-        ref: 'User', 
-        required: true, 
-        unique: true
+    email: {
+        type: String,
+        required: 'Email address is required', 
+        unique: true,
+        trim: true, 
+        lowercase: true, 
+        match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, 'Please fill a valid email address']
+    }, 
+    password: {
+        type: String, 
+        required : 'Password is required', 
+        trim: true
     }, 
     firstName: {
         type: String, 
@@ -26,6 +35,21 @@ const customerSchema = new mongoose.Schema({
     collection: 'customers' 
 })
 
-// export the customer model to be used by the controllers
+// generate a hash for the password
+customerSchema.methods.generateHash = function(password) {
+    return bcrypt.hashSync(password, bcrypt.genSaltSync(SALT_WORK_FACTOR), null)
+}
+
+// check if password is valid
+customerSchema.methods.validPassword = function(password) {
+    return bcrypt.compareSync(password, this.password)
+}
+
+// TODO:
+// Implement user lockout for too many wrong password attempts
+
+// compile the schema into a model
 const Customer = mongoose.model("Customer", customerSchema)
+
+// export the model to be used by other files
 module.exports = Customer
