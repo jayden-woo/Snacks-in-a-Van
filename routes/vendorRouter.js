@@ -62,50 +62,10 @@ vendorRouter.post('/account', isVendor, userController.vendorUpdate)
 /* ----- PUT routes ----- */
 
 // // handle the PUT request for marking an order as fulfilled
-// vendorRouter.put('/order/:orderNumber/fulfilled', isVendor, vendorController.markFuilfilled)
+vendorRouter.put('/order/:orderNumber/fulfilled', isVendor, vendorController.markFulfilled)
 
 // // handle the PUT request for marking an order as picked up
-// vendorRouter.put('/order/:orderNumber/pickedup', isVendor, vendorController.markPickedUp)
-
-
-
-// // GET requests by userid to find one vendor 
-// vendorRouter.get('/:userID', vendorController.getVendorByUserID)
-
-// // handle the GET request for the outstanding orders of a vendor
-// // emmmmmmmmm
-// vendorRouter.get('/:vendorID/outstanding', vendorController.getOutstandingOrders)
-
-
-// // handle the POST request to add a new vendor
-// // temporarily keeping to quickly add test vendors to database
-// vendorRouter.post('/', vendorController.addVendor)
-
-// // handle the POST request to update the status of a vendor
-// vendorRouter.post('/account', isLoggedIn, vendorController.updateVendor)
-
-// // handle the POST request to update the status of an order
-// // havent test
-// vendorRouter.post('/orders/:orderNum', isLoggedIn, vendorController.updateOrderStatus)
-
-
+vendorRouter.put('/order/:orderNumber/pickedup', isVendor, vendorController.markPickedUp)
 
 // export the router
 module.exports = vendorRouter 
-
-
-// get /
-// get login
-// get signup
-// get account
-// get order
-// get order/id
-
-// post login
-// post signup
-// post logout
-// post account
-
-// put order/id/fulfilled
-// put order/id/pickedup
-

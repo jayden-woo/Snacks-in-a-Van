@@ -74,6 +74,7 @@ const getOrderByNumber = async (req, res) => {
     try {
         const order = await Order
             .findOne({
+                vendorID: req.user._id, 
                 orderNumber: req.params.orderNumber
             }).populate({
                 path: "customerID", 
@@ -110,130 +111,97 @@ const getOrderHistory = async (req, res) => {
 }
 
 
-
-
-
-
-
-// get all the vendors currently in the database
-const getAllVendors = async (req, res) => {
-    try {
-        const vendors = await Vendor.find( {}, {_id: false} )
-        return res.send(vendors)
-    } catch (err) {
-        return res.status(400).json({error: "Database query failed"})
-    }
-}
-
-// get the current status of a vendor 
-const getVendorByUserID = async (req, res) => {
-    try {
-        const vendor = await Vendor.findOne( {"userID": req.params.userID} , {_id: false})
-        // no vendor was found in database
-        if (vendor === null) { 
-            return res.status(404).json({error: "Vendor not found"})
-        }
-        return res.status(200).send(vendor)
-    } catch (err) { 
-        return res.status(400).json({error: "Database query failed"})
-    }
-}
-
-
-
-
-// // add a new vendor
+// // TEMP create 10 vendors with random locations and ids
+// // create random mongoIDs
+// const mongoObjectId = function () {
+//     var timestamp = (new Date().getTime() / 1000 | 0).toString(16)
+//     return timestamp + 'xxxxxxxxxxxxxxxx'.replace(/[x]/g, function() {
+//         return (Math.random() * 16 | 0).toString(16);
+//     }).toLowerCase()
+// }
 // const addVendor = async (req, res) => {
-//     // construct a new vendor object from body of the POST request
-//     const vendor = await new Vendor(req.body)
-//     // save the new vendor to the vendors database
-//     vendor.save( (err, result) => {
-//         // error occured during saving of a new vendor
-//         if (err) res.send(err)
-//         // send back vendor details for checking
-//         res.send(result)
-//     })
+//     const coordinates = [
+//         [144.953552, -37.816904],   // Location 1
+//         [144.967131, -37.817651],   //          2
+//         [144.960535, -37.802159],   //          3
+//         [144.956983, -37.813893],   //          4
+//         [144.955188, -37.808538],   //          5
+//         [144.960482, -37.804329],   //          6
+//         [144.962324, -37.799144],   //          7
+//         [144.970075, -37.785843],   //          8
+//         [144.987312, -37.790795],   //          9
+//         [144.971927, -37.811552]    //          10
+//     ]
+//     for (let i=1; i<=10; i++) {
+//         let vendor = new Vendor({
+//             userID: mongoObjectId(), 
+//             isOnline: [3,6,9].includes(i) ? false : true, 
+//             location: {
+//                 coordinates: coordinates[i-1]
+//             }, 
+//             textAddress: "Location " + i
+//         })
+//         vendor.save( (err) => {
+//             if (err) throw err;
+//         })
+//     }
+//     return res.send(await Vendor.find())
 // }
 
 
-// TEMP create 10 vendors with random locations and ids
-// create random mongoIDs
-const mongoObjectId = function () {
-    var timestamp = (new Date().getTime() / 1000 | 0).toString(16)
-    return timestamp + 'xxxxxxxxxxxxxxxx'.replace(/[x]/g, function() {
-        return (Math.random() * 16 | 0).toString(16);
-    }).toLowerCase()
-}
-const addVendor = async (req, res) => {
-    const coordinates = [
-        [144.953552, -37.816904],   // Location 1
-        [144.967131, -37.817651],   //          2
-        [144.960535, -37.802159],   //          3
-        [144.956983, -37.813893],   //          4
-        [144.955188, -37.808538],   //          5
-        [144.960482, -37.804329],   //          6
-        [144.962324, -37.799144],   //          7
-        [144.970075, -37.785843],   //          8
-        [144.987312, -37.790795],   //          9
-        [144.971927, -37.811552]    //          10
-    ]
-    for (let i=1; i<=10; i++) {
-        let vendor = new Vendor({
-            userID: mongoObjectId(), 
-            isOnline: [3,6,9].includes(i) ? false : true, 
-            location: {
-                coordinates: coordinates[i-1]
-            }, 
-            textAddress: "Location " + i
-        })
-        vendor.save( (err) => {
-            if (err) throw err;
-        })
-    }
-    return res.send(await Vendor.find())
-}
-
-
-// update the status of a vendor
-const updateVendor = async (req, res) => {
-    const {isOnline, latitude, longitude, textAddress} = req.body
+//
+const markFulfilled = async (req, res) => {
     try {
-        // change the status if it is in the request body
-        if ("isOnline" in req.body){
-            console.log("Changing isOnline to :", isOnline)
-            await Vendor.updateOne({userID: req.session.user._id}, {isOnline: isOnline}) 
+        // search for the order from the database
+        const order = await Order.findOne({
+            vendorID: req.user._id, 
+            orderNumber: req.params.orderNumber
+        })
+        // order not found in database
+        if (order === null) {
+            req.flash("updateMessage", "Order does not exist.")
+            return res.status(400).send("Sorry, we could not find the order in our database.")
         }
-        // change the location of the vendor's van if it is in the request body
-        if (latitude && longitude) {
-            console.log("Changing location to :",latitude, longitude)
-            await Vendor.updateOne({userID: req.session.user._id}, {latitude:latitude, longitude:longitude}) 
+        // order has already been fulfilled or cancelled
+        if (order.status != "Placed") {
+            req.flash("updateMessage", "Order could not be fulfilled.")
+            return res.status(400).send("Sorry, the order could not be fulfilled.")
         }
-        if(textAddress) {
-            console.log("Changing text address to: ", textAddress)
-            await Vendor.updateOne({userID: req.session.user._id}, {textAddress: textAddress}) 
+        // check if the time limit for discount has passed
+        if ((new Date() - new Date(order.updatedAt)) >= DISCOUNT_TIME) {
+            order.discountApplied = true
         }
-        // send back vendor details for checking
-        res.status(200).send(await Vendor.findOne({userID: req.session.user._id}))
-    // error occurred during the database update
+        order.status = "Fulfilled"
+        await order.save()
+        return res.status(200).send("Order has been fulfilled.")
     } catch (err) {
-        res.status(400).json({error: "Database update failed"})
+        return res.status(400).send("Oops! Something went wrong.")
     }
 }
 
-// update the status of a current order
-const updateOrderStatus = async (req, res) => {
+//
+const markPickedUp = async (req, res) => {
     try {
-        if (req.body.status) {
-            // change the status of the order 
-            console.log("Changing status to", req.body.status)
-            await Order.updateOne( {orderNumber: req.params.orderNum}, {status: req.body.status} )
-            res.send("Changed Order "+req.params.orderNum+"'s status to "+req.body.status)
+        // search for the order from the database
+        const order = await Order.findOne({
+            vendorID: req.user._id, 
+            orderNumber: req.params.orderNumber
+        })
+        // order not found in database
+        if (order === null) {
+            req.flash("updateMessage", "Order does not exist.")
+            return res.status(400).send("Sorry, we could not find the order in our database.")
         }
-    }
-    // error occurred during the database update
-    catch (err) {
-        res.status(400) 
-        res.send("Database update failed")
+        // order has already been cancelled or not ready yet
+        if (order.status != "Fulfilled") {
+            req.flash("updateMessage", "Order could not be picked up.")
+            return res.status(400).send("Sorry, the order could not be picked up.")
+        }
+        order.status = "Picked-Up"
+        await order.save()
+        return res.status(200).send("Order has been picked up.")
+    } catch (err) {
+        return res.status(400).send("Oops! Something went wrong.")
     }
 }
 
@@ -243,11 +211,7 @@ module.exports = {
     getOrders, 
     getOrderByNumber, 
     getOrderHistory, 
-
-
-    getAllVendors, 
-    getVendorByUserID, 
-    addVendor, 
-    updateVendor, 
-    updateOrderStatus
+    // addVendor, 
+    markFulfilled,
+    markPickedUp
 }
