@@ -66,20 +66,21 @@ require('./config/passport').configPassport(passport)
 // for reading body of requests
 app.use(express.json())
 
-// set up customer and vendor routes
+// set up the routers
 const customerRouter = require('./routes/customerRouter')
 const vendorRouter =  require('./routes/vendorRouter')
-
-// handler for GET home page
-app.get('/', (req, res) => {
-    res.send('<h1> Snack in a Van </h1>')
-});
+const indexRouter = require('./routes/indexRouter')
 
 // handler for customer and vendor requests
+
 // customer routes are added onto the end of '/customer'
 app.use('/customer', customerRouter)
+
 // vendor routes are added onto the end of '/vendor'
 app.use('/vendor', vendorRouter)
+
+// any other routes are redirected to the general index router
+app.use('/', indexRouter)
 
 // dynamically set the port number or use static 8080 port for local testing
 const port = process.env.PORT || 8080
