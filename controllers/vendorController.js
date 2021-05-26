@@ -1,10 +1,118 @@
 const mongoose = require("mongoose")
 
 // import the models used
-const Vendor = mongoose.model("Vendor")
+const Customer = mongoose.model("Customer")
+const Snack = mongoose.model("Snack")
 const Order = mongoose.model("Order")
+const Vendor = mongoose.model("Vendor")
 
-// TODO: IMPLEMET LOGIN
+// global constants to be tweaked in the future if needed
+// time limit to give a discount for orders (15 mins)
+const DISCOUNT_TIME = 15 * 60 * 1000
+
+// get the front page for a vendor
+const getFrontPage = (req, res) => {
+    return res.status(200).redirect("/vendor/order")
+}
+
+// get all the outstanding order details
+const getOrders = (req, res) => {
+    Order.aggregate()
+        .match({
+            vendorID: req.user._id, 
+            status: { $in: ["Placed", "Fulfilled"] }
+        }).lookup({
+            from: "customers", 
+            localField: "customerID", 
+            foreignField: "_id", 
+            as: "customerID"
+        }).unwind(
+            "customerID"
+        ).lookup({
+            from: "snacks", 
+            localField: "snacks.snackID", 
+            foreignField: "_id", 
+            as: "snacks"
+        }).project({
+            _id: 0, 
+            customerID: {
+                _id: 0, 
+                email: 0, 
+                password: 0, 
+                lastName: 0, 
+                createdAt: 0, 
+                updatedAt: 0,
+                __v: 0
+            }
+        // add the duration left before discount need to be applied (in milliseconds)
+        }).addFields({
+            duration: {
+                $subtract: [
+                    DISCOUNT_TIME, 
+                    { $subtract: [
+                        "$$NOW", 
+                        "$updatedAt"
+                    ] }
+                ]
+            }
+        // sort by oldest order first then "placed" order before "fulfilled"
+        }).sort({
+            updatedAt: "asc", 
+            status: "desc"
+        })
+        .exec( (err, result) => {
+            if (err) {
+                return res.status(400).send("Oops! Something went wrong.")
+            }
+            // don't need to use lean as pipeline output is already js object
+            return res.status(200).send(result)
+        })
+}
+
+//
+const getOrderByNumber = async (req, res) => {
+    try {
+        const order = await Order
+            .findOne({
+                orderNumber: req.params.orderNumber
+            }).populate({
+                path: "customerID", 
+                select: "firstName"
+            }).populate({
+                path: "snacks.snackID"
+            }).lean()
+        order.duration = DISCOUNT_TIME - (new Date() - new Date(order.updatedAt))
+        return res.status(200).send(order)
+    } catch (err) {
+        return res.status(400).send("Oops! Something went wrong.")
+    }
+}
+
+//
+const getOrderHistory = async (req, res) => {
+    try {
+        const orders = await Order
+            .find({
+                vendorID: req.user._id, status: {$in: ["Picked-Up", "Cancelled"]}
+            }).populate({
+                path: "customerID", 
+                select: "firstName"
+            }).populate({
+                path: "snacks.snackID"
+            // sort by newest order first
+            }).sort({
+                updatedAt: -1
+            }).lean()
+        return res.status(200).send(orders)
+    } catch (err) {
+        return res.status(400).send("Oops! Something went wrong.")
+    }
+}
+
+
+
+
+
 
 
 // get all the vendors currently in the database
@@ -31,19 +139,7 @@ const getVendorByUserID = async (req, res) => {
     }
 }
 
-// get a list of all the outstanding orders of a vendor
-// need to change order schema?
-const getOutstandingOrders = async (req, res) => {
-    try {
-        // find the list of outstanding orders of a vendor and send it back
-        const OutstandingOrders = await Order.find( {"vendorID": req.params.vendorID, $or:[{"status": "Cooking"}, {"status": "Ordering"}, {"status": "Fulfilled"}]} )
-        res.send(OutstandingOrders)
-    // error occurred during the database query
-    } catch (err) {
-        res.status(400)
-        res.send("Database query failed")
-    }
-}
+
 
 
 // // add a new vendor
@@ -143,9 +239,14 @@ const updateOrderStatus = async (req, res) => {
 
 // remember to export the functions
 module.exports = {
+    getFrontPage,
+    getOrders, 
+    getOrderByNumber, 
+    getOrderHistory, 
+
+
     getAllVendors, 
     getVendorByUserID, 
-    getOutstandingOrders, 
     addVendor, 
     updateVendor, 
     updateOrderStatus
