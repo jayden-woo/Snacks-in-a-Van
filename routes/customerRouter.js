@@ -80,7 +80,7 @@ customerRouter.post('/menu/order', isLoggedIn, customerController.confirmOrder)
 customerRouter.put('/order/:id', isLoggedIn, customerController.cancelOrder)
 
 // handle the PUT request to submit a feedback for the order
-customerRouter.put('/order/:id', isLoggedIn, customerController.submitFeedback)
+customerRouter.put('/order/:id/feedback', isLoggedIn, customerController.submitFeedback)
 
 // export the router
 module.exports = customerRouter

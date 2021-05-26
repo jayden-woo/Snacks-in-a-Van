@@ -102,6 +102,11 @@ const getOrderByID = async (req, res) => {
     }
 }
 
+//
+const getFeedback = (req, res) => {
+    return res.status(200).send("<h1> Feedback Page <\h1>")
+}
+
 // select a vendor to order from
 const selectVendor = async (req, res) => {
     try {
@@ -204,6 +209,7 @@ module.exports = {
     getCart, 
     getOrders, 
     getOrderByID, 
+    getFeedback, 
     selectVendor, 
     confirmOrder, 
     cancelOrder, 
