@@ -1,5 +1,6 @@
 // packages or schema imports
 const cookieParser = require('cookie-parser')
+const exphbs = require('express-handlebars')
 const express = require('express')
 const flash = require('connect-flash-plus')
 const helmet = require('helmet')
@@ -7,34 +8,48 @@ const passport = require('passport')
 const session = require('express-session')
 const app = express()
 
-// app.use(express.static('public')) // define where static assets live
+// define where static assets live
+app.use(express.static('public')) 
 
-// const exphbs = require('express-handlebars')
+// set up the templating engine for the app
+app.engine('hbs', exphbs({
+    defaultlayout: 'main',
+    extname: 'hbs',
+    helpers: require(__dirname + "/public/js/helpers.js").helpers
+}))
 
-// app.engine('hbs', exphbs({
-//     defaultlayout: 'main',
-//     extname: 'hbs',
-//     helpers: require(__dirname + "/public/js/helpers.js").helpers
-// }))
+// use the templating engine in the app
+app.set('view engine', 'hbs')
 
-// app.set('view engine', 'hbs')
+// declare sources for the HTTP Content-Security-Policy
+const imgSrc = [
+    "'self'", 
+    "data:", 
+    "https://source.unsplash.com/", 
+    "https://images.unsplash.com/"
+]
+const scriptSrc = [
+    "'self'", 
+    "'unsafe-inline'", 
+    "https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js", 
+    "https://code.getmdl.io/1.3.0/material.min.js", 
+    "https://cdn.jsdelivr.net/npm/jquery", 
+    "https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js", 
+    "https://cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js", 
+]
 
 // set up HTTP headers for web app security
-app.use(helmet())
-// app.use(helmet({
-//     directives: {
-//         "img-src": ['self', 'https://source.unsplash.com/']
-//     }
-// }))
-// app.use(helmet({
-//     contentSecurityPolicy: {
-//         directives: {
-//             ...helmet.contentSecurityPolicy.getDefaultDirectives(),
-//             // "img-src": ["'self'", "data:", "https://source.unsplash.com/", "https://images.unsplash.com/"], 
-//             // "script-src": ["'self'", "data:", "'unsafe-inline'"]
-//         }
-//     }
-// }))
+app.use(helmet({
+    contentSecurityPolicy: {
+        directives: {
+            ...helmet.contentSecurityPolicy.getDefaultDirectives(),
+            "img-src": imgSrc, 
+            "script-src": scriptSrc, 
+            "script-src-attr": scriptSrc, 
+            "script-src-elem": scriptSrc
+        }
+    }
+}))
 
 // set up session to keep track of user data in between requests
 app.use(cookieParser())
