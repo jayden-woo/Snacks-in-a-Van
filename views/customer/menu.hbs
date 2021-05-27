@@ -1,0 +1,16 @@
+<section id="foodList">
+  <ul class="menu--list">
+    {{#each list}}
+      <li class="menu--list__item">
+        <div class="card">
+          <img src="https://source.unsplash.com/{{this.image}}" class="card-img-top" alt="{{this.name}}">
+          <div class="card-body">
+            <h5 class="card-title">{{this.name}}</h5>
+            <p class="card-text">${{this.price}}</p>
+            <a href="/customer/menu/{{this.name}}" class="btn btn-primary">More</a>
+          </div>
+        </div>
+      </li>
+    {{/each}}
+  </ul>
+</section>

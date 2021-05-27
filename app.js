@@ -11,14 +11,14 @@ const app = express()
 // define where static assets live
 app.use(express.static('public')) 
 
-// set up the templating engine for the app
+// set the template engine to handlebars
 app.engine('hbs', exphbs({
     defaultlayout: 'main',
     extname: 'hbs',
     helpers: require(__dirname + "/public/js/helpers.js").helpers
 }))
 
-// use the templating engine in the app
+// set the view engine to hds engine above
 app.set('view engine', 'hbs')
 
 // declare sources for the HTTP Content-Security-Policy
@@ -51,6 +51,12 @@ app.use(helmet({
     }
 }))
 
+// use flash to store messages
+app.use(flash())
+
+// set up database
+const db = require('./models/db.js')
+
 // set up session to keep track of user data in between requests
 app.use(cookieParser())
 app.use(session({
@@ -65,12 +71,6 @@ app.use(session({
     }
 }))
 
-// set up database
-const db = require('./models/db.js')
-
-// use flash to store messages
-app.use(flash())
-
 // configure the passport to handle authentication
 app.use(passport.initialize())
 app.use(passport.session())
@@ -79,7 +79,8 @@ app.use(passport.session())
 require('./config/passport').configPassport(passport)
 
 // for reading body of requests
-app.use(express.json())
+app.use(express.json())  // json format
+app.use(express.urlencoded({extended:true}))  // urlencoded format
 
 // set up the routers
 const customerRouter = require('./routes/customerRouter')

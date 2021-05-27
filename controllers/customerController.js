@@ -38,10 +38,13 @@ const getVendorsList = (req, res) => {
 const getMenu = async (req, res) => {
     try {
         const menu = await Snack.find().lean()
-        return res.status(200).send(menu)
+        // render the menu page
+        // return res.status(200).send(menu)
+        return res.status(200).render("customer/menu", {list: menu})
     // error occurred during query
     } catch (err) {
-        return res.status(400).send("Oops! Something went wrong.")
+        // return res.status(400).send("Oops! Something went wrong.")
+        return res.status(400).render("error", {code: 400, message: "Oops! Something went wrong."})
     }
 }
 
@@ -52,10 +55,12 @@ const getSnackByName = async (req, res) => {
         const snack = await Snack.findOne({ name: req.params.snackName }).lean()
         // snack not found in database
         if (snack === null) { 
-            return res.status(404).send("Oops! Snack not found.")
+            // return res.status(404).send("Oops! Snack not found.")
+            return res.status(404).render("error", {code: 404, message: "Oops! Snack not found."})
         }
-        // send back snack details
-        return res.status(200).send(snack)
+        // render the snack details page
+        // return res.status(200).send(snack)
+        return res.status(200).render("customer/oneSnack", {oneSnack: snack})
     // error occurred during query
     } catch (err) {
         return res.status(400).send("Oops! Something went wrong.")
