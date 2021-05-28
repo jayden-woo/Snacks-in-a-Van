@@ -1,0 +1,148 @@
+{{!-- <ul>
+    {{#each orders}}
+    <li>
+        Order Number: {{this.orderNumber}}<br>
+        Status: {{this.status}}<br>
+        Van Name: {{this.vendorName}}<br>
+        {{#each this.snacks}}
+            SnackId: {{this.snackId}}<br>
+            Quantity: {{this.quantity}}<br>
+        {{/each}}
+        Created at: {{this.createdAt}}<br>
+        Updated at: {{this.updatedAt}}<br>
+    </li>
+    <br>
+    {{/each}}
+</ul> --}}
+
+<div class="container--">
+    <div class="card container--content" id="list">
+     
+    </div>
+</div>
+
+<script id="tpl-list" type="text/html">
+<% for(var i = 0; i < list.length; i++){ %>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-8">
+                    <h5 class="card-title">order #<%= list[i].orderNumber %></h5>
+    
+                    <% for(var ii =0; ii < list[i].snacks.length; ii++) { %>
+                        <div class="row">
+                            <div class="col-8"><%= list[i].snacks[ii].snackID.name %></div>
+                            <div class="col-3 lg--text">x<%= list[i].snacks[ii].quantity %></div>
+                        </div>
+                    <% } %>
+                </div>
+
+                <div class="col-4">
+                    <div class="alert alert-success"><a href="/customer/order/<%= list[i]._id %>">Order <%= list[i].status %></a></div>
+                </div>
+                <div class="col-12 text-muted">
+                    10mins Left
+                </div>
+            </div>
+            
+            <button type="button" class="btn edit btn-primary btn-sm" data-id="<%= list[i]._id %>" data-data="<%= list[i].snacks%>">Edit Order</button>
+            <button type="button" data-id="<%= list[i]._id %>" class="cancel btn btn-danger btn-sm">Cancel Order</button>
+            <a href="/customer/order/rating/<%= list[i]._id %>" class="btn btn-secondary btn-sm">Rate Order</a>
+        </div>
+<% } %>
+</script>
+
+<script type="text/javascript">
+   $(function() {
+       // Get order list
+        function getOrderList(type) {
+
+            if (type !== 'polling') {
+                gbmsg.loading()
+            }
+            
+            $.ajax({
+                type: 'GET',
+                url: '/customer/api/order'
+            }).done(function( res ) {
+                var list = res.data || []
+
+                var html = template('tpl-list', {list:list})
+                $('#list').html(html)
+            }).fail(function(jqXHR) {
+                console.log('jqXHR', jqXHR)
+                var res = jqXHR.responseJSON || {}
+                var errs = res.errors || []
+
+                gbmsg.failure(errs[0] || 'Failed！')
+            }).always(function() { 
+                gbmsg.hide()
+            });
+        }
+
+        getOrderList()
+
+        // Polling for order status updates
+        setInterval(() => {
+            getOrderList('polling')
+        },30000)
+
+        $('#list').on('click', 'button.btn', function(e) {
+            // cancel order
+            if ($(this).hasClass('cancel')) {
+                gbmsg.loading();
+
+                $.ajax({
+                    type: 'PUT',
+                    url: '/customer/api/order/cancel',
+                    data: {
+                        orderId: $(this).attr('data-id'),
+                    }
+                }).done(function( res ) {
+                    console.log('res', res)
+                    gbmsg.success('Successfully')
+                    setTimeout(() => {
+                        window.location.reload()
+                    }, 800)
+                }).fail(function(jqXHR) {
+                    console.log('jqXHR', jqXHR)
+                    var res = jqXHR.responseJSON || {}
+                    var errs = res.errors || []
+                    gbmsg.failure(errs[0] || 'Failed！')
+                }).always(function() { 
+                // gbmsg.hide()
+                });
+            }
+
+            // Edit order
+            if ($(this).hasClass('edit')) {
+                var orderId = $(this).attr('data-id')
+                var data = $(this).attr('data-data')
+
+                window.sessionStorage.setItem('orderId', orderId)
+                console.log(orderId,data)
+
+                var dataJson = JSON.parse(data)
+                var carts = dataJson.map(v => {
+                    var snack = v.snackID || {}
+                    return {
+                        id: snack._id,
+                        name: snack.name,
+                        price: snack.price.$numberDecimal,
+                        desc: snack.description,
+                        count: v.quantity
+                    }
+                })
+                console.log('carts',carts)
+
+                window.sessionStorage.setItem('carts', JSON.stringify(carts))
+
+                setTimeout(() => {
+                    window.location.href = '/customer/cart'
+                }, 100)
+            }
+
+            
+        })
+   });
+</script>
+

@@ -1,0 +1,19 @@
+<h1>List of all vendors</h1>
+
+<p>View a list of other vendors! Click on the vendors to view where they are located and if they are online. 
+    You can only change the address or status if you are logged in and access your own van name.
+</p>
+
+{{!-- shows a list of all vendors with the const allVendors mapped by vendors schema in Mongo --}}
+
+{{#each allVendors}}
+
+    <ul>
+        <li>
+            {{!-- this links to vendor page information --}}
+            <a href="/vendor/{{this.userID._id}}/account">{{this.userID.username}}</a>
+        </li>
+    </ul>
+
+
+{{/each}}

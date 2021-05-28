@@ -1,105 +1,158 @@
 // packages or schema imports
-const cookieParser = require('cookie-parser')
-const exphbs = require('express-handlebars')
-const express = require('express')
-const flash = require('connect-flash-plus')
-const helmet = require('helmet')
-const passport = require('passport')
-const session = require('express-session')
-const app = express()
+const cookieParser = require("cookie-parser");
+const cors = require("cors");
+const express = require("express");
+// const helmet = require('helmet')
+const session = require("express-session");
+const app = express();
+const bodyParser = require("body-parser");
 
-// define where static assets live
-app.use(express.static('public')) 
+const resetRespnse = require("./middleware/resetResponse");
 
-// set the template engine to handlebars
-app.engine('hbs', exphbs({
-    defaultlayout: 'main',
-    extname: 'hbs',
-    helpers: require(__dirname + "/public/js/helpers.js").helpers
-}))
+// we will use passport.js, so include it
+// const passport = require('passport');
 
-// set the view engine to hds engine above
-app.set('view engine', 'hbs')
-
-// declare sources for the HTTP Content-Security-Policy
-const imgSrc = [
-    "'self'", 
-    "data:", 
-    "https://source.unsplash.com/", 
-    "https://images.unsplash.com/"
-]
-const scriptSrc = [
-    "'self'", 
-    "'unsafe-inline'", 
-    "https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js", 
-    "https://code.getmdl.io/1.3.0/material.min.js", 
-    "https://cdn.jsdelivr.net/npm/jquery", 
-    "https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js", 
-    "https://cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js", 
-]
+// // set up cors
+// var whitelist = ['https://snacksinavan-generator.herokuapp.com','http://localhost:3000']
+// app.use(cors({
+//        origin: whitelist,
+//        // access-control-allow-credentials:true
+//        credentials: true,
+//        optionSuccessStatus: 200
+//    }
+// ))
 
 // set up HTTP headers for web app security
-app.use(helmet({
-    contentSecurityPolicy: {
-        directives: {
-            ...helmet.contentSecurityPolicy.getDefaultDirectives(),
-            "img-src": imgSrc, 
-            "script-src": scriptSrc, 
-            "script-src-attr": scriptSrc, 
-            "script-src-elem": scriptSrc
-        }
-    }
-}))
+// app.use(helmet())
 
-// use flash to store messages
-app.use(flash())
+app.use(bodyParser.json()); // for parsing application/json
+app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
 
-// set up database
-const db = require('./models/db.js')
+app.use(express.static("public")); // define where static assets live
 
-// set up session to keep track of user data in between requests
-app.use(cookieParser())
-app.use(session({
-    secret: "INFO30005 Web-App",
+const exphbs = require("express-handlebars");
+
+app.engine(
+  "hbs",
+  exphbs({
+    defaultlayout: "main",
+    extname: "hbs",
+    helpers: require(__dirname + "/public/js/helpers.js").helpers,
+  })
+);
+
+app.set("view engine", "hbs");
+
+// we can pass messages between app and callbacks
+// we will not use it for this app
+// const flash = require("connect-flash-plus");
+
+// // for using JSON Web Tokens (JWT)
+// const jwt = require("jsonwebtoken");
+
+// // we use a few enviornment variables
+// const dotenv = require("dotenv").config();
+
+// configure passport authenticator
+// require('./config/passport')(passport);
+
+// set up HTTP headers for web app security
+// app.use(helmet())
+
+// for keeping track of data in between pages
+app.use(cookieParser());
+app.use(
+  session({
+    secret: 'INFO30005 Web-App',
     resave: false,
     saveUninitialized: false,
     cookie: {
-        // user should log in again after restarting the browser
-        expires: false, 
-        // 2 hours before cookies expire and have to log in again
-        maxAge: 2 * 60 * 60 * 1000
-    }
-}))
+      // user should log in again after restarting the browser
+    //   expires: false,
+      // 2 hours before cookies expire and have to log in again
+      maxAge: 2 * 60 * 60 * 1000,
+    },
+  }),
+);
 
-// configure the passport to handle authentication
-app.use(passport.initialize())
-app.use(passport.session())
+// middleware
+// app.use(function(req, res, next) {
+//     const route = req.url || ''
+//     const { user = {} } = req.session;
 
-// set up the passport strategies
-require('./config/passport').configPassport(passport)
+//     if (route.indexOf('/customer') > -1) {
+//         if (user._id) {
+//             if (route === '/customer/login') {
+//                 res.redirect('/customer/map');
+//             }
+//         } else {
+//             if (route !== '/customer/login') {
+//               res.redirect('/customer/login');
+//             }
+//         }
+          
+//     } else {}
+//     console.log('middleware', req.url, req.session);
+//     next()
+// })
 
-// for reading body of requests
-app.use(express.json())  // json format
-app.use(express.urlencoded({extended:true}))  // urlencoded format
+// //middleware that's required for passport to operate
+// app.use(passport.initialize());
 
-// set up the routers
-const customerRouter = require('./routes/customerRouter')
-const vendorRouter =  require('./routes/vendorRouter')
-const indexRouter = require('./routes/indexRouter')
+// // middleware to store user object
+// app.use(passport.session());
 
-// handler for customer requests and routes are added onto the end of '/customer'
-app.use('/customer', customerRouter)
+// // use flash to store messages
+// app.use(flash());
 
-// handler for vendor requests and routes are added onto the end of '/vendor'
-app.use('/vendor', vendorRouter)
+// // for reading body of requests
+// app.use(express.urlencoded({ extended: true })) // replaces body-parser
 
-// any other routes are redirected to the general index router
-app.use('/', indexRouter)
+// // for reading body of requests
+// app.use(express.json())
+
+// set up database
+const db = require("./models/db.js");
+
+// set up the middlewares
+const resetResponse = require("./middleware/resetResponse");
+const isLoggedIn = require("./middleware/isLoggedIn");
+
+// set up customer and vendor routes
+const customerRouter = require("./routes/customerRouter");
+const vendorRouter = require("./routes/vendorRouter");
+
+// handler for GET home page
+app.get("/", (req, res) => {
+  console.log("connected");
+  res.render("index");
+});
+
+// handler for GET request to log out a user
+app.get("/logout", isLoggedIn, (req, res) => {
+  // kill the current session so a new session could be created on next req
+  req.session.destroy();
+  console.log("User has successfully logged out");
+  return res.status(200).json({ success: true, errors: [] });
+});
+
+// handler for customer and vendor requests
+// customer routes are added onto the end of '/customer'
+app.use("/customer", resetRespnse, customerRouter); //, resetResponse
+// vendor routes are added onto the end of '/vendor'
+app.use("/vendor", resetRespnse, vendorRouter); //, resetResponse
+
+app.all("*", (req, res) => {
+  // 'default' route to catch user errors
+  res
+    .status(404)
+    .render("error", { errorCode: "404", message: "That route is invalid." });
+});
 
 // dynamically set the port number or use static 8080 port for local testing
-const port = process.env.PORT || 8080
+const port = process.env.PORT || 8080;
 
 // listen to any request to the web app
 app.listen(port, () => {
-    console.log('The web app is listening on port', port)
-})
+  console.log("The web app is listening on port", port);
+});

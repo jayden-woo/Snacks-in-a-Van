@@ -3,8 +3,8 @@
 
     <div class="login--form">
       <div class="form-group">
-        <label>Email</label>
-        <input placeholder="name@example.com" type="email" class="form-control" name='email' id='email' value="test@gmail.com">
+        <label>Username</label>
+        <input placeholder="name@example.com" type="username" class="form-control" name='username' id='username' value="myvendor">
       </div>
       <div class="form-group">
         <label>Password</label>
@@ -12,20 +12,8 @@
       </div>
 
       <button type="submit" class="btn btn-primary center-block " id="submit">Login</button>
-      <a href="/customer/signup" >Sign up</a>
+      <a href="/vendor/signup" >Sign up</a>
     </div>
-    {{!-- <form method="post" action="/customer/login">
-        <label> Email 
-          <input placeholder="username" name='email' id='email' value="test@gmail.com"/>
-        </label>
-        &nbsp;
-        <label> Password
-          <input placeholder="***************" type="password" name='password' id='password' value="Test1234!"/>
-        </label>
-        &nbsp;
-        <button type="button"  id="submit">Submit</button>
-        {{session}}
-    </form> --}}
 </section>
 
 <script>
@@ -33,14 +21,14 @@
     /**
     login
     */
-    var $email = $('#email')
+    var $username = $('#username')
     var $password = $('#password')
     var $submit = $('#submit')
 
     $submit.click(function(e) {
       e.preventDefault()
-      if (!$email.val()) {
-        gbmsg.failure('Please enter Email')
+      if (!$username.val()) {
+        gbmsg.failure('Please enter Username')
         return
       }
 
@@ -53,19 +41,19 @@
 
       $.ajax({
         type: 'POST',
-        url: '/customer/login',
+        url: '/vendor/login',
         data: {
-          email: $email.val(),
+          username: $username.val(),
           password: $password.val() 
         }
       }).done(function( res ) {
          console.log('res', res)
-         window.location.href = '/customer'
+         window.location.href = '/vendor'
       }).fail(function(jqXHR) {
         console.log('jqXHR', jqXHR)
         var res = jqXHR.responseJSON || {}
         var errs = res.errors || []
-        alertify.alert('Title', errs[0] || 'Email or password failed！');
+        alertify.alert('Title', errs[0] || 'Username or password failed！');
       }).always(function() { 
         gbmsg.hide()
        });

@@ -1,0 +1,58 @@
+<section id='addressfrom'>
+  <h1>Enter your address</h1>
+  <form method='post' action='/customer'>
+    <div class="container">
+      <div class='row'>
+        <label for='address' class='form-label'>Enter your address to find neast vendors</label>
+        <input
+          id='address'
+          name='address'
+          placeholder='Enter your full address'
+          value="-73.99279 , 40.719296"
+        />
+        &nbsp;
+        <button id="submit" type="button" class="btn btn-primary">Search</button>
+      </div>
+    </div>
+  </form>
+
+</section>
+
+<script>
+    $(function() {
+        // declare html elment in js to use
+        var $address = $('#address')
+        var $submit = $('#submit')
+        // handle button click
+        $submit.click(function(e) {
+            // handle empty input
+            e.preventDefault()
+            if (!$address.val()) {
+                alert('Please enter address')
+                return
+            }
+
+            gbmsg.loading();
+            
+            $.ajax({
+                type: 'POST',
+                url: '/customer',
+                data: {
+                    address: $address.val()
+                }
+            }).done(function(res) {
+                // handle success request
+                console.log('res', res)
+                window.location.href = '/customer/vendorlist'
+            }).fail(function(jqXHR) {
+                // handle failed request
+                console.log('jqXHR', jqXHR)
+                var res = jqXHR.responseJson || {}
+                var errs = res.errors || []
+                alertify.alert('Title', errs[0] || 'Address failed！');
+            }).always(function(){
+                gbmsg.hide()
+            });
+        })
+    })
+</script>

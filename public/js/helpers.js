@@ -1,7 +1,7 @@
 var register = function(Handlebars) {
-    // add all helpers as key: value pairs
-    var helpers = {
-        // iterate over food items and display it on the page
+    var helpers = { // add all helpers as key: value pairs
+        // an example of listfood helper to iterate over
+        // food items and display these in the page
         listsnack: function (snacks) { 
             var ret ="<ul>";
 
@@ -54,7 +54,7 @@ var register = function(Handlebars) {
       // for each helper defined above (we have only one, listfood)
       for (var prop in helpers) {
           // we register helper using the registerHelper method
-          Handlebars.registerHelper(prop, helpers[prop])
+          Handlebars.registerHelper(prop, helpers[prop]);
       }
     } else {
         // just return helpers object if we can't register helpers here
@@ -64,5 +64,5 @@ var register = function(Handlebars) {
   };
   
   // export helpers to be used in our express app
-  module.exports.register = register
-  module.exports.helpers = register(null)
+  module.exports.register = register;
+  module.exports.helpers = register(null);    

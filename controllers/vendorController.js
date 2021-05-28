@@ -1,238 +1,291 @@
 const mongoose = require("mongoose")
 
 // import the models used
-const Customer = mongoose.model("Customer")
-const Snack = mongoose.model("Snack")
-const Order = mongoose.model("Order")
 const Vendor = mongoose.model("Vendor")
+const Order = mongoose.model("Order")
+const User = mongoose.model("User")
 
-// global constants to be tweaked in the future if needed
-// time limit to give a discount for orders (15 mins)
-const DISCOUNT_TIME = 15 * 60 * 1000
+// TODO: IMPLEMET LOGIN
 
-// get the front page for a vendor
-const getFrontPage = (req, res) => {
-    return res.status(200).redirect("/vendor/order")
-}
+// sign in with username and password
+const logIn = (req, res) => {
+    User.findOne(
+      { $or: [{ password: req.body.password }, { username: req.body.username}] },
+      async function (err, user) {
+        // couldn't find user in database
+        if (!user || err) {
+          console.log("User not found");
+          req.session.response.success = false;
+          req.session.response.errors.push("username/password invalid");
+          req.session.save();
+          return res.status(401).json(req.session.response);
+        }
+        // check if the user is a vendor
+        if (await Vendor.exists({ userID: user._id })) {
+          if (!(await user.comparePassword(req.body.password))) {
+            console.log("Wrong password");
+            req.session.response.success = false;
+            // error message = 'You have entered an invalid username or password'
+            req.session.response.errors.push("username/password invalid");
+            req.session.save();
+            // res.redirect('login')
+            return res.status(401).json(req.session.response);
+          }
+          req.session.user = user;
+          req.session.save();
+          console.log("Vendor has successfully logged in");
+          // res.redirect('login')
+          return res.status(req.session.status).json(req.session.response);
+        } else {
+          console.log("User is not a vendor");
+          req.session.response.success = false;
+          // error message = 'You have entered an invalid username or password'
+          req.session.response.errors.push("username/password invalid");
+          req.session.save();
+          // res.redirect('login')
+          return res.status(401).json(req.session.response);
+        }
+      }
+    );
+};
 
-// get all the outstanding order details
-const getOrders = (req, res) => {
-    Order.aggregate()
-        // find the outstanding orders associated with the current vendor
-        .match({
-            vendorID: req.user._id, 
-            status: { $in: ["Placed", "Fulfilled"] }
-        // add the customer given name
-        }).lookup({
-            from: "customers", 
-            localField: "customerID", 
-            foreignField: "_id", 
-            as: "customerID"
-        // unpack it from an array of one item
-        }).unwind(
-            "customerID"
-        // add the snack details
-        ).lookup({
-            from: "snacks", 
-            localField: "snacks.snackID", 
-            foreignField: "_id", 
-            as: "snacks"
-        // remove unnecessary fields
-        }).project({
-            _id: 0, 
-            customerID: {
-                _id: 0, 
-                email: 0, 
-                password: 0, 
-                lastName: 0, 
-                createdAt: 0, 
-                updatedAt: 0,
-                __v: 0
-            }
-        // add the duration left before discount must be given (in milliseconds)
-        }).addFields({
-            duration: {
-                $subtract: [
-                    DISCOUNT_TIME, 
-                    { $subtract: [
-                        "$$NOW", 
-                        "$updatedAt"
-                    ] }
-                ]
-            }
-        // sort by oldest order first then "placed" order comes before "fulfilled"
-        }).sort({
-            updatedAt: "asc", 
-            status: "desc"
-        })
-        // execute the pipeline
-        .exec( (err, result) => {
-            if (err) {
-                return res.status(400).send("Oops! Something went wrong.")
-            }
-            // don't need to use lean as pipeline output is already js object
-            return res.status(200).send(result)
-        })
-}
+// register a new vendor
+const signUp = async (req, res) => {
+    // console.log('signUp req', res.body);
+    // // check if the input is correctly formed and if the username or email is taken
+    // if (!(await validateInput(req))) {
+    //   // res.redirect('signup')
+    //   return res.status(req.session.status).json(req.session.response);
+    // }
+  
+    // create a new user
+    const user = new User({
+      username: req.body.username,
+      password: req.body.password,
+      email: req.body.email.toLowerCase(),
+    });
+    // save user to database
+    user.save((err) => {
+      if (err) {
+        req.session.response.success = false;
+        req.session.response.errors.push(err);
+        req.session.save();
+        // res.redirect('signup')
+        return res.status(400).json(req.session.response);
+      }
+    });
+  
+    // create a new vendor entry
+    const vendor = new Vendor({
+      userID: user._id
+    });
 
-// get details of one order by its order number
-const getOrderByNumber = async (req, res) => {
+    // save vendor to database
+    vendor.save((err) => {
+      if (err) {
+        req.session.response.success = false;
+        req.session.response.errors.push(err);
+        req.session.save();
+        // res.redirect('signup')
+        return res.status(400).json(req.session.response);
+      }
+    });
+  
+    // res.redirect('login')
+    return res.status(req.session.status).json(req.session.response);
+};
+
+
+
+  
+
+
+// get all the vendors currently in the database
+const getAllVendors = async (req, res) => {
     try {
-        const order = await Order
-            // find the given order that is associated with the current vendor
-            .findOne({
-                vendorID: req.user._id, 
-                orderNumber: req.params.orderNumber
-            // add the customer given name
-            }).populate({
-                path: "customerID", 
-                select: "firstName"
-            // add the snack details
-            }).populate({
-                path: "snacks.snackID"
-            // convert to a js object
-            }).lean()
-        // add the duration left before discount must be given (in milliseconds)
-        order.duration = DISCOUNT_TIME - (new Date() - new Date(order.updatedAt))
-        return res.status(200).send(order)
-    // error occurred during query
+        const vendors = await Vendor.find( {}, {_id: false} )
+            .populate("userID")
+            .lean()
+        return res.render("vendor/getAllVendors", {"allVendors": vendors})
     } catch (err) {
-        return res.status(400).send("Oops! Something went wrong.")
+        return res.status(400).json({error: "Database query failed"})
     }
 }
 
-// get the order history with picked-up and cancelled orders
-const getOrderHistory = async (req, res) => {
+// get the current status of a vendor 
+const getVendorByUserID = async (req, res) => {
     try {
-        const orders = await Order
-            // find the previous orders associated with the current vendor
-            .find({
-                vendorID: req.user._id, status: {$in: ["Picked-Up", "Cancelled"]}
-            // add the customer given name
-            }).populate({
-                path: "customerID", 
-                select: "firstName"
-            // add the snack details
-            }).populate({
-                path: "snacks.snackID"
-            // sort by newest order first
-            }).sort({
-                updatedAt: -1
-            // convert to a js object
-            }).lean()
-        return res.status(200).send(orders)
-    // error occurred during query
+        const vendor = await Vendor.findOne( {"userID": req.params.userID} , {_id: false})
+        // no vendor was found in database
+        if (vendor === null) { 
+            return res.status(404).json({error: "Vendor not found"})
+        }
+        return res.status(200).send(vendor)
+    } catch (err) { 
+        return res.status(400).json({error: "Database query failed"})
+    }
+}
+
+// get a list of all the outstanding orders of a vendor
+// need to change order schema?
+const getOutstandingOrders = async (req, res) => {
+    try {
+        // find the list of outstanding orders of a vendor and send it back
+        const OutstandingOrders = await Order.find( {"vendorID": req.params.vendorID, $or:[{"status": "Cooking"}, {"status": "Ordering"}, {"status": "Fulfilled"}]} )
+        res.send(OutstandingOrders)
+    // error occurred during the database query
     } catch (err) {
-        return res.status(400).send("Oops! Something went wrong.")
+        res.status(400)
+        res.send("Database query failed")
+    }
+}
+
+// get order information using orderID
+const getVendorOrderDetails = async (req, res) => {
+    try {
+        // use vendorID and orderID to get details
+        // use order models to look for the order
+        const oneOrderDetail = await Order.find( {"vendorID": req.params.vendorID, "orderNumber": req.params.orderID} )
+            // populate allows us to use relational data by "populating" the schema with its relevant data
+            .populate("customerID")
+            // to reference additional schemas, just use another populate() function
+            // to populate within another nested array, simply use array.id
+            .populate("snacks.snackID")
+            .lean()
+        // res.send(oneOrderDetail)
+        // renders the hdb page and assigns results of array to variabla "orders"
+        res.render("vendor/vendorOrderDetails", {"orders": oneOrderDetail})
+    } catch (err) {  
+        res.status(400)
+        res.send("No order found")
+    }
+}
+
+// get vendor account details by rendering vendorAccount page
+// this retrives from the database relevant information
+const getVendorAccount = async (req, res) => {
+    try {
+        const vendorAccount = await Vendor.find( {"userID": req.params.vendorID} )
+            .populate("userID")
+            .lean()
+        res.render("vendor/vendorAccount", {"account": vendorAccount})
+    } catch (err) {
+        res.status(400)
+        res.send("Vendor information not available")
     }
 }
 
 
-// // TEMP create 10 vendors with random locations and ids
-// // create random mongoIDs
-// const mongoObjectId = function () {
-//     var timestamp = (new Date().getTime() / 1000 | 0).toString(16)
-//     return timestamp + 'xxxxxxxxxxxxxxxx'.replace(/[x]/g, function() {
-//         return (Math.random() * 16 | 0).toString(16);
-//     }).toLowerCase()
-// }
+
+// // add a new vendor
 // const addVendor = async (req, res) => {
-//     const coordinates = [
-//         [144.953552, -37.816904],   // Location 1
-//         [144.967131, -37.817651],   //          2
-//         [144.960535, -37.802159],   //          3
-//         [144.956983, -37.813893],   //          4
-//         [144.955188, -37.808538],   //          5
-//         [144.960482, -37.804329],   //          6
-//         [144.962324, -37.799144],   //          7
-//         [144.970075, -37.785843],   //          8
-//         [144.987312, -37.790795],   //          9
-//         [144.971927, -37.811552]    //          10
-//     ]
-//     for (let i=1; i<=10; i++) {
-//         let vendor = new Vendor({
-//             userID: mongoObjectId(), 
-//             isOnline: [3,6,9].includes(i) ? false : true, 
-//             location: {
-//                 coordinates: coordinates[i-1]
-//             }, 
-//             textAddress: "Location " + i
-//         })
-//         vendor.save( (err) => {
-//             if (err) throw err;
-//         })
-//     }
-//     return res.send(await Vendor.find())
+//     // construct a new vendor object from body of the POST request
+//     const vendor = await new Vendor(req.body)
+//     // save the new vendor to the vendors database
+//     vendor.save( (err, result) => {
+//         // error occured during saving of a new vendor
+//         if (err) res.send(err)
+//         // send back vendor details for checking
+//         res.send(result)
+//     })
 // }
 
 
-// mark an order as fulfilled and apply discount if time limit passed
-const markFulfilled = async (req, res) => {
-    try {
-        // search for the order from the database
-        const order = await Order.findOne({
-            vendorID: req.user._id, 
-            orderNumber: req.params.orderNumber
+// TEMP create 10 vendors with random locations and ids
+// create random mongoIDs
+const mongoObjectId = function () {
+    var timestamp = (new Date().getTime() / 1000 | 0).toString(16)
+    return timestamp + 'xxxxxxxxxxxxxxxx'.replace(/[x]/g, function() {
+        return (Math.random() * 16 | 0).toString(16);
+    }).toLowerCase()
+}
+const addVendor = async (req, res) => {
+    const coordinates = [
+        [144.953552, -37.816904],   // Location 1
+        [144.967131, -37.817651],   //          2
+        [144.960535, -37.802159],   //          3
+        [144.956983, -37.813893],   //          4
+        [144.955188, -37.808538],   //          5
+        [144.960482, -37.804329],   //          6
+        [144.962324, -37.799144],   //          7
+        [144.970075, -37.785843],   //          8
+        [144.987312, -37.790795],   //          9
+        [144.971927, -37.811552]    //          10
+    ]
+    for (let i=1; i<=10; i++) {
+        let vendor = new Vendor({
+            userID: mongoObjectId(), 
+            isOnline: [3,6,9].includes(i) ? false : true, 
+            location: {
+                coordinates: coordinates[i-1]
+            }, 
+            textAddress: "Location " + i
         })
-        // order not found in database
-        if (order === null) {
-            req.flash("updateMessage", "Order does not exist.")
-            return res.status(400).send("Sorry, we could not find the order in our database.")
+        vendor.save( (err) => {
+            if (err) throw err;
+        })
+    }
+    return res.send(await Vendor.find())
+}
+
+
+// update the status of a vendor
+const updateVendor = async (req, res) => {
+    var {isOnline, latitude, longitude, textAddress} = req.body
+    try {
+        // change the status if it is in the request body
+        if ("isOnline" in req.body){
+            console.log("Changing isOnline to :", isOnline)
+            // await Vendor.updateOne({userID: req.session.user._id}, {isOnline: isOnline}) 
+            await Vendor.updateOne({ userID: req.params.vendorID }, { isOnline: isOnline })
         }
-        // order has already been fulfilled or cancelled
-        if (order.status != "Placed") {
-            req.flash("updateMessage", "Order could not be fulfilled.")
-            return res.status(400).send("Sorry, the order could not be fulfilled.")
+        // // change the location of the vendor's van if it is in the request body
+        // if (latitude && longitude) {
+        //     console.log("Changing location to :",latitude, longitude)
+        //     await Vendor.updateOne({userID: req.session.user._id}, {latitude:latitude, longitude:longitude}) 
+        // }
+        if(textAddress) {
+            console.log("Changing text address to: ", textAddress)
+            // await Vendor.updateOne({userID: req.session.user._id}, {textAddress: textAddress}) 
+            await Vendor.updateOne({ userID: req.params.vendorID }, { textAddress: textAddress })
         }
-        // check if the time limit for discount has passed
-        if ((new Date() - new Date(order.updatedAt)) >= DISCOUNT_TIME) {
-            order.discountApplied = true
-        }
-        // mark the order as fulfilled and save it in the database
-        order.status = "Fulfilled"
-        await order.save()
-        return res.status(200).send("Order has been fulfilled.")
-    // error occurred during saving
+        // send back vendor details for checking
+        // res.status(200).send(await Vendor.findOne({userID: req.session.user._id}))
+        res.status(200).send("success")
+    // error occurred during the database update
     } catch (err) {
-        return res.status(400).send("Oops! Something went wrong.")
+        console.log(err)
+        res.status(400).json({error: "Database update failed"})
     }
 }
 
-// mark an order as picked up
-const markPickedUp = async (req, res) => {
+// update the status of a current order
+const updateOrderStatus = async (req, res) => {
     try {
-        // search for the order from the database
-        const order = await Order.findOne({
-            vendorID: req.user._id, 
-            orderNumber: req.params.orderNumber
-        })
-        // order not found in database
-        if (order === null) {
-            req.flash("updateMessage", "Order does not exist.")
-            return res.status(400).send("Sorry, we could not find the order in our database.")
+        if (req.body.status) {
+            // change the status of the order 
+            console.log("Changing status to", req.body.status)
+            await Order.updateOne( {orderNumber: req.params.orderNum}, {status: req.body.status} )
+            res.send("Changed Order "+req.params.orderNum+"'s status to "+req.body.status)
         }
-        // order has already been cancelled or not ready yet
-        if (order.status != "Fulfilled") {
-            req.flash("updateMessage", "Order could not be picked up.")
-            return res.status(400).send("Sorry, the order could not be picked up.")
-        }
-        // mark an order as picked up and save it in the database
-        order.status = "Picked-Up"
-        await order.save()
-        return res.status(200).send("Order has been picked up.")
-    // error occurred during saving
-    } catch (err) {
-        return res.status(400).send("Oops! Something went wrong.")
+    }
+    // error occurred during the database update
+    catch (err) {
+        res.status(400) 
+        res.send("Database update failed")
     }
 }
 
-// export the controller functions
+// remember to export the functions
 module.exports = {
-    getFrontPage,
-    getOrders, 
-    getOrderByNumber, 
-    getOrderHistory, 
-    // addVendor, 
-    markFulfilled,
-    markPickedUp
+    logIn,
+    signUp,
+    getAllVendors, 
+    getVendorByUserID, 
+    getOutstandingOrders, 
+    addVendor, 
+    updateVendor, 
+    updateOrderStatus, 
+    getVendorAccount,
+    getVendorOrderDetails   
 }

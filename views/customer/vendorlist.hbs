@@ -1,0 +1,53 @@
+<section class='container--'>
+
+  <div class="container--">
+    <div class="card container--content" style='width: 18rem;' id="list">
+    {{#each vendors}}>
+    <div class="card-body">
+      <div class="row">
+        <div class="col-8">
+          <h5 class='card-title'>VendorName</h5>
+          <p class='card-text'>{{this.textAddress}}</p>
+          <p class='card-text'>Distance</p>
+          <p class='card-text'>{{this.isOnline}}</p>
+        </div>
+      </div>
+      <button id="submit" type="button" data-id="{{this.userID}}" class='submit btn btn-primary'>Order Here</button>
+    </div>
+    {{/each}}
+    </div>
+  </div>
+</section>
+
+<script type="text/javascript">
+  $(function() {
+    // order here button
+    $('#list').on('click', 'button.submit', function(e){
+      // get the venderId of selected vendor
+      let vendorID = $(this).attr('data-id')
+      console.log(vendorID)
+      // store in session storage temporarily
+      window.sessionStorage.setItem('vendor', vendorID)
+
+      // handle click 
+      $.ajax({
+        type: 'GET',
+        url: '/customer/vendorlist'
+      }).done(function(res) {
+        // handle success request
+        window.location.href = '/customer/menu'                   
+      }).fail(function(jqXHR) {
+        // handle failed request
+        console.log('jqXHR', jqXHR)
+        var res = jqXHR.responseJSON || {}
+        var errs = res.errors || []
+        gbmsg.failure(errs[0] || 'Failed')
+      }).always(function() {
+         gbmsg.hide()
+      })      
+    })
+  })
+</script> 
+
+
+

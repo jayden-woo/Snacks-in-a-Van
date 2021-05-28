@@ -1,0 +1,51 @@
+{{!-- this page includes the details of the vendor, the form to update information, 
+and the script that prompts the vendor to add their geolocation --}}
+
+<script>
+
+    const successCallback = (position) => {
+        console.log(position)
+    }
+
+    const errorCallBack = (error) => {
+        console.log(error)
+    }
+
+    navigator.geolocation.getCurrentPosition(successCallback, errorCallBack);
+
+</script>
+
+<h1>Account Details</h1>
+
+<p>View your account information, update the latest address and status here! To save your geolocation, allow the browser to capture your location when prompted.</p>
+
+{{#each account}}
+
+    {{!-- below is the account details for the vendor to view --}}
+    <div id="vendorAccountDetails">
+        <b>Username</b>: {{this.userID.username}} <br/>
+        <b>Is the user online?</b> {{this.isOnline}} <br/>
+        <b>Current address</b>: {{this.textAddress}} <br/>
+    </div>
+
+    {{!-- below is the form for entering details and changing address --}}
+    <form action="/vendor/{{this.userID._id}}/account" method="post">
+
+        <label for="textAddress">Enter new address: 
+            <input id="textAddress" type="text" name="textAddress">
+        </label>
+
+        <label for="isOnline">I am online
+            <input id="isOnline" type="radio" name="isOnline" value="true">
+        </label>
+
+        <label for="isOnline">I am offline
+            <input id="isOnline" type="radio" name="isOnline" value="false">
+        </label>
+
+        <button type="submit">Update Information</button>
+
+    </form>
+
+{{/each}}
+

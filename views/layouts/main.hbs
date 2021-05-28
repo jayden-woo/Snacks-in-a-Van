@@ -1,78 +1,58 @@
 <html lang="en">
-  
   <head>
-    
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title> Snacks In A Van </title>
-
-    <link 
-      rel="stylesheet" 
-      href="/css/styles.css"
-    />
-    <link 
-      rel="stylesheet" 
-      href="/css/toast.css"
-    />
-    <link 
-      rel="preconnect" 
-      href="https://fonts.gstatic.com"
-    />
-    <link 
-      rel="stylesheet" 
+    <link rel="stylesheet" href="/css/styles.css" />
+    <link rel="stylesheet" href="/css/toast.css" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" />
+    <link
       href="https://fonts.googleapis.com/css2?family=Lexend+Mega&family=Rammetto+One&display=swap"
+      rel="stylesheet"
     />
-    <script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"></script>
-    <link 
-      rel="stylesheet" 
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" 
-      integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" 
+    <script
+      src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"
+    ></script>
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x"
       crossorigin="anonymous"
     />
-    <link 
+
+    <link
       rel="stylesheet"
       href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
     />
-    <link 
+    <link
       rel="stylesheet"
       href="https://fonts.googleapis.com/icon?family=Material+Icons"
     />
-    <link 
+    <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/alertify.min.css"
     />
-    <link 
+    <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/themes/bootstrap.min.css"
     />
-    <link 
-      rel="stylesheet" 
-      href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.19.1/css/mdb.min.css"
-    />
-    <link 
-      rel="stylesheet" 
-      href="https://netdna.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
-    />
-    <link 
-      rel="stylesheet" 
-      href="http://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css"
-    />
-    <link 
-      rel="stylesheet" 
-      href="https://cdn.jsdelivr.net/npm/animate.css"
-    />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.19.1/css/mdb.min.css" rel="stylesheet">
+    <link href="https://netdna.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css">
     <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jquery"></script>
     <script src="/js/art-template.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js"
+    ></script>
     <script src="/js/jquery.barrating.min.js"></script>
     
   </head>
-
   <body>
-
     <nav>
       <div id="mySidenav" class="sidenav">
         <a
@@ -99,19 +79,14 @@
         {{/if}}
 
       </div>
-
       <span
         style="font-size:25px;cursor:pointer"
         onclick="openNav()"
       >&#9776;</span>
-
       <script>
-        function openNav() { 
-          document.getElementById("mySidenav").style.width ="250px";
-        } 
-        function closeNav() {
-          document.getElementById("mySidenav").style.width = "0";
-        }
+        function openNav() { document.getElementById("mySidenav").style.width =
+        "250px"; } function closeNav() {
+        document.getElementById("mySidenav").style.width = "0"; }
       </script>
       {{! <hr size="30"> }}
 
@@ -119,19 +94,15 @@
         <a href="javascript:;" id="goToCart" class="fa fa-shopping-cart"></a>
       </div>
     </nav>
-
     <header>
       <h1><a href="/">Snacks In A Van</a></h1>
     </header>
-
     <main>
       {{{body}}}
     </main>
-
     <footer>
       <p>INFO30005 Workshops 2021 - Team generator</p>
     </footer>
-
     <input type="hidden" id="isLogin" value="{{user}}">
     <script src="/js/toast.js"></script>
 
@@ -143,7 +114,5 @@
         })
       })
     </script>
-
   </body>
-
 </html>

@@ -1,0 +1,30 @@
+<h1>Details of Order</h1>
+
+{{#each orders}}
+
+    {{!-- orderDetails requires: order number, customer given name, items ordered and how many more minutes  --}}
+    <div id="orderDetails">
+        <div id="generalDetails">
+            Order Number: {{this.orderNumber}} <br/>
+            Customer name: {{this.customerID.firstName}} <br/>
+        </div>
+
+        <div id="orderList">
+            {{!-- snacks are contained in an array - print out the array --}}
+            Items Ordered: <br/>
+            
+            {{#each this.snacks}}
+                    <ul>
+
+                        {{!-- this refers to the name of the snackID contained in the array of snacks (referenced) --}}
+                        <li>{{snackID.name}}</li>
+                        {{!-- this refers to the quantity of the snacks (not referenced) --}}
+                        quantity: {{this.quantity}} <br/>
+
+                    </ul>           
+            {{/each}}
+        </div>
+    </div>
+  
+{{/each}}
+

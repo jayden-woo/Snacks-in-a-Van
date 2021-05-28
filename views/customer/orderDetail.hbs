@@ -1,0 +1,67 @@
+{{! <Rating name="half-rating" defaultValue={2.5} precision={0.5} /> }}
+
+<section class='container--'>
+  <h1>order #{{detail.orderNumber}}</h1>
+  <div class="container--content">
+      <ul class="stepper stepper-vertical">
+
+        {{#each detail.statusList}}
+            <li class="{{this.status}}">
+                <a href="#!">
+                <span class="circle"></span>
+                <span class="label">{{this.name}}</span>
+                </a>
+            </li>
+        {{/each}}
+    </ul>
+
+    <div class="row">
+        <div class="col-12 text-primary text-center">
+            Time of Order: {{detail.formartTime}}
+        </div>
+    </div>
+  </div>
+
+</section>
+<script type="text/javascript">
+   $(function() {
+      $('#rating').barrating({
+        theme: 'fontawesome-stars'
+      });
+
+
+        var $rating = $('#rating')
+        var $content = $('#content')
+        var $submit = $('#submit')
+
+        $submit.click(function(e) {
+        e.preventDefault()
+        if (!$rating.val()) {
+            gbmsg.failure('Please rating')
+            return
+        }
+
+        gbmsg.loading();
+
+        $.ajax({
+            type: 'POST',
+            url: '/customer/api/rating',
+            data: {
+                rating: $rating.val(),
+                content: $content.val(),
+            }
+        }).done(function( res ) {
+            console.log('res', res)
+            gbmsg.success('Successfully')
+        }).fail(function(jqXHR) {
+            console.log('jqXHR', jqXHR)
+            var res = jqXHR.responseJSON || {}
+            var errs = res.errors || []
+            // alertify.alert('Title', errs[0] || 'Failed！');
+            gbmsg.failure(errs[0] || 'Failed！')
+        }).always(function() { 
+            //gbmsg.hide()
+        });
+      })
+   });
+</script>

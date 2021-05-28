@@ -1,0 +1,74 @@
+{{! <Rating name="half-rating" defaultValue={2.5} precision={0.5} /> }}
+
+<section class='container--'>
+  <h1>Please rate this order</h1>
+  <form method='post' action='/customer/order/rating'>
+
+    {{! <Rating name="rating" defaultValue={2.5} precision={0.5} /> }}
+
+    <div class="row text-center">
+        <div class="col-12">
+            <div class="br-wrapper br-theme-css-stars">
+                <select id='rating'>
+                <option value='1'>1</option>
+                <option value='2'>2</option>
+                <option value='3'>3</option>
+                <option value='4'>4</option>
+                <option value='5' selected>5</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-12">
+            <textarea name="" id="content" cols="30" rows="10"></textarea>
+        </div>
+        <div class="col-12">
+            <input type="hidden" id="id" value="{{id}}">
+            <input type='submit' class="btn btn-primary center-block " value='Submit' id="submit" />
+        </div>
+    </div>
+  </form>
+
+</section>
+<script type="text/javascript">
+   $(function() {
+      $('#rating').barrating({
+        theme: 'fontawesome-stars'
+      });
+
+        var $id = $('#id')
+        var $rating = $('#rating')
+        var $content = $('#content')
+        var $submit = $('#submit')
+        
+        // Rating interface request
+        $submit.click(function(e) {
+        e.preventDefault()
+        if (!$rating.val()) {
+            gbmsg.failure('Please rating')
+            return
+        }
+
+        gbmsg.loading();
+
+        $.ajax({
+            type: 'POST',
+            url: '/customer/api/order/' + $id.val(),
+            data: {
+                ratingScore: $rating.val(),
+                comment: $content.val(),
+            }
+        }).done(function( res ) {
+            console.log('res', res)
+            gbmsg.success('Successfully')
+        }).fail(function(jqXHR) {
+            console.log('jqXHR', jqXHR)
+            var res = jqXHR.responseJSON || {}
+            var errs = res.errors || []
+            // alertify.alert('Title', errs[0] || 'Failed！');
+            gbmsg.failure(errs[0] || 'Failed！')
+        }).always(function() { 
+            //gbmsg.hide()
+        });
+      })
+   });
+</script>

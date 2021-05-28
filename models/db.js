@@ -3,6 +3,7 @@ const mongoose = require("mongoose")
 
 // database login is retrieved from environment variables
 CONNECTION_STRING = "mongodb+srv://<username>:<password>@project-t10-generator.1mtcl.mongodb.net/INFO30005?retryWrites=true&w=majority"
+// CONNECTION_STRING = "mongodb+srv://xyz:<password>@cluster0.iocjs.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
 MONGO_URL = CONNECTION_STRING.replace("<username>", process.env.MONGO_USERNAME).replace("<password>", process.env.MONGO_PASSWORD)
 
 // connect to MongoDB
@@ -28,4 +29,5 @@ db.once("open", async () => {
 require("./customer")
 require("./order")
 require("./snack")
+require("./user")
 require("./vendor")
