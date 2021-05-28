@@ -1,0 +1,145 @@
+<section id="loginform">
+  <h1>Sign Up</h1>
+
+  <div class="login--form">
+    <div class="form-group">
+      <label>First Name</label>
+      <input placeholder="First Name (required)" type="text" class="form-control" name='firstname' id='firstname'>
+    </div>
+
+    <div class="form-group">
+      <label>Last Name</label>
+      <input placeholder="Last Name (required)" type="text" class="form-control" name='lastname' id='lastname'>
+    </div>
+
+    <div class="form-group">
+      <label>Email Address</label>
+      <input placeholder="Email (required)" type="email" class="form-control" name='email' id='email'>
+    </div>
+
+    <div class="form-group">
+      <label>Password</label>
+      <input placeholder="Password (required)" type="password" class="form-control"  name='password' id='password'>
+    </div>
+
+    <div class="form-group">
+      <label>Confirm Password</label>
+      <input placeholder="Password (required)" type="password" class="form-control" name='repassword' id='repassword'>
+    </div>
+
+    <button type="submit" class="btn btn-primary center-block " id="submit">Submit</button>
+    <a href="/customer/login">Login</a>
+  </div>
+</section>
+
+<script>
+  $(function() {
+    var $firstname = $('#firstname')
+    var $lastname = $('#lastname')
+    var $email = $('#email')
+    var $password = $('#password')
+    var $repassword = $('#repassword')
+    var $submit = $('#submit')
+
+    $submit.click(function(e) {
+      e.preventDefault()
+
+      if (!$firstname.val()) {
+        {{!-- gbmsg.failure('Please enter first name') --}}
+        alertify.alert('Missing Field', 'Please enter your first name.')
+        $firstname.focus()
+        return
+      }
+
+      if (!$lastname.val()) {
+        {{!-- gbmsg.failure('Please enter last name') --}}
+        alertify.alert('Missing Field', 'Please enter your last name.')
+        $lastname.focus()
+        return
+      }
+
+      if (!$email.val()) {
+        {{!-- gbmsg.failure('Please enter Email') --}}
+        alertify.alert('Missing Field', 'Please enter your email.')
+        $email.focus()
+        return
+      }
+
+      if (!$password.val()) {
+        {{!-- gbmsg.failure('Please enter Password') --}}
+        alertify.alert('Missing Field', 'Please enter your password.')
+        $password.focus()
+        return
+      }
+
+      if (!$repassword.val()) {
+        alertify.alert('Missing Field', 'Please enter your password again.')
+        $password.focus()
+        return
+      }
+
+      // validations
+      var re_name = /^[a-zA-Z ]+$/
+      var re_email = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
+      var re_pwd = /^(?=.*\d)(?=.*[a-zA-Z])[a-zA-Z0-9!@#$%^&*]{8,}$/
+
+      if (!re_name.test($firstname.val())) {
+        alertify.alert('Value Error', 'First name can only contain letters and spaces.')
+        $firstname.focus()
+        return
+      }
+
+      if (!re_name.test($lastname.val())) {
+        alertify.alert('Value Error', 'Last name can only contain letters and spaces.')
+        $lastname.focus()
+        return
+      }
+
+      if (!re_email.test($email.val())) {
+        alertify.alert('Value Error', 'Please enter a valid email.')
+        $email.focus()
+        return
+      }
+
+      if (!re_pwd.test($password.val())) {
+        {{!-- gbmsg.failure('Password does not meet the rules: 1. At least one alphabet character (upper or lower caseA-Z) 2. At least one numerical digit (0-9) 3. A length of at least 8 characters') --}}
+        alertify.alert('Value Error', "Password must have at least one uppercase or lowercase letter (A-Z or a-z), have at least one digit (0-9), and be longer than 8 characters.")
+        $password.focus()
+        return
+      }
+
+      if ($password.val() !== $repassword.val()) {
+        {{!-- gbmsg.failure('Two password entries are inconsistent') --}}
+        alertify.alert('Value Error', 'Your passwords didn\'t match. Please try again.')
+        return
+      }
+
+      gbmsg.loading()
+
+      $.ajax({
+        type: 'POST',
+        url: '/customer/signup',
+        data: {
+          firstName: $firstname.val(),
+          lastName: $lastname.val(),
+          email: $email.val(),
+          password: $password.val() 
+        }
+      }).done(function( res ) {
+        if (res.success) {
+          alertify.alert('Signup Success', res.message[0], function() {
+            window.location.href = '/customer/login'
+          }).set('label', 'Login')
+        } else {
+          alertify.alert('Signup Failure', res.message[0])
+        }
+      }).fail(function(jqXHR) {
+        console.log('jqXHR', jqXHR)
+        alertify.alert('Signup Failure', errs[0] || 'Sorry, the application has encountered an unknown error.')
+      }).always(function() { 
+        gbmsg.hide()
+       })
+    })
+
+  })
+</script>

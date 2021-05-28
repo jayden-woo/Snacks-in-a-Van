@@ -38,20 +38,10 @@ vendorRouter.get('/history', isVendor, vendorController.getOrderHistory)
 /* ----- POST routes ----- */
 
 // handle the POST request to log in
-vendorRouter.post('/login', isLoggedOut, passport.authenticate('vendor-login', {
-    successRedirect: '/vendor', 
-    failureRedirect: '/vendor/login', 
-    failureFlash: true, 
-    successFlash: true
-}))
+vendorRouter.post('/login', isLoggedOut, passport.authenticate('vendor-login'))
 
 // handle the POST request to sign up
-vendorRouter.post('/signup', isLoggedOut, passport.authenticate('vendor-signup', {
-    successRedirect: '/vendor/login', 
-    failureRedirect: '/vendor/signup', 
-    failureFlash: true, 
-    successFlash: true
-}))
+vendorRouter.post('/signup', isLoggedOut, passport.authenticate('vendor-signup'))
 
 // handle the POST request to log out
 vendorRouter.post('/logout', isVendor, userController.logOut)

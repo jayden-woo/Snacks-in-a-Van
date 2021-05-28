@@ -1,0 +1,78 @@
+<section id="loginform">
+  <h1>Log In</h1>
+
+  <div class="login--form">
+    <div class="form-group">
+      <label>Username</label>
+      <input placeholder="Username" type="username" class="form-control" name='username' id='username'>
+    </div>
+
+    <div class="form-group">
+      <label>Password</label>
+      <input placeholder="Password" type="password" class="form-control" name='password' id='password'>
+    </div>
+
+    <button type="submit" class="btn btn-primary center-block " id="submit">Login</button>
+    <a href="/vendor/signup">Sign up</a>
+  </div>
+</section>
+
+<script>
+  $(function() {
+
+    var $username = $('#username')
+    var $password = $('#password')
+    var $submit = $('#submit')
+
+    $submit.click(function(e) {
+      e.preventDefault()
+
+      if (!$username.val() && !$password.val()) {
+        alertify.alert('Missing Fields', 'Please enter your username and password.')
+        $username.focus()
+        return
+      }
+
+      if (!$username.val()) {
+        {{!-- gbmsg.failure('Please enter your username.') --}}
+        alertify.alert('Missing Field', 'Please enter your username.')
+        $username.focus()
+        return
+      }
+
+      if (!$password.val()) {
+        {{!-- gbmsg.failure('Please enter your password.') --}}
+        alertify.alert('Missing Field', 'Please enter your password.')
+        $password.focus()
+        return
+      }
+
+      gbmsg.loading()
+
+      $.ajax({
+        type: 'POST',
+        url: '/vendor/login',
+        data: {
+          username: $username.val(),
+          password: $password.val() 
+        }
+      }).done(function(res) {
+        if (res.success) {
+          alertify.alert('Login Success', res.message[0], function() {
+            window.location.href = '/vendor'
+          })
+        } else {
+          alertify.alert('Login Failure', res.message[0])
+        }
+      }).fail(function(jqXHR) {
+        console.log('jqXHR', jqXHR)
+        var res = jqXHR.responseJSON || {}
+        var errs = res.errors || []
+        alertify.alert('Login Failure', errs[0] || 'Sorry, the application has encountered an unknown error.')
+      }).always(function() { 
+        gbmsg.hide()
+      })
+    })
+    
+  })
+</script>

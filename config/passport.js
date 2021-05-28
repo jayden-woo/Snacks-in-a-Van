@@ -47,16 +47,17 @@ const configPassport = (passport) => {
             // wrong email
             if (!user) {
                 console.log("Customer not found")
-                return done(null, false, req.flash("loginMessage", "You have entered an invalid username or password."))
+                return req.res.status(200).json({success: false, message: ["You have entered an invalid username or password."]})
             }
             // wrong password
             if (!user.validPassword(password)) {
                 console.log("Wrong password")
-                return done(null, false, req.flash("loginMessage", "You have entered an invalid username or password"))
+                return req.res.status(200).json({success: false, message: ["You have entered an invalid username or password."]})
             // user is found and authenticated
             } else {
                 console.log("Customer has successfully logged in")
-                return done(null, user, req.flash("loginMessage", "Login Successful."))
+                done(null, user)
+                return req.res.status(200).json({success: true, message: ["You have successfully logged in."]})
             }
         })
     }))
@@ -75,16 +76,17 @@ const configPassport = (passport) => {
             // wrong username
             if (!user) {
                 console.log("Vendor not found")
-                return done(null, false, req.flash("loginMessage", "You have entered an invalid username or password"))
+                return req.res.status(200).json({success: false, message: ["You have entered an invalid username or password."]})
             }
             // wrong password
             if (!user.validPassword(password)) {
                 console.log("Wrong password")
-                return done(null, false, req.flash("loginMessage", "You have entered an invalid username or password"))
+                return req.res.status(200).json({success: false, message: ["You have entered an invalid username or password."]})
             // user is found and authenticated
             } else {
                 console.log("Vendor has successfully logged in")
-                return done(null, user, req.flash("loginMessage", "Login Successful."))
+                done(null, user)
+                return req.res.status(200).json({success: true, message: ["You have successfully logged in."]})
             }
         })
     }))
@@ -103,7 +105,7 @@ const configPassport = (passport) => {
             // email is taken
             if (user) {
                 console.log("Email is taken")
-                return done(null, false, req.flash("signupMessage", "The email address you have entered is already taken."))
+                return req.res.status(200).json({success: false, message: ["The email address you have entered is already taken."]})
             } else {
                 // constuct a new customer instance with the given details
                 const customer = new Customer({
@@ -117,10 +119,10 @@ const configPassport = (passport) => {
                 customer.save( (err) => {
                     if (err) {
                         console.log("Error while saving")
-                        return done(null, false, req.flash("signupMessage", "Please try again in a few minutes."))
+                        return done(null, false)
                     }
                     console.log("Customer created")
-                    return done(null, customer, req.flash("signupMessage", "Sign Up Successful."))
+                    return req.res.status(200).json({success: true, message: ["You have successfully signed up."]})
                 })
             } 
         })
@@ -140,7 +142,7 @@ const configPassport = (passport) => {
             // username is taken
             if (user) {
                 console.log("Username is taken")
-                return done(null, false, req.flash("signupMessage", "The username you have entered is already taken."))
+                return req.res.status(200).json({success: false, message: ["The username you have entered is already taken."]})
             } else {
                 // constuct a new vendor instance with the given username
                 const vendor = new Vendor({
@@ -152,10 +154,11 @@ const configPassport = (passport) => {
                 vendor.save( (err) => {
                     if (err) {
                         console.log("Error while saving")
-                        return done(null, false, req.flash("signupMessage", "Please try again in a few minutes."))
+                        console.log(err)
+                        return done(null, false)
                     }
                     console.log("Vendor created")
-                    return done(null, vendor, req.flash("signupMessage", "Sign Up Successful."))
+                    return req.res.status(200).json({success: true, message: ["You have successfully signed up."]})
                 })
             } 
         })

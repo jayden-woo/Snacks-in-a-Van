@@ -6,22 +6,23 @@ const Vendor = mongoose.model("Vendor")
 
 // get the customer login page
 const getCustomerLogIn = (req, res) => {
-    return res.status(200).send('<h1> Customer Log In Page <\h1>')
+    return res.status(200).render("customer/login")
 }
 
 // get the vendor login page
 const getVendorLogIn = (req, res) => {
-    return res.status(200).send('<h1> Vendor Log In Page <\h1>')
+    // return res.status(200).send('<h1> Vendor Log In Page <\h1>')
+    return res.status(200).render("vendor/login")
 }
 
 // get the customer signup page
 const getCustomerSignUp = (req, res) => {
-    return res.status(200).send('<h1> Customer Sign Up Page <\h1>')
+    return res.status(200).render("customer/signup")
 }
 
 // get the vendor signup page
 const getVendorSignUp = (req, res) => {
-    return res.status(200).send('<h1> Vendor Sign Up Page <\h1>')
+    return res.status(200).render("vendor/signup")
 }
 
 // get the customer or vendor account details
