@@ -70,7 +70,7 @@ const getSnackByName = async (req, res) => {
         }
         // render the snack details page
         // return res.status(200).send(snack)
-        return res.status(200).render("customer/oneSnack", {oneSnack: snack})
+        return res.status(200).render("customer/oneSnack", {oneSnack: snack, user: req.user })
     // error occurred during query
     } catch (err) {
         return res.status(400).send("Oops! Something went wrong.")

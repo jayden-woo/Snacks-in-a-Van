@@ -55,6 +55,7 @@
     var $cart = $('#cart')
     var $count = $('#count')
     var $name = $('#name')
+    var $isLogin = $('#isLogin')
     var name = $name.attr('data-name')
     var id = $name.attr('data-id')
     var count = $count.val()
@@ -68,6 +69,14 @@
       }
     })
     $cart.click(function() {
+      // Jump to the login page when not logged in
+      if (!$isLogin.val()) {
+          gbmsg.info('please sign in before place an order')
+          setTimeout(() => {
+              window.location.href = '/customer/login'
+          }, 1000)
+          return
+      }
       var carts = window.sessionStorage.getItem('carts') || '[]'
       var cartsJson = JSON.parse(carts)
       var count = $count.val()
@@ -88,8 +97,11 @@
       }
       
       window.sessionStorage.setItem('carts', JSON.stringify(cartsJson))
+      gbmsg.info('Added to cart successfully')
       gbmsg.success('Successfully')
-      window.location.href = '/customer/cart'
+      setTimeout(() => {
+          window.location.href = '/customer/menu'
+      }, 1000)
     })
   })
 </script>
