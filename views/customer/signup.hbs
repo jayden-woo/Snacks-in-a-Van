@@ -1,35 +1,38 @@
 <section id="loginform">
   <h1>Sign Up</h1>
 
-  <div class="login--form">
-    <div class="form-group">
-      <label>First Name</label>
-      <input placeholder="First Name (required)" type="text" class="form-control" name='firstname' id='firstname'>
-    </div>
+  <form>
+    <div class="login--form">
+      <div class="form-group">
+        <label>First Name</label>
+        <input placeholder="First Name (required)" type="text" class="form-control" name='firstname' id='firstname'>
+      </div>
 
-    <div class="form-group">
-      <label>Last Name</label>
-      <input placeholder="Last Name (required)" type="text" class="form-control" name='lastname' id='lastname'>
-    </div>
+      <div class="form-group">
+        <label>Last Name</label>
+        <input placeholder="Last Name (required)" type="text" class="form-control" name='lastname' id='lastname'>
+      </div>
 
-    <div class="form-group">
-      <label>Email Address</label>
-      <input placeholder="Email (required)" type="email" class="form-control" name='email' id='email'>
-    </div>
+      <div class="form-group">
+        <label>Email Address</label>
+        <input placeholder="Email (required)" type="email" class="form-control" name='email' id='email'>
+      </div>
 
-    <div class="form-group">
-      <label>Password</label>
-      <input placeholder="Password (required)" type="password" class="form-control"  name='password' id='password'>
-    </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input placeholder="Password (required)" type="password" class="form-control"  name='password' id='password'>
+      </div>
 
-    <div class="form-group">
-      <label>Confirm Password</label>
-      <input placeholder="Password (required)" type="password" class="form-control" name='repassword' id='repassword'>
-    </div>
+      <div class="form-group">
+        <label>Confirm Password</label>
+        <input placeholder="Password (required)" type="password" class="form-control" name='repassword' id='repassword'>
+      </div>
 
-    <button type="submit" class="btn btn-primary center-block " id="submit">Submit</button>
-    <a href="/customer/login">Login</a>
-  </div>
+      <button type="submit" class="btn btn-primary center-block " id="submit">Submit</button>
+      <a href="/customer/login">Login</a>
+    </div>
+  </form>
+
 </section>
 
 <script>
@@ -136,7 +139,7 @@
         alertify.alert('Signup Failure', errs[0] || 'Sorry, the application has encountered an unknown error.')
       }).always( function() { 
         gbmsg.hide()
-       })
+      })
     })
 
   })
