@@ -59,9 +59,8 @@
         var cartsJson = JSON.parse(carts)
         var totalPrice = 0
 
-        // Get order id
+        // Check if it is new order or edit order request
         var orderId = window.sessionStorage.getItem('orderId')
-
         if (orderId) {
             $orderUpdate.show()
             $order.hide()
@@ -69,8 +68,6 @@
             $orderUpdate.hide()
             $order.show()   
         }
-    
-
         
         // Update shopping cart
         function updateCart(data) {
@@ -110,7 +107,7 @@
         updateCart(cartsJson)
 
         
-        // Remove cart items
+        // Remove item from cart
         $list.on('click','a.remove', function() {
             var carts = window.sessionStorage.getItem('carts') || '[]'
             var cartsJson = JSON.parse(carts)
@@ -123,7 +120,7 @@
             updateCart(cartsJson)
         })
 
-        // Place Order
+        // Place Order when it is new order
         $order.on('click', function() {
 
             var vendorId = window.sessionStorage.getItem('vendor')
@@ -138,7 +135,7 @@
                 return
             }
 
-            // Jump to the login page when not logged in
+            // direct to the login page when not logged in
             if (!$isLogin.val()) {
                 gbmsg.info('please sign in before place an order')
                 setTimeout(() => {
@@ -155,7 +152,7 @@
             })
 
             gbmsg.loading()
-            
+            // handle confirmOrder post request
             $.ajax({
                 type: 'POST',
                 url: '/customer/menu/order',
@@ -180,7 +177,7 @@
             });
         })
 
-        // Update Order
+        // Update Order when it is edited order
         $orderUpdate.on('click', 'a.btn', function() {
 
             // Jump to the login page when not logged in
@@ -200,7 +197,7 @@
             })
 
             gbmsg.loading()
-            
+            // handle update order post request
             $.ajax({
                 type: 'PUT',
                 url: '/customer/order/update',

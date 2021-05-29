@@ -22,7 +22,7 @@
 
 <script>
   $(function() {
-    // declare html variables
+    // Cache JQ elements
     var $email = $('#email')
     var $password = $('#password')
     var $submit = $('#submit')
@@ -52,7 +52,7 @@
 
       gbmsg.loading()
       
-      // login post request 
+      // handle customer-login post request 
       $.ajax({
         type: 'POST',
         url: '/customer/login',

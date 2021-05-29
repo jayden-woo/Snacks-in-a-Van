@@ -51,7 +51,7 @@
 
 <script>
   $(function() {
-    // declare html variables
+    // Cache JQ elements
     var $cart = $('#cart')
     var $count = $('#count')
     var $name = $('#name')
@@ -63,7 +63,6 @@
     var price = $name.attr('data-price')
     var carts = window.sessionStorage.getItem('carts') || '[]'
     var cartsJson = JSON.parse(carts)
-
     cartsJson.forEach(v => {
       if (v.id === id) {
         $count.val(v.count || 1)
@@ -71,7 +70,7 @@
     })
     // show cart
     $cart.click(function() {
-      // Jump to the login page when not logged in
+      // Direct to the login page when not logged in
       if (!$isLogin.val()) {
           gbmsg.info('please sign in before place an order')
           setTimeout(() => {
@@ -79,15 +78,19 @@
           }, 1000)
           return
       }
+      // get current item in cart
       var carts = window.sessionStorage.getItem('carts') || '[]'
       var cartsJson = JSON.parse(carts)
       var count = $count.val()
+      // check if the item is in cart
       var itemIndex = cartsJson.findIndex(v => {
         return v.id === id
       })
       console.log('itemIndex',itemIndex)
+      // increase quantity if item is already in cart
       if (itemIndex > -1) {
-        cartsJson[itemIndex].count = count
+        cartsJson[itemIndex].count = count 
+      // add new item to cart
       } else {
          cartsJson.push({
           id:id, 
@@ -95,9 +98,10 @@
           count: count,
           desc: desc,
           price: price,
-        })     
+        }) 
+          
       }
-      
+      // update cart
       window.sessionStorage.setItem('carts', JSON.stringify(cartsJson))
       gbmsg.info('Added to cart successfully')
       gbmsg.success('Successfully')

@@ -9,7 +9,7 @@
 
 <script>
   $(function() {
-    // declare html elment in js to use
+    // Cache JQ elements
     var $search = $('#search')
     // handle button click
     $search.click(function(e) {
@@ -17,10 +17,10 @@
       e.preventDefault()
 
       gbmsg.loading();
-
+      // get current location
       navigator.geolocation.getCurrentPosition( (location) => {
         console.log(`${location.coords.latitude},${location.coords.longitude}`)
-
+        // save location post request
         $.ajax({
           type: 'POST',
           url: '/customer/',
