@@ -79,7 +79,7 @@ const getSnackByName = async (req, res) => {
 
 // render the cart page for the client
 const getCart = (req, res) => {
-    return res.status(200).send("<h1> Cart <\h1>")
+    res.render('customer/cart', { user: req.user });
 }
 
 // get all the orders details
@@ -171,32 +171,35 @@ const selectVendor = async (req, res) => {
 // confirm the current order selections
 const confirmOrder = async (req, res) => {
     try {
-        // check if a vendor has been selected before
-        if (!req.session.vendor) {
-            return res.status(422).send("Please chose a vendor first.")
-        }
         // create a list containing all the snacks and quantity
-        const orderList = req.body.orderList
-        const lineItems = []
-        for (i=0; i<req.body.list.length; i++) {
-            lineItems.push(new OrderLine({
-                snackID: orderList[i]._id, 
-                quantity: orderList[i].quantity 
-            }))
+        const { orderlist, price , vendorId} = req.body;
+        const lineItems = [];
+        for (i = 0; i < orderlist.length; i++) {
+          lineItems.push(
+            new OrderLine({
+              snackID: orderlist[i].snackId,
+              quantity: parseInt(orderlist[i].quantity),
+            }),
+          );
         }
+
         // construct a new order and save it to database
         const orderNumber = await Order.countDocuments()
         const order = new Order({
             orderNumber: orderNumber, 
-            vendorID: req.session.vendor._id, 
+            vendorID: vendorId || req.session.vendor._id,
             customerID: req.user._id, 
             snacks: lineItems, 
-            total: req.body.price
+            total: parseInt(price)
         })
-        await order.save()
 
-        req.flash("orderMessage", "Order has been successfully placed.")
-        return res.status(200).redirect("/customer/order")
+        await order.save((err) => {
+            if (err) throw err;
+            else {
+                return req.res.status(200).json({success: true, message: ["Order placed successfully."]})
+            }
+        });
+
     // error occurred during saving
     } catch {
         return res.status(400).send("Oops! Something went wrong.")
@@ -206,31 +209,24 @@ const confirmOrder = async (req, res) => {
 // update the previously confirmed order with new items or quantities
 const updateOrder = async (req, res) => {
     try {
-        // find the order from the database
-        const order = await Order.findOne({
-            customerID: req.user._id, 
-            orderNumber: req.params.orderNumber
-        })
-        // order not found in database
-        if (order === null) {
-            return res.status(404).send("Order does not exist.")
+        const {orderId, orderlist, newPrice} = req.body
+        console.log(req.body);
+        const order = await Order.findOne({ _id: orderId });
+        if (order == null) {
+            return res.status(400).json("Order doesnt exist")
         }
+
         // create a new list containing all the snacks and quantity
-        const orderList = req.body.orderList
         const lineItems = []
         for (i=0; i<req.body.list.length; i++) {
             lineItems.push(new OrderLine({
-                snackID: orderList[i]._id, 
-                quantity: orderList[i].quantity 
+                snackID: orderlist[i].snackId, 
+                quantity: parseInt(orderlist[i].quantity)
             }))
         }
-        // change the items and the price in the order and save it
-        order.snacks = lineItems
-        order.total = req.body.price
-        await order.save()
 
-        req.flash("orderMessage", "Order successfully updated.")
-        return res.status(200).send("Order has been successfully cancelled.")
+        await Order.updateOne( {_id: orderId}, {$set: {snacks: lineItems, total: parseInt(newPrice)}} )
+        return res.status(200).json({ success: true, errors: [] });
     // error occurred during saving
     } catch (err) {
         return res.status(400).send("Oops! Something went wrong.")

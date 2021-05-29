@@ -1,0 +1,230 @@
+<section class='container--'>
+  {{!-- {{#listsnack snacks}}{{/listsnack}} --}}
+  <div class="container--content">
+
+    <ul class='cart--list' id="list">
+        <li class='cart--list__item'>
+        <div class='alert alert-primary d-flex justify-content-between'>
+            <div class='item--info'>
+            </div>
+            <div class="item--side">
+                <div class="item--side__count">
+                    x <b>1</b>
+                </div>
+                <div class="item--side__ctrl">
+                    <a href="#">Edit</a>
+                    <a href="#">Remove</a>
+                </div>
+            </div>
+        </div>
+        </li>
+    </ul>
+
+    <div class="row">
+        <div class="col-12 text-center">
+              
+        </div>
+    </div>
+
+    <div class="cart--footer row">
+        <div class="cart--footer__amount col-12 text-center">Total Amount = $<span id="total">0</span></div>
+        <div class="col-6 text-center">
+            <a href="/customer/menu" class="btn btn-info">Menu</a>  
+        </div>
+        <div class="col-6 cart--footer__btn text-center">
+           <a href="javascript:;" id="order" class="btn btn-primary">Place Order</a>
+            
+            <div id="orderUpdate">
+            <a href="javascript:;" class="btn btn-success">Press to confirm</a>
+                <p>
+                    Waring this will reset ths discount timer。
+                </p>
+            </div>
+        </div>
+    </div>
+  </div>
+</section>
+
+<script>
+    $(function() {
+        // Cache JQ elements
+        var $list = $('#list')
+        var $total = $('#total')
+        var $order = $('#order')
+        var $orderUpdate = $('#orderUpdate')
+        var $isLogin = $('#isLogin')
+
+        // Get shopping cart items
+        var carts = window.sessionStorage.getItem('carts') || '[]'
+        var cartsJson = JSON.parse(carts)
+        var totalPrice = 0
+
+        // Get order id
+        var orderId = window.sessionStorage.getItem('orderId')
+
+        if (orderId) {
+            $orderUpdate.show()
+            $order.hide()
+        } else {
+            $orderUpdate.hide()
+            $order.show()   
+        }
+    
+
+        
+        // Update shopping cart
+        function updateCart(data) {
+            var total = 0
+
+            var html = data.map(v => {
+                total = total + v.count * v.price
+                return `
+                    <li class='cart--list__item'>
+                        <div class='alert alert-primary row'>
+                            <div class='item--info col-8'>
+                            <h3>${v.name}</h3>
+                            <p class='item--info__desc'>${v.desc}</p>
+                            <p>$ ${v.price}</p>
+                            </div>
+                            <div class="item--side col-4 text-right">
+                                <div class="item--side__count">
+                                    x <b class="count--text ">${v.count}</b><input class="count--input hidden" type="number" value="${v.count}" />
+                                </div>
+                                <div class="item--side__ctrl">
+                                    <a href="/customer/menu/${v.id}" data-id="${v.id}">Edit</a>
+                                    <a class="remove" href="javascript:;" data-id="${v.id}">Remove</a>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                `
+            })
+            $list.html(html.join(''))
+            $total.text(Number(total).toFixed(2))
+            totalPrice = Number(total).toFixed(2)
+            cartsJson = data
+
+            window.sessionStorage.setItem('carts', JSON.stringify(data))
+        }
+
+        updateCart(cartsJson)
+
+        
+        // Remove cart items
+        $list.on('click','a.remove', function() {
+            var carts = window.sessionStorage.getItem('carts') || '[]'
+            var cartsJson = JSON.parse(carts)
+            var id = $(this).attr('data-id')
+            
+            cartsJson = cartsJson.filter(v => {
+                return v.id !== id
+            })
+
+            updateCart(cartsJson)
+        })
+
+        // Place Order
+        $order.on('click', function() {
+
+            var vendorId = window.sessionStorage.getItem('vendor')
+
+            if (!cartsJson.length) {
+                gbmsg.info('Cannot place a empty cart')
+                return
+            }
+
+            if (!vendorId) {
+                gbmsg.info('please select a vendor before placing the order')
+                return
+            }
+
+            // Jump to the login page when not logged in
+            if (!$isLogin.val()) {
+                gbmsg.info('please sign in before place an order')
+                setTimeout(() => {
+                    window.location.href = '/customer/login'
+                }, 1000)
+                return
+            }
+
+            var orderlist = cartsJson.map(v => {
+                return {
+                    snackId: v.id,
+                    quantity: v.count
+                }
+            })
+
+            gbmsg.loading()
+            
+            $.ajax({
+                type: 'POST',
+                url: '/customer/menu/order',
+                data: {
+                    orderlist: orderlist,
+                    price: totalPrice,
+                    vendorId: vendorId,
+                }
+            }).done(function( res ) {
+                alertify.alert('orderMessage', res.message[0])
+                window.sessionStorage.setItem('carts', '')
+                setTimeout(() => {
+                    window.location.href = '/customer/menu'
+                }, 500)
+            }).fail(function(jqXHR) {
+                console.log('jqXHR', jqXHR)
+                var res = jqXHR.responseJSON || {}
+                var errs = res.errors || []
+                gbmsg.failure(errs[0] || 'Place order failed')
+            }).always(function() { 
+                gbmsg.hide()
+            });
+        })
+
+        // Update Order
+        $orderUpdate.on('click', 'a.btn', function() {
+
+            // Jump to the login page when not logged in
+            if (!$isLogin.val()) {
+                gbmsg.info('please sign in')
+                setTimeout(() => {
+                    window.location.href = '/customer/login'
+                }, 1000)
+                return
+            }
+
+            var orderlist = cartsJson.map(v => {
+                return {
+                    snackId: v.id,
+                    quantity: v.count
+                }
+            })
+
+            gbmsg.loading()
+            
+            $.ajax({
+                type: 'PUT',
+                url: '/customer/order/update',
+                data: {
+                    orderlist: orderlist,
+                    newPrice: totalPrice,
+                    orderId: orderId
+                }
+            }).done(function( res ) {
+                console.log('res', res)
+                gbmsg.success('Successfully')
+                window.sessionStorage.setItem('orderId', '')
+                window.sessionStorage.setItem('carts', '')
+                setTimeout(() => {
+                    window.location.href = '/customer/order'
+                }, 800)
+            }).fail(function(jqXHR) {
+                console.log('jqXHR', jqXHR)
+                var res = jqXHR.responseJSON || {}
+                var errs = res.errors || []
+                gbmsg.failure(errs[0] || 'Failed！')
+            }).always(function() { 
+               gbmsg.hide()
+            });
+        })
+    })
+</script>

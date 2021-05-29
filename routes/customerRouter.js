@@ -40,7 +40,7 @@ customerRouter.get('/menu', customerController.getMenu)
 customerRouter.get('/menu/:snackName', customerController.getSnackByName)
 
 // handle the GET request to get the current cart
-customerRouter.get('/cart', isCustomer, customerController.getCart)
+customerRouter.get('/cart', customerController.getCart)
 
 // handle the GET request to get all the order details
 customerRouter.get('/order', isCustomer, customerController.getOrders)
@@ -74,7 +74,7 @@ customerRouter.post('/menu/order', isCustomer, customerController.confirmOrder)
 /* ----- PUT routes ----- */
 
 // handle the PUT request to update an order
-customerRouter.put('/order/:orderNumber/update', isCustomer, withinTimeLimit, customerController.updateOrder)
+customerRouter.put('/order/update', isCustomer, withinTimeLimit, customerController.updateOrder)
 
 // handle the PUT request to cancel an order
 customerRouter.put('/order/:orderNumber/cancel', isCustomer, withinTimeLimit, customerController.cancelOrder)
