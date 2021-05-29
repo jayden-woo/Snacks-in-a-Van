@@ -71,6 +71,7 @@
 
 <script>
   $(function() {
+    // declare html variables
     var $list = $('#list')
     var $dialog = $('#dialog')
 
@@ -78,7 +79,7 @@
     var re_name = /^[a-zA-Z ]+$/
     var re_email = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
     var re_pwd = /^(?=.*\d)(?=.*[a-zA-Z])[a-zA-Z0-9!@#$%^&*]{8,}$/
-
+    // open dialog when clicking on list
     function showDialog(type) {
       $(`#${type}`).show().siblings().hide()
       $dialog.addClass('animate__animated animate__backInUp').show()
@@ -98,7 +99,7 @@
       }
       
     })
-
+    // first name validations and post request
     $('#firstname').on('click', 'button', function() {
       var value = $('#firstname').find('input.firstname').val()
 
@@ -116,6 +117,7 @@
 
       gbmsg.loading()
 
+      
       $.ajax({
         type: 'POST',
         url: '/customer/account',
@@ -133,7 +135,7 @@
         gbmsg.failure(errs[0] || "error"); 
       })
     })
-
+    // last name validations and post request
     $('#lastname').on('click', 'button', function() {
       var value = $('#lastname').find('input.lastname').val()
 
@@ -168,7 +170,7 @@
         gbmsg.failure(errs[0] || "error")
       })
     })
-
+    // email validations and post request
     $('#email').on('click', 'button', function() {
       var value = $('#email').find('input.email').val()
 
@@ -203,7 +205,7 @@
         gbmsg.failure(errs[0] || "error")
       })
     })
-
+    // password validations and post request
     $('#password').on('click', 'button', function() {
       var curVal = $('#password').find('input.current').val()
       var newVal = $('#password').find('input.new').val()
@@ -245,7 +247,7 @@
         gbmsg.failure(errs[0] || "error")
       })
     })
-
+    // close dialog
     $('#close').click(function () {
       $dialog.hide()
     })

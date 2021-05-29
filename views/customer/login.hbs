@@ -19,11 +19,11 @@
 
 <script>
   $(function() {
-
+    // declare html variables
     var $email = $('#email')
     var $password = $('#password')
     var $submit = $('#submit')
-
+    // input validations
     $submit.click(function(e) {
       e.preventDefault()
 
@@ -48,7 +48,8 @@
       }
 
       gbmsg.loading()
-
+      
+      // login post request 
       $.ajax({
         type: 'POST',
         url: '/customer/login',

@@ -1,5 +1,4 @@
 <section id='oneFood'>
-  {{!-- {{#onesnack oneSnack}}{{/onesnack}} --}}
   <a href='/customer/menu'> 
     <h1 
       id="name" 
@@ -52,6 +51,7 @@
 
 <script>
   $(function() {
+    // declare html variables
     var $cart = $('#cart')
     var $count = $('#count')
     var $name = $('#name')
@@ -62,11 +62,13 @@
     var price = $name.attr('data-price')
     var carts = window.sessionStorage.getItem('carts') || '[]'
     var cartsJson = JSON.parse(carts)
+
     cartsJson.forEach(v => {
       if (v.id === id) {
         $count.val(v.count || 1)
       }
     })
+    // show cart
     $cart.click(function() {
       var carts = window.sessionStorage.getItem('carts') || '[]'
       var cartsJson = JSON.parse(carts)
