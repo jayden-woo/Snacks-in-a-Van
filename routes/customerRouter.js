@@ -21,6 +21,9 @@ customerRouter.get('/', customerController.getVendorsList)
 // handle the GET request for the login page
 customerRouter.get('/login', isLoggedOut, userController.getCustomerLogIn)
 
+// handle the get request to log out
+customerRouter.get('/logout', isCustomer, userController.logOut)
+
 // handle the GET request for the signup page
 customerRouter.get('/signup', isLoggedOut, userController.getCustomerSignUp)
 
@@ -55,9 +58,6 @@ customerRouter.post('/login', isLoggedOut, passport.authenticate('customer-login
 
 // handle the POST request to sign up
 customerRouter.post('/signup', isLoggedOut, passport.authenticate('customer-signup'))
-
-// handle the POST request to log out
-customerRouter.post('/logout', isCustomer, userController.logOut)
 
 // handle the POST request to change the account details
 customerRouter.post('/account', isCustomer, userController.customerUpdate)

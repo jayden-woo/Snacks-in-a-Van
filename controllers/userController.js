@@ -55,6 +55,7 @@ const getVendorAccount = (req, res) => {
 const logOut = (req, res) => {
     req.logout()
     console.log("Logged out")
+    req.session.destroy()
     return res.status(200).redirect(`/${req.originalUrl.split('/')[1]}/login`)
 }
 
