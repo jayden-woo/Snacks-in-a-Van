@@ -128,14 +128,7 @@ const getOrderHistory = async (req, res) => {
 }
 
 
-// // TEMP create 10 vendors with random locations and ids
-// // create random mongoIDs
-// const mongoObjectId = function () {
-//     var timestamp = (new Date().getTime() / 1000 | 0).toString(16)
-//     return timestamp + 'xxxxxxxxxxxxxxxx'.replace(/[x]/g, function() {
-//         return (Math.random() * 16 | 0).toString(16);
-//     }).toLowerCase()
-// }
+// TEMP create 10 vendors with random locations and ids
 // const addVendor = async (req, res) => {
 //     const coordinates = [
 //         [144.953552, -37.816904],   // Location 1
@@ -151,15 +144,18 @@ const getOrderHistory = async (req, res) => {
 //     ]
 //     for (let i=1; i<=10; i++) {
 //         let vendor = new Vendor({
-//             userID: mongoObjectId(), 
+//             username: "Name " + i, 
+//             // password = aaaa1111
+//             password: "$2a$10$uuACKy/3wV2toq37dZf9l.Nv.35bXKYG8xS0S59LutyDOK9ujYRuG", 
 //             isOnline: [3,6,9].includes(i) ? false : true, 
 //             location: {
+//                 type: "Point", 
 //                 coordinates: coordinates[i-1]
 //             }, 
 //             textAddress: "Location " + i
 //         })
 //         vendor.save( (err) => {
-//             if (err) throw err;
+//             if (err) throw err
 //         })
 //     }
 //     return res.send(await Vendor.find())

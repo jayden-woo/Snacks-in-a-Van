@@ -35,7 +35,7 @@ const scriptSrc = [
     "https://code.getmdl.io/1.3.0/material.min.js", 
     "https://cdn.jsdelivr.net/npm/jquery", 
     "https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js", 
-    "https://cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js", 
+    "https://cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js"
 ]
 
 // set up HTTP headers for web app security

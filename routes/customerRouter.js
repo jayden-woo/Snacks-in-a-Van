@@ -15,8 +15,11 @@ const withinTimeLimit = require('../middleware/withinTimeLimit')
 
 /* ----- GET routes ----- */
 
+// handle the GET request to get the front page
+customerRouter.get('/', customerController.getFrontPage)
+
 // handle the GET request to get the closest vendors
-customerRouter.get('/', customerController.getVendorsList)
+customerRouter.get('/map', customerController.getVendorsList)
 
 // handle the GET request for the login page
 customerRouter.get('/login', isLoggedOut, userController.getCustomerLogIn)
@@ -50,8 +53,11 @@ customerRouter.get('/order/:orderNumber/feedback', isCustomer, customerControlle
 
 /* ----- POST routes ----- */
 
+// handle the POST request to store the current location
+customerRouter.post('/', customerController.saveLocation)
+
 // handle the POST request to select a vendor
-customerRouter.post('/', customerController.selectVendor)
+customerRouter.post('/map', customerController.selectVendor)
 
 // handle the POST request to log in
 customerRouter.post('/login', isLoggedOut, passport.authenticate('customer-login'))

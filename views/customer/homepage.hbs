@@ -1,0 +1,49 @@
+<section id='addressfrom'>
+  <h1>Find Nearest Vendors</h1>
+  <div class="customer-search">
+    <center>
+      <button id="search" type="button" class="btn btn-primary">Search</button>
+    </center>
+  </div>
+</section>
+
+<script>
+  $(function() {
+    // declare html elment in js to use
+    var $search = $('#search')
+    // handle button click
+    $search.click(function(e) {
+      // handle empty input
+      e.preventDefault()
+
+      gbmsg.loading();
+
+      navigator.geolocation.getCurrentPosition( (location) => {
+        console.log(`${location.coords.latitude},${location.coords.longitude}`)
+
+        $.ajax({
+          type: 'POST',
+          url: '/customer/',
+          data: {
+            longitude: location.coords.longitude, 
+            latitude: location.coords.latitude
+          }
+        }).done( function(res) {
+          // handle success request
+          console.log('res', res)
+          window.location.href = '/customer/map'
+        }).fail( function(jqXHR) {
+          // handle failed request
+          console.log('jqXHR', jqXHR)
+          var res = jqXHR.responseJson || {}
+          var errs = res.message || []
+          alertify.alert('Location Error', errs[0] || 'Failed to get your current location. Please try again later.')
+        }).always(function(){
+          gbmsg.hide()
+        })
+
+      })
+
+    })
+  })
+</script>

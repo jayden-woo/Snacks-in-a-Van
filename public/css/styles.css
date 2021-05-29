@@ -555,6 +555,12 @@ a#favourite:hover {
   text-align: center;
 }
 
+/* Customer homepage */
+
+.customer-search {
+  padding: 10px 0px 20px 0px;
+}
+
 
 /* Responsive Design */
 

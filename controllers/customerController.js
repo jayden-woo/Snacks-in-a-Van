@@ -11,12 +11,17 @@ const Vendor = mongoose.model("Vendor")
 // number of vendors to be displayed
 const N_VENDORS = 5
 
+// get the frontpage
+const getFrontPage = (req, res) => {
+    return res.status(200).render("customer/homepage")
+}
+
 // get a list of the closest vendors
-const getVendorsList = (req, res) => {
+const getVendorsList = (req, res) => {    
     Vendor.aggregate([
         { 
             $geoNear: {
-                near: req.body.location, 
+                near: req.session.location, 
                 distanceField: 'distance', 
                 spherical: true, 
                 query: { isOnline: true }
@@ -27,10 +32,15 @@ const getVendorsList = (req, res) => {
     ]).exec( (err, result) => {
         // error occured during query
         if (err) {
-            return res.status(400).send("Oops! Something went wrong.")
+            console.log(err)
+            return res.status(400).json({success: false, message: ["Oops! Something went wrong."]})
         }
+        // convert the distance to km and round to 3 decimal places
+        result.map( (vendor) => {
+            vendor.distance = (vendor.distance/1000).toFixed(3)
+        })
         // don't need to use lean as pipeline output is already js object
-        return res.status(200).send(result)
+        return res.status(200).render("customer/map", {vendors: result})
     })
 }
 
@@ -127,21 +137,34 @@ const getFeedback = (req, res) => {
     return res.status(200).send("<h1> Feedback Page <\h1>")
 }
 
+// save the location of the customer in session
+const saveLocation = (req, res) => {
+    try {
+        req.session.location = {
+            type: "Point", 
+            coordinates: [Number(req.body.longitude), Number(req.body.latitude)]
+        }
+        return res.status(200).json({success: true, message: []})
+    } catch (err) {
+        return res.status(500).json({success: false, message: ["Oops! Something went wrong. Please try again later."]})
+    }
+}
+
 // select a vendor to start the order from
 const selectVendor = async (req, res) => {
     try {
         // search for the vendor
-        const vendor = await Vendor.findOne({ userID: req.body.userID })
+        const vendor = await Vendor.findById(req.body._id)
         // vendor not found in database
         if (vendor === null) {
-            return res.status(404).send("Oops! Vendor not found.")
+            return res.status(404).json({success: false, message: ["Oops! Vendor not found."]})
         }
         // store the vendor in session to be added during order confirmation
         req.session.vendor = vendor
-        return res.status(200).send("Vendor selected.")
+        return res.status(200).json({success: true, message: ["Vendor selected."]})
     // error occurred during query
     } catch (err) {
-        return res.status(400).send("Oops! Something went wrong.")
+        return res.status(400).json({success: false, message: ["Oops! Something went wrong."]})
     }
 }
 
@@ -269,6 +292,7 @@ const submitFeedback = async (req, res) => {
 
 // export the controller functions
 module.exports = {
+    getFrontPage, 
     getVendorsList, 
     getMenu, 
     getSnackByName, 
@@ -276,6 +300,7 @@ module.exports = {
     getOrders, 
     getOrderByNumber, 
     getFeedback, 
+    saveLocation, 
     selectVendor, 
     confirmOrder, 
     updateOrder, 
