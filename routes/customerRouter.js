@@ -25,7 +25,7 @@ customerRouter.get('/login', isLoggedOut, userController.getCustomerLogIn)
 customerRouter.get('/signup', isLoggedOut, userController.getCustomerSignUp)
 
 // handle the GET request for the account details page
-customerRouter.get('/account', isCustomer, userController.getAccount)
+customerRouter.get('/account', isCustomer, userController.getCustomerAccount)
 
 // handle the GET request to get the menu
 customerRouter.get('/menu', customerController.getMenu)

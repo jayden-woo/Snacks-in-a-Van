@@ -1,0 +1,272 @@
+<section class="container--">
+  <ul class="list-group account--list" id="list">
+    <li class="list-group-item">
+      <span class="list--label bg-primary">First Name</span>
+      <a href="javascript:;" class="firstname text-secondary">{{user.firstName}}</a> 
+    </li>
+    <li class="list-group-item">
+      <span class="list--label bg-primary">Last Name</span>
+      <a href="javascript:;" class="lastname text-secondary">{{user.lastName}}</a> 
+    </li>
+    <li class="list-group-item">
+      <span class="list--label bg-primary">Email</span>
+      <a href="javascript:;" class="email text-secondary">{{user.email}}</a> 
+    </li>
+    <li class="list-group-item">
+      <span class="list--label bg-primary">Password</span>
+      <a href="javascript:;" class="password text-secondary">********</a> 
+    </li>
+  </ul>
+
+  <div class="account--dialog animate__faster" id="dialog">
+    <div class="account--dialog__header">
+      <a id="close" href="javascript:;" class="account--dialog__header--close fa fa-close fa-2x"></a>
+    </div>
+    <div class="account--dialog__content">
+      <div class="flex-wrap" id="firstname" style="display: none;">
+        <div class="form-group">
+          <label>First Name</label>
+          <input type="text" class="form-control firstname" value="{{user.firstName}}">
+        </div>
+        <div class="form-group">
+          <button type="submit" class="btn btn-primary">Update</button>
+        </div>
+      </div>
+      <div class="flex-wrap" id="lastname" style="display: none;">
+        <div class="form-group">
+          <label>Last Name</label>
+          <input type="text" class="form-control lastname" value="{{user.lastName}}">
+        </div>
+        <div class="form-group">
+          <button type="submit" class="btn btn-primary">Update</button>
+        </div>
+      </div>
+
+      <div class="flex-wrap" id="email" style="display: none;">
+        <div class="form-group">
+          <label>Email</label>
+          <input type="text" class="form-control email" value="{{user.email}}">
+        </div>
+        <div class="form-group">
+          <button type="submit" class="btn btn-primary">Update</button>
+        </div>
+      </div>
+
+      <div class="flex-wrap" id="password" style="display: none;">
+        <div class="form-group">
+          <label>Current password</label>
+          <input type="password" class="form-control current" value="">
+        </div>
+        <div class="form-group">
+          <label>New password</label>
+          <input type="password" class="form-control new" value="">
+        </div>
+        <div class="form-group">
+          <button type="submit" class="btn btn-primary">Update</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  $(function() {
+    var $list = $('#list')
+    var $dialog = $('#dialog')
+
+    // validations
+    var re_name = /^[a-zA-Z ]+$/
+    var re_email = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
+    var re_pwd = /^(?=.*\d)(?=.*[a-zA-Z])[a-zA-Z0-9!@#$%^&*]{8,}$/
+
+    function showDialog(type) {
+      $(`#${type}`).show().siblings().hide()
+      $dialog.addClass('animate__animated animate__backInUp').show()
+    }
+
+    $list.on('click', 'a', function() {
+      var $this = $(this)
+
+      if ($this.hasClass('firstname')) {
+        showDialog('firstname')
+      } else if ($this.hasClass('lastname')) {
+        showDialog('lastname')
+      }  else if ($this.hasClass('email')) {
+        showDialog('email')
+      }  else if ($this.hasClass('password')) {
+        showDialog('password')
+      }
+      
+    })
+
+    $('#firstname').on('click', 'button', function() {
+      var value = $('#firstname').find('input.firstname').val()
+
+      if (!value) {
+        alertify.alert('Missing Field', 'Please enter your first name.')
+        $('#firstname').focus()
+        return
+      }
+
+      if (!re_name.test(value)) {
+        alertify.alert('Value Error', 'First name can only contain letters and spaces.')
+        $('#firstname').focus()
+        return
+      }
+
+      gbmsg.loading()
+
+      $.ajax({
+        type: 'POST',
+        url: '/customer/account',
+        data: {
+          firstName: value
+        }
+      }).done( function(res) { 
+        gbmsg.success(res.message[0] || 'Success') 
+        $dialog.hide()
+        $list.find('a.firstname').text(value)
+      }).fail( function(jqXHR) {
+        console.log(jqXHR)
+        var res = jqXHR.responseJSON || {}
+        var errs = res.message || []
+        gbmsg.failure(errs[0] || "error"); 
+      })
+    })
+
+    $('#lastname').on('click', 'button', function() {
+      var value = $('#lastname').find('input.lastname').val()
+
+      if (!value) {
+        alertify.alert('Missing Field', 'Please enter your last name.')
+        $('#lastname').focus()
+        return
+      }
+
+      if (!re_name.test(value)) {
+        alertify.alert('Value Error', 'Last name can only contain letters and spaces.')
+        $('#lastname').focus()
+        return
+      }
+
+      gbmsg.loading()
+
+      $.ajax({
+        url: '/customer/account',
+        type: 'POST',
+        data:{
+          lastName: value
+        }
+      }).done( function(res) { 
+        gbmsg.success(res.message[0] || 'Success') 
+        $dialog.hide()
+        $list.find('a.lastname').text(value)
+      }).fail( function(jqXHR) { 
+        console.log(jqXHR)
+        var res = jqXHR.responseJSON || {}
+        var errs = res.message || []
+        gbmsg.failure(errs[0] || "error")
+      })
+    })
+
+    $('#email').on('click', 'button', function() {
+      var value = $('#email').find('input.email').val()
+
+      if (!value) {
+        alertify.alert('Missing Field', 'Please enter your email.')
+        $('#email').focus()
+        return
+      }
+
+      if (!re_email.test(value)) {
+        alertify.alert('Value Error', 'Please enter a valid email.')
+        $('#email').focus()
+        return
+      }
+
+      gbmsg.loading()
+
+      $.ajax({
+        url: '/customer/account',
+        type: 'POST',
+        data:{
+          email: value
+        }
+      }).done( function(res) { 
+        gbmsg.success(res.message[0] || 'Success') 
+        $dialog.hide()
+        $list.find('a.email').text(value)
+      }).fail( function(jqXHR) { 
+        console.log(jqXHR)
+        var res = jqXHR.responseJSON || {}
+        var errs = res.message || []
+        gbmsg.failure(errs[0] || "error")
+      })
+    })
+
+    $('#password').on('click', 'button', function() {
+      var curVal = $('#password').find('input.current').val()
+      var newVal = $('#password').find('input.new').val()
+
+      if (!curVal) {
+        alertify.alert('Missing Field', 'Please enter your current password.')
+        $('#password').focus()
+        return
+      }
+
+      if (!newVal) {
+        alertify.alert('Missing Field', 'Please enter your new password.')
+        $('#password').focus()
+        return
+      }
+
+      if (!re_pwd.test(newVal)) {
+        alertify.alert('Value Error', 'Password must have at least one uppercase or lowercase letter (A-Z or a-z), at least one digit (0-9), and be longer than 8 characters.')
+        $('#password').focus()
+        return
+      }
+
+      gbmsg.loading()
+
+      $.ajax({
+        url: '/customer/account',
+        type: 'POST',
+        data:{
+          oldPassword: curVal,
+          password: newVal,
+        }
+      }).done( function(res) { 
+        gbmsg.success(res.message[0] || 'Success')  
+        $dialog.hide()
+      }).fail( function(jqXHR) { 
+        console.log(jqXHR)
+        var res = jqXHR.responseJSON || {}
+        var errs = res.message || []
+        gbmsg.failure(errs[0] || "error")
+      })
+    })
+
+    $('#close').click(function () {
+      $dialog.hide()
+    })
+
+  })
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

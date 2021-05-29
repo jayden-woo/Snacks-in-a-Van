@@ -24,7 +24,7 @@ vendorRouter.get('/login', isLoggedOut, userController.getVendorLogIn)
 vendorRouter.get('/signup', isLoggedOut, userController.getVendorSignUp)
 
 // handle the GET request for the account details page
-vendorRouter.get('/account', isVendor, userController.getAccount)
+vendorRouter.get('/account', isVendor, userController.getVendorAccount)
 
 // handle the GET request to get all the outstanding order details
 vendorRouter.get('/order', isVendor, vendorController.getOrders)
