@@ -47,12 +47,12 @@ const configPassport = (passport) => {
             // wrong email
             if (!user) {
                 console.log("Customer not found")
-                return req.res.status(200).json({success: false, message: ["You have entered an invalid username or password."]})
+                return req.res.status(401).json({success: false, message: ["You have entered an invalid username or password."]})
             }
             // wrong password
             if (!user.validPassword(password)) {
                 console.log("Wrong password")
-                return req.res.status(200).json({success: false, message: ["You have entered an invalid username or password."]})
+                return req.res.status(401).json({success: false, message: ["You have entered an invalid username or password."]})
             // user is found and authenticated
             } else {
                 console.log("Customer has successfully logged in")
@@ -76,12 +76,12 @@ const configPassport = (passport) => {
             // wrong username
             if (!user) {
                 console.log("Vendor not found")
-                return req.res.status(200).json({success: false, message: ["You have entered an invalid username or password."]})
+                return req.res.status(401).json({success: false, message: ["You have entered an invalid username or password."]})
             }
             // wrong password
             if (!user.validPassword(password)) {
                 console.log("Wrong password")
-                return req.res.status(200).json({success: false, message: ["You have entered an invalid username or password."]})
+                return req.res.status(401).json({success: false, message: ["You have entered an invalid username or password."]})
             // user is found and authenticated
             } else {
                 console.log("Vendor has successfully logged in")
@@ -105,7 +105,7 @@ const configPassport = (passport) => {
             // email is taken
             if (user) {
                 console.log("Email is taken")
-                return req.res.status(200).json({success: false, message: ["The email address you have entered is already taken."]})
+                return req.res.status(409).json({success: false, message: ["The email address you have entered is already taken."]})
             } else {
                 // constuct a new customer instance with the given details
                 const customer = new Customer({
@@ -142,7 +142,7 @@ const configPassport = (passport) => {
             // username is taken
             if (user) {
                 console.log("Username is taken")
-                return req.res.status(200).json({success: false, message: ["The username you have entered is already taken."]})
+                return req.res.status(409).json({success: false, message: ["The username you have entered is already taken."]})
             } else {
                 // constuct a new vendor instance with the given username
                 const vendor = new Vendor({

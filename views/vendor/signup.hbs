@@ -61,7 +61,7 @@
       }
 
       if (!re_pwd.test($password.val())) {
-        alertify.alert('Value Error', "Password must have at least one uppercase or lowercase letter (A-Z or a-z), have at least one digit (0-9), and be longer than 8 characters.")
+        alertify.alert('Value Error', "Password must have at least one uppercase or lowercase letter (A-Z or a-z), at least one digit (0-9), and be longer than 8 characters.")
         $password.focus()
         return
       }
@@ -80,18 +80,16 @@
           username: $vanname.val(),
           password: $password.val() 
         }
-      }).done(function( res ) {
-        if (res.success) {
-          alertify.alert('Signup Success', res.message[0], function() {
-            window.location.href = '/vendor/login'
-          }).set('label', 'Login')
-        } else {
-          alertify.alert('Signup Failure', res.message[0])
-        }
-      }).fail(function(jqXHR) {
+      }).done( function(res) {
+        alertify.alert('Signup Success', res.message[0], function() {
+          window.location.href = '/vendor/login'
+        }).set('label', 'Login')
+      }).fail( function(jqXHR) {
         console.log('jqXHR', jqXHR)
+        var res = jqXHR.responseJSON || {}
+        var errs = res.message || []
         alertify.alert('Signup Failure', errs[0] || 'Sorry, the application has encountered an unknown error.')
-      }).always(function() { 
+      }).always( function() { 
         gbmsg.hide()
        })
     })

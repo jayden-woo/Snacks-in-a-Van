@@ -56,20 +56,16 @@
           username: $username.val(),
           password: $password.val() 
         }
-      }).done(function(res) {
-        if (res.success) {
-          alertify.alert('Login Success', res.message[0], function() {
-            window.location.href = '/vendor'
-          })
-        } else {
-          alertify.alert('Login Failure', res.message[0])
-        }
-      }).fail(function(jqXHR) {
+      }).done( function(res) {
+        alertify.alert('Login Success', res.message[0], function() {
+          window.location.href = '/vendor'
+        })
+      }).fail( function(jqXHR) {
         console.log('jqXHR', jqXHR)
         var res = jqXHR.responseJSON || {}
-        var errs = res.errors || []
+        var errs = res.message || []
         alertify.alert('Login Failure', errs[0] || 'Sorry, the application has encountered an unknown error.')
-      }).always(function() { 
+      }).always( function() { 
         gbmsg.hide()
       })
     })
