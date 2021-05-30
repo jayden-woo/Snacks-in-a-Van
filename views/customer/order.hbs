@@ -87,6 +87,9 @@
     if (msg == user._id) {
       alertify.set('notifier', 'position', 'top-center')
       alertify.warning('Your order(s) has been updated. Please reload the page to get the latest information.', 0)
+      setTimeout(() => {
+          window.location.reload()
+        }, 1500)
     }
   })
   
