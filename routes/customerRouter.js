@@ -21,6 +21,9 @@ customerRouter.get('/', customerController.getFrontPage)
 // handle the GET request to get the closest vendors
 customerRouter.get('/map', customerController.getVendorsList)
 
+// handle the GET request to get the closest vendors
+customerRouter.get('/api/map', customerController.getVendorsListApi)
+
 // handle the GET request for the login page
 customerRouter.get('/login', isLoggedOut, userController.getCustomerLogIn)
 

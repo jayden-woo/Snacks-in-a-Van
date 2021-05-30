@@ -551,6 +551,12 @@ a#favourite:hover {
   padding: 10px;
 }
 
+.account--dialog__header--showlist {
+  position: absolute;
+  right: 30px;
+  top: 10px;
+}
+
 .account--dialog__content {
   margin: 0 auto;
   padding: 20px;
@@ -632,6 +638,22 @@ a#favourite:hover {
 .location--map {
   width: 100%;
   min-height: 400px;
+}
+
+/* map */
+.map--head__icon {
+  position: fixed;
+  right: 40px;
+  top: 11px;
+  z-index: 100;
+}
+.view--map {
+  width: 100%;
+  min-height: 360px;
+}
+.vendor--list {
+  overflow: auto;
+  height: calc(100vh - 460px);
 }
 
 /* Responsive Design */
