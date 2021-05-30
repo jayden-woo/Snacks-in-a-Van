@@ -1,83 +1,84 @@
-<div id="customer-order" class="container py-5">
-  <div class="row text-center text-blue mb-5">
-    <div class="col-lg-7 mx-auto">
-      <h1>Order History</h1>
+<section>
+  <div id="customer-order" class="container py-5">
+    <div class="row text-center text-blue mb-5">
+      <div class="col-lg-7 mx-auto">
+        <h1>Order History</h1>
+      </div>
     </div>
-  </div>
-  <div class="row">
-    <div class="col-lg-8 mx-auto">
-      <!-- List group-->
-      {{#if order}}
-        {{#each order}}
-          <!-- list group item-->
-          <div class="card shadow mb-4">
-            <!-- Custom content-->
-            <div class="card-body p-5">
-              <div class="media align-items-lg-center flex-column flex-lg-row p-3">
-                <div class="media-body order-2 order-lg-1">
-                  <h4 class="mt-0 font-weight-bold mb-2">Order #{{orderNumber}}</h4>
-                  <div id="customer-order-progress" class="progress">
-                    <div 
-                      class="progress-bar" 
-                      role="progressbar" 
-                      style="width: 33%" 
-                      aria-valuenow="33" 
-                      aria-valuemin="0" 
-                      aria-valuemax="100" 
-                      data-data="{{status}}"
-                    ><h6>{{status}}</h6>
+    <div class="row">
+      <div class="col-lg-8 mx-auto">
+        <!-- List group-->
+        {{#if order}}
+          {{#each order}}
+            <!-- list group item-->
+            <div class="card shadow mb-4">
+              <!-- Custom content-->
+              <div class="card-body p-5">
+                <div class="media align-items-lg-center flex-column flex-lg-row p-3">
+                  <div class="media-body order-2 order-lg-1">
+                    <h4 class="mt-0 font-weight-bold mb-2">Order #{{orderNumber}}</h4>
+                    <div id="customer-order-progress" class="progress">
+                      <div 
+                        class="progress-bar" 
+                        role="progressbar" 
+                        style="width: 33%" 
+                        aria-valuenow="33" 
+                        aria-valuemin="0" 
+                        aria-valuemax="100" 
+                        data-data="{{status}}"
+                      ><h6>{{status}}</h6>
+                      </div>
                     </div>
-                  </div>
-                  <div class="d-flex flex-wrap align-items-center justify-content-between mt-1">
-                    <ul id="customer-order-list" class="unstyled-list">
-                      {{#each snacks}}
-                        <li class=mb-2>
-                          <div class="container">
-                            <div class="row">
-                              <div class="col-xs-12 col-sm">
-                                <span class="float-left">{{snackID.name}}</span>
-                              </div>
-                              <div class="col-xs-12 col-sm-3">
-                                <span class="float-right">Qty {{quantity}}</span>
+                    <div class="d-flex flex-wrap align-items-center justify-content-between mt-1">
+                      <ul id="customer-order-list" class="unstyled-list">
+                        {{#each snacks}}
+                          <li class=mb-2>
+                            <div class="container">
+                              <div class="row">
+                                <div class="col-xs-12 col-sm">
+                                  <span class="float-left">{{snackID.name}}</span>
+                                </div>
+                                <div class="col-xs-12 col-sm-3">
+                                  <span class="float-right">Qty {{quantity}}</span>
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        </li>
-                      {{/each}}
-                    </ul>
-                    <div id="info-row" class="row">
-                      <div class="col-14">
-                        <div class="text--muted alert alert-success" data-time="{{updatedAt}}"></div>
+                          </li>
+                        {{/each}}
+                      </ul>
+                      <div id="info-row" class="row">
+                        <div class="col-14">
+                          <div class="text--muted alert alert-success" data-time="{{updatedAt}}"></div>
+                        </div>
+                        <div class="col-14"><h6 class="font-weight-bold my-2" data-total="{{total}}">${{total}}</h6></div>
                       </div>
-                      <div class="col-14"><h6 class="font-weight-bold my-2" data-total="{{total}}">${{total}}</h6></div>
                     </div>
+                    <button type="button" class="edit btn btn-primary" data-id="{{_id}}" data-data={{{json snacks}}}>Edit Order</button>
+                    <button type="button" class="cancel btn btn-danger" data-id="{{_id}}">Cancel Order</button>
+                    {{#if (is_equal status "Picked-Up")}}
+                      <button type="button" class="rate btn btn-info" data-id="{{_id}}" data-number="{{orderNumber}}">Rate Order</button>
+                    {{/if}}
                   </div>
-                  <button type="button" class="edit btn btn-primary" data-id="{{_id}}" data-data={{{json snacks}}}>Edit Order</button>
-                  <button type="button" class="cancel btn btn-danger" data-id="{{_id}}">Cancel Order</button>
-                  {{#if (is_equal status "Picked-Up")}}
-                    <button type="button" class="rate btn btn-info" data-id="{{_id}}" data-number="{{orderNumber}}">Rate Order</button>
-                  {{/if}}
                 </div>
               </div>
             </div>
+          {{/each}}
+        {{else}}
+          <div class="row">
+            <div class="col-12 text-center">
+              <p><img src="/img/order-icon.png"></p>
+            </div>
           </div>
-        {{/each}}
-      {{else}}
-        <div class="row">
-          <div class="col-12 text-center">
-            <p><img src="/img/order-icon.png"></p>
+          <div class="row">
+            <div class="col-12 text-center">
+              <p class="text-primary">You don't have any orders in your history yet.</p>
+            </div>
           </div>
-        </div>
-        <div class="row">
-          <div class="col-12 text-center">
-            <p class="text-primary">You don't have any orders in your history yet.</p>
-          </div>
-        </div>
-      {{/if}}
-
+        {{/if}}
+      </div>
     </div>
   </div>
-</div>
+</section>
 
 <script type="text/javascript">
   var socket = io()
