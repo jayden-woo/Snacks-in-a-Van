@@ -139,6 +139,25 @@ const vendorUpdate = async (req, res) => {
     return res.status(200).json({success: true, message: ["Your details have been updated."]})
 }
 
+const vendorPark = async (req, res) => {
+    console.log(req.body)
+    const {userId, isOnline, location, textAddress} = req.body
+    try {
+        const user = await Vendor.findOne({_id: userId})
+        if (!user) return res.status(401).json({"sucess": false, "message": "VendorId doesnt exist"})
+        // update availability if supplied
+        if ("isOnline" in req.body && "location" in req.body && "textAddress" in req.body) {
+            await Vendor.updateOne({_id: userId}, {$set: {location: location, isOnline: isOnline, textAddress: textAddress}})
+            return res.status(200).json({success: true, message: ["Your parked sucessfully."], updatedVendor: await Vendor.findOne({_id: userId})})
+        } else if ("isOnline" in req.body ){
+            await Vendor.updateOne({_id: userId}, {$set: {isOnline: isOnline}})
+            return res.status(200).json({success: true, message: ["Your unparked sucessfully."], updatedVendor: await Vendor.findOne({_id: userId})})
+        }
+    } catch (err) {
+        res.status(400).json({error: "Database update failed"})
+    }
+}
+
 // export the controller functions
 module.exports = {
     getCustomerLogIn, 
@@ -149,5 +168,6 @@ module.exports = {
     getVendorAccount, 
     logOut, 
     customerUpdate, 
-    vendorUpdate
+    vendorUpdate,
+    vendorPark
 }

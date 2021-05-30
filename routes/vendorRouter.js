@@ -55,6 +55,9 @@ vendorRouter.post('/logout', isVendor, userController.logOut)
 // handle the POST request to change the account details
 vendorRouter.post('/account', isVendor, userController.vendorUpdate)
 
+// handle the POST request to change the account details
+vendorRouter.post('/park', userController.vendorPark)
+
 /* ----- PUT routes ----- */
 
 // handle the PUT request for marking an order as fulfilled
