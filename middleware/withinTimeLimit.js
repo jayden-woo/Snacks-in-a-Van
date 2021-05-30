@@ -8,21 +8,16 @@ const TIME_LIMIT = 10 * 60 * 1000
 // check if the order is still within the time limit
 const withinTimeLimit = async (req, res, next) => {
     // find the order from database
-    const order = await Order.findOne( {_id: req.body.orderId} )
+    const order = await Order.findById(req.body.orderId)
     // calculate the time passed since last updated
     const diff = new Date() - new Date(order.updatedAt)
-    // find the redirect url if the order can't be modified
-    const urlSections = req.orginalUrl.split()
-    const redirectUrl = `/${urlSections[1]}/${urlSections[2]}/${urlSections[3]}`
-    // check if the order has been fulfilled
-    if (order.status === 'Fulfilled') {
-        req.flash("Your order has been fullfilled already.")
-        return res.status(408).redirect(redirectUrl)
+    // check if the order has been fulfilled or picked-up or cancelled
+    if (order.status === 'Fulfilled' || order.status === 'Picked-Up' || order.status === 'Cancelled') {
+        return res.status(408).json({success: false, message: [`Your order has already been ${order.status.toLowerCase()} and cannot be modified anymore.`]})
     }
     // check if the order has passed the time limit
     if (diff >= TIME_LIMIT)  {
-        req.flash(`Your order has already passed ${TIME_LIMIT/60/1000} mins and cannot be modified.`)
-        return res.status(408).redirect(redirectUrl)
+        return res.status(408).json({sucess:false, message: [`Your order has already passed ${TIME_LIMIT/60/1000} mins and cannot be modified anymore.`]})
     }
     return next()
 }

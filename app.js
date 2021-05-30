@@ -7,6 +7,23 @@ const helmet = require('helmet')
 const passport = require('passport')
 const session = require('express-session')
 const app = express()
+const server = require('http').createServer(app)
+const socket = require('socket.io')
+const io = socket(server)
+
+// listen to socket connections
+io.on('connection', (socket) => {
+    console.log('a user connected')
+    socket.on('disconnect', () => {
+        console.log('user disconnected')
+    })
+})
+
+// bind the io reference to every incoming request
+app.use( (req, res, next) => {
+    req.io = io
+    return next()
+})
 
 // define where static assets live
 app.use(express.static('public')) 
@@ -100,6 +117,6 @@ app.use('/', indexRouter)
 const port = process.env.PORT || 8080
 
 // listen to any request to the web app
-app.listen(port, () => {
+server.listen(port, () => {
     console.log('The web app is listening on port', port)
 })

@@ -40,7 +40,7 @@ customerRouter.get('/menu', customerController.getMenu)
 customerRouter.get('/menu/:snackName', customerController.getSnackByName)
 
 // handle the GET request to get the current cart
-customerRouter.get('/cart', customerController.getCart)
+customerRouter.get('/cart', isCustomer, customerController.getCart)
 
 // handle the GET request to get all the order details
 customerRouter.get('/order', isCustomer, customerController.getOrders)
@@ -49,7 +49,7 @@ customerRouter.get('/order', isCustomer, customerController.getOrders)
 customerRouter.get('/order/:orderNumber', isCustomer, customerController.getOrderByNumber)
 
 // handle the GET request to get the feedback page
-customerRouter.get('/order/:orderNumber/feedback', isCustomer, customerController.getFeedback)
+customerRouter.get('/feedback', isCustomer, customerController.getFeedback)
 
 /* ----- POST routes ----- */
 
@@ -77,10 +77,10 @@ customerRouter.post('/menu/order', isCustomer, customerController.confirmOrder)
 customerRouter.put('/order/update', isCustomer, withinTimeLimit, customerController.updateOrder)
 
 // handle the PUT request to cancel an order
-customerRouter.put('/order/:orderNumber/cancel', isCustomer, withinTimeLimit, customerController.cancelOrder)
+customerRouter.put('/order/cancel', isCustomer, withinTimeLimit, customerController.cancelOrder)
 
 // handle the PUT request to submit a feedback for the order
-customerRouter.put('/order/:orderNumber/feedback', isCustomer, customerController.submitFeedback)
+customerRouter.put('/feedback', isCustomer, customerController.submitFeedback)
 
 // export the router
 module.exports = customerRouter

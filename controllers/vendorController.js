@@ -104,6 +104,15 @@ const getOrderByNumber = async (req, res) => {
 // get the order history with picked-up and cancelled orders
 const getOrderHistory = async (req, res) => {
     try {
+        // check if there's any orders
+        const list = await Order
+            .find({
+                vendorID: req.user._id, 
+                status: {$in: ["Picked-Up", "Cancelled"]}
+            }).limit(1)
+        if (!list.length) {
+            return res.status(200).render("vendor/history", {order: []})
+        }
         const orders = await Order
             // find the previous orders associated with the current vendor
             .find({
@@ -187,6 +196,8 @@ const markFulfilled = async (req, res) => {
         // mark the order as fulfilled and save it in the database
         order.status = "Fulfilled"
         await order.save()
+        // send a notification to the customer to refresh their page
+        req.io.emit('customer message', order.customerID)
         return res.status(200).send("Order has been fulfilled.")
     // error occurred during saving
     } catch (err) {
