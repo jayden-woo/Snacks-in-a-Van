@@ -546,7 +546,7 @@ a#favourite:hover {
 .account--dialog__content {
   margin: 0 auto;
   padding: 20px;
-  max-width: 400px;
+  max-width: 500px;
 }
 
 .account--dialog__content .form-group {
@@ -561,6 +561,18 @@ a#favourite:hover {
   padding: 10px 0px 20px 0px;
 }
 
+
+/* Vendor order */
+.vendor--order__history {
+  margin-top: 20px;
+}
+.card .row {
+  margin-left: 0;
+  margin-right: 0;
+}
+.text-right {
+  text-align: right;
+}
 
 /* Responsive Design */
 

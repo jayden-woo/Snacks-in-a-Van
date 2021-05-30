@@ -29,27 +29,27 @@ const imgSrc = [
     "https://images.unsplash.com/"
 ]
 const scriptSrc = [
-    "'self'", 
-    "'unsafe-inline'", 
-    "https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js", 
-    "https://code.getmdl.io/1.3.0/material.min.js", 
-    "https://cdn.jsdelivr.net/npm/jquery", 
-    "https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js", 
-    "https://cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js"
-]
+  "'self'",
+  "'unsafe-inline'",
+  "https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js",
+  "https://code.getmdl.io/1.3.0/material.min.js",
+  "https://cdn.jsdelivr.net/npm/jquery",
+  "https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js",
+  "https://cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js",
+];
 
 // set up HTTP headers for web app security
-app.use(helmet({
-    contentSecurityPolicy: {
-        directives: {
-            ...helmet.contentSecurityPolicy.getDefaultDirectives(),
-            "img-src": imgSrc, 
-            "script-src": scriptSrc, 
-            "script-src-attr": scriptSrc, 
-            "script-src-elem": scriptSrc
-        }
-    }
-}))
+// app.use(helmet({
+//     contentSecurityPolicy: {
+//         directives: {
+//             ...helmet.contentSecurityPolicy.getDefaultDirectives(),
+//             "img-src": imgSrc, 
+//             "script-src": scriptSrc, 
+//             "script-src-attr": scriptSrc, 
+//             "script-src-elem": scriptSrc
+//         }
+//     }
+// }))
 
 // use flash to store messages
 app.use(flash())

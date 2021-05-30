@@ -26,14 +26,17 @@ vendorRouter.get('/signup', isLoggedOut, userController.getVendorSignUp)
 // handle the GET request for the account details page
 vendorRouter.get('/account', isVendor, userController.getVendorAccount)
 
+// Order list view rendering
+vendorRouter.get('/order', isVendor, vendorController.viewOrderList)
+
 // handle the GET request to get all the outstanding order details
-vendorRouter.get('/order', isVendor, vendorController.getOrders)
+vendorRouter.get('/api/order', isVendor, vendorController.getOrders)
 
 // handle the GET request to get details of one order
 vendorRouter.get('/order/:orderNumber', isVendor, vendorController.getOrderByNumber)
 
 // // handle the GET request to get the history of all previous orders
-vendorRouter.get('/history', isVendor, vendorController.getOrderHistory)
+vendorRouter.get('/api/history', isVendor, vendorController.getOrderHistory)
 
 /* ----- POST routes ----- */
 
