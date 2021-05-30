@@ -95,8 +95,7 @@ const getOrders = async (req, res) => {
                 status: {$ne: "Cancelled"}
             // add the vendor van name
             }).populate({
-                path: "vendorID",
-                select: "username"
+                path: "vendorID"
             // add the snack details
             }).populate({
                 path: "snacks.snackID"
