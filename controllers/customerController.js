@@ -44,34 +44,6 @@ const getVendorsList = (req, res) => {
     })
 }
 
-// get a list of the closest vendors
-const getVendorsListApi = (req, res) => {    
-    Vendor.aggregate([
-        { 
-            $geoNear: {
-                near: req.session.location, 
-                distanceField: 'distance', 
-                spherical: true, 
-                query: { isOnline: true }
-            }
-        }, {
-            $limit: N_VENDORS
-        }
-    ]).exec( (err, result) => {
-        // error occured during query
-        if (err) {
-            console.log(err)
-            return res.status(400).json({success: false, message: ["Oops! Something went wrong."]})
-        }
-        // convert the distance to km and round to 3 decimal places
-        result.map( (vendor) => {
-            vendor.distance = (vendor.distance/1000).toFixed(3)
-        })
-        // don't need to use lean as pipeline output is already js object
-        return res.status(200).json({success: true, vendors: result})
-    })
-}
-
 // get the menu from database
 const getMenu = async (req, res) => {
     try {
@@ -323,7 +295,6 @@ const submitFeedback = async (req, res) => {
 module.exports = {
     getFrontPage, 
     getVendorsList, 
-    getVendorsListApi,
     getMenu, 
     getSnackByName, 
     getCart, 
