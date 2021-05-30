@@ -62,6 +62,7 @@
       rel="stylesheet" 
       href="https://cdn.jsdelivr.net/npm/animate.css"
     />
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.3.0/mapbox-gl.css" rel="stylesheet">
     {{!-- <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script> --}}
     <script src="https://cdn.jsdelivr.net/npm/jquery"></script>
     <script src="/js/art-template.js"></script>
@@ -69,7 +70,7 @@
     <script src="https://cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js"></script>
     <script src="/js/jquery.barrating.min.js"></script>
     <script src="/js/jquery.countdown.min.js"></script>
-    
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.3.0/mapbox-gl.js"></script>
   </head>
 
   <body>
@@ -81,13 +82,22 @@
           class="closebtn"
           onclick="closeNav()"
         >&times;</a>
-        <a href="/customer/">Homepage</a>
-        <a href="/customer/vendorlist">Select Vendor</a>
-        <a href="/customer/menu">Menu</a>
-        <a href="/customer/order">Order</a>
-        <a href="/customer/account">Account</a>
+        {{!-- <a class="customer" href="/customer/">Homepage</a>
+        <a class="customer" href="/customer/vendorlist">Select Vendor</a>
+        <a class="customer" href="/customer/menu">Menu</a>
+        <a class="customer" href="/customer/order">Order</a>
+        <a class="customer" href="/customer/account">Account</a>
+        <a class="customer" href="/customer/login">Customer Login</a>
+        <a class="customer" href="/customer/logout">Logout</a>
 
-        {{#if userType}}
+        <a class="vendor" href="/vendor/location">Van Location</a>
+        <a class="vendor" href="/vendor/order">Order</a>
+        <a class="vendor" href="/vendor/account">Account</a>
+        <a class="vendor" href="/vendor/login">Vendor Login</a>
+        <a class="vendor" href="/vendor/logout">Vendor Login</a>   --}}
+        
+
+        {{!-- {{#if userType}}
           <a href="/customer/login">Customer Login</a>
         {{else}}
           <a href="/vendor/login">Vendor Login</a>       
@@ -96,8 +106,8 @@
         {{#if user}}
           <a href="/customer/logout">Logout</a>
         {{else}}
-          <a href="/customer/login">Login</a>
-        {{/if}}
+          <a href="/vendor/login">Login</a>
+        {{/if}} --}}
 
       </div>
 
@@ -128,17 +138,88 @@
     <main>
       {{{body}}}
     </main>
-
     <footer>
       <p>&copy; 2021 &nbsp;|&nbsp; Team Generator</p>
       <p>INFO30005 Web Information Technologies</p>
     </footer>
 
+    <script id="tpl-nav" type="text/html">
+        <a
+          href="javascript:void(0)"
+          class="closebtn"
+          onclick="closeNav()"
+        >&times;</a>
+        <% if (isLogin) { %>
+          <% if (userType !== 'vendor') { %>
+            <a class="customer" href="/customer/">Homepage</a>
+            <a class="customer" href="/customer/vendorlist">Select Vendor</a>
+            <a class="customer" href="/customer/menu">Menu</a>
+            <a class="customer" href="/customer/order">Order</a>
+            <a class="customer" href="/customer/account">Account</a>
+            <a class="customer logout" href="/customer/logout">Logout</a>
+          <% } else { %>
+            <a class="vendor" href="/vendor/location">Van Location</a>
+            <a class="vendor" href="/vendor/order">Order</a>
+            <a class="vendor" href="/vendor/account">Account</a>
+            <a class="vendor logout" href="/vendor/logout">Vendor Logout</a>
+          <% } %>
+        <% } else { %>
+          <a class="customer" href="/customer/">Homepage</a>
+          <a class="customer" href="/customer/vendorlist">Select Vendor</a>
+          <a class="customer" href="/customer/menu">Menu</a>
+          <a class="customer" href="/customer/order">Order</a>
+          <a class="customer" href="/customer/account">Account</a>
+          <a class="customer" href="/customer/login">Customer Login</a>
+
+          <a class="vendor" href="/vendor/location">Van Location</a>
+          <a class="vendor" href="/vendor/order">Order</a>
+          <a class="vendor" href="/vendor/account">Account</a>
+          <a class="vendor" href="/vendor/login">Vendor Login</a>
+        <% } %>
+        
+    </script>
+
     <input type="hidden" id="isLogin" value="{{user}}">
     <script src="/js/toast.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
 
     <script>
+      var userType = window.sessionStorage.getItem('userType')
+      var isLogin = Cookies.get('connect.sid');
+
       $(function() {
+        var $mySidenav = $('#mySidenav')
+
+        // Display content based on login type
+        var html = template('tpl-nav', {userType:userType,isLogin:isLogin})
+        $mySidenav.html(html)
+
+        // logout
+        $mySidenav.on('click', 'a.logout', function(e) {
+          e.preventDefault()
+
+          var url = '';
+          var loginUrl = ''
+          if ($(this).hasClass('vendor')) {
+            url = '/vendor/logout'
+            loginUrl = '/vendor/login'
+          } else {
+            url = '/customer/logout'
+            loginUrl = '/customer/login'
+          }
+
+          $.ajax({
+              type: 'POST',
+              url: url
+          }).always(function() {
+            Cookies.remove('connect.sid')
+            window.sessionStorage.setItem('userType', '')
+
+            window.location.href = loginUrl
+          })
+        })
+        
+
         $('#goToCart').click(function() {
           window.sessionStorage.setItem('orderId', '')
           window.location.href = '/customer/cart'

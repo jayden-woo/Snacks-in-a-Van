@@ -82,6 +82,11 @@ const viewOrderList = (req, res) => {
   return res.status(200).render("vendor/order");
 };
 
+// Order list view rendering
+const viewLocation = (req, res) => {
+  return res.status(200).render("vendor/location");
+};
+
 // get details of one order by its order number
 const getOrderByNumber = async (req, res) => {
   try {
@@ -108,6 +113,9 @@ const getOrderByNumber = async (req, res) => {
     order.pickedUpTime = dayjs(
       new Date(order.updatedAt).getTime() + DISCOUNT_TIME
     ).format("hh:mm a");
+
+    order.discountPrice = order.duration <= 0 ? order.total * 0.8 : order.total;
+
     return res.status(200).send(order);
     // error occurred during query
   } catch (err) {
@@ -256,4 +264,5 @@ module.exports = {
   markPickedUp,
 
   viewOrderList,
+  viewLocation,
 };

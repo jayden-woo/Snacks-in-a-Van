@@ -1,4 +1,4 @@
-<div class="container--">
+<div class="container--" id="container">
     <div class="card container--content" id="list">
      
     </div>
@@ -43,6 +43,7 @@
 
                         <div class="col-4">
                             <div class="text--muted alert alert-primary" data-time="<%= list[i].updatedAt %>"></div>
+                            <div class="discount badge badge-info">discount not applied</div>
                         </div>
                     </div>
                 </a>
@@ -64,7 +65,7 @@
 <script id="tpl-history-list" type="text/html">
     <% for(var i = 0; i < historyList.length; i++){ %>
         <li class="list-group-item list-group-item-secondary">
-            <%= historyList[i].orderNumber %>
+           <a class="detail" data-id="<%= historyList[i].orderNumber %>" href="javascript:;"> <%= historyList[i].orderNumber %> </a>
         </li>
     <% } %>
 
@@ -76,7 +77,7 @@
             Order <%= detail.orderNumber %>
         </div>
         <div class="col-12">
-            Fulfilled by <%= detail.pickedUpTime %>
+            Pick up <%= detail.pickedUpTime %>
         </div>
          <% for(var i = 0; i < detail.snacks.length; i++){ %>
             <div class="col-8"><%= detail.snacks[i].snackID.name %>  x<%= detail.snacks[i].quantity %> 
@@ -91,15 +92,21 @@
         <div class="col-8 text-right">Tax</div>
         <div class="col-4  text-right">$0.00</div>
 
+        <% if (detail.duration <= 0) { %>
+            <div class="col-8 text-right">Discount</div>
+            <div class="col-4  text-right">-$<%= detail.total * 0.2 %></div>
+        <% } %>
         <div class="col-8 text-right">Paid</div>
-        <div class="col-4  text-right">$<%= detail.total %></div>
+        <div class="col-4  text-right">$<%= detail.discountPrice %></div>
 
-        <div class="col-6">
-            <button class="btn btn-info done" data-id="<%= detail.orderNumber %>">FOOD IS DONE</button>
-        </div>
-        <div class="col-6">
-            <button class="btn btn-primary picked-up" data-id="<%= detail.orderNumber %>">ORDER PICKED UP</button>
-        </div>
+        <% if (detail.status !== 'Picked-Up' && detail.status !== 'Cancelled') { %>
+            <div class="col-6">
+                <button class="btn btn-info done" data-id="<%= detail.orderNumber %>">FOOD IS DONE</button>
+            </div>
+            <div class="col-6">
+                <button class="btn btn-primary picked-up" data-id="<%= detail.orderNumber %>">ORDER PICKED UP</button>
+            </div>
+        <% } %>
     </div>
 </script>
 
@@ -146,6 +153,10 @@
                         } else if (minute <= 5) {
                         // Less than 5 minutes to show the red box
                             $(this).removeClass('alert-warning').addClass('alert-danger')      
+
+                            if (minute <= 0) {
+                                $(this).next('div.discount').text('discount applied')
+                            }
                         }
 
                         $(this).text(event.strftime('%M:%S'));
@@ -211,7 +222,7 @@
         },30000)    
 
         // Open order details
-        $list.on('click', 'a.detail', function(e) {
+        $('#container').on('click', 'a.detail', function(e) {
             e.preventDefault()
 
             gbmsg.loading()

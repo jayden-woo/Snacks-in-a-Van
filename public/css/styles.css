@@ -573,6 +573,15 @@ a#favourite:hover {
 .text-right {
   text-align: right;
 }
+.list-group-item a {
+  display: block;
+}
+
+/* Van location */
+.location--map {
+  width: 100%;
+  min-height: 400px;
+}
 
 /* Responsive Design */
 

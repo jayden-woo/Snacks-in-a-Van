@@ -131,10 +131,11 @@ const vendorUpdate = async (req, res) => {
     // save the user details
     req.user.save( (err) => {
         if (err) {
-            console.log("Error while saving to database")
+            console.log("Error while saving to database",err)
             return res.status(400).json({success: false, message: ["Oops! Something went wrong."]})
         }
     })
+    
     return res.status(200).json({success: true, message: ["Your details have been updated."]})
 }
 

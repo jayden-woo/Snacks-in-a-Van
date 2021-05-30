@@ -59,17 +59,20 @@ const db = require('./models/db.js')
 
 // set up session to keep track of user data in between requests
 app.use(cookieParser())
-app.use(session({
+app.use(
+  session({
     secret: "INFO30005 Web-App",
     resave: false,
     saveUninitialized: false,
     cookie: {
-        // user should log in again after restarting the browser
-        expires: false, 
-        // 2 hours before cookies expire and have to log in again
-        maxAge: 2 * 60 * 60 * 1000
-    }
-}))
+      // user should log in again after restarting the browser
+      expires: false,
+      // 2 hours before cookies expire and have to log in again
+      maxAge: 2 * 60 * 60 * 1000,
+      httpOnly: false,
+    },
+  })
+);
 
 // configure the passport to handle authentication
 app.use(passport.initialize())

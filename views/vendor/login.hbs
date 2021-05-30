@@ -22,11 +22,11 @@
 
 <script>
   $(function() {
-
+    // Cache JQ elements
     var $username = $('#username')
     var $password = $('#password')
     var $submit = $('#submit')
-
+    // input validations
     $submit.click(function(e) {
       e.preventDefault()
 
@@ -51,7 +51,7 @@
       }
 
       gbmsg.loading()
-
+      // handle vendor-login post request 
       $.ajax({
         type: 'POST',
         url: '/vendor/login',
@@ -61,6 +61,8 @@
         }
       }).done( function(res) {
         alertify.alert('Login Success', res.message[0], function() {
+          // save vendor as user type
+          window.sessionStorage.setItem('userType', 'vendor')
           window.location.href = '/vendor'
         })
       }).fail( function(jqXHR) {

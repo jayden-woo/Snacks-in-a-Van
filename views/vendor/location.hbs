@@ -1,0 +1,145 @@
+<!-- Load the `mapbox-gl-geocoder` plugin. -->
+<script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.0/mapbox-gl-geocoder.min.js"></script>
+<link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.0/mapbox-gl-geocoder.css" type="text/css">
+ 
+<!-- Promise polyfill script is required -->
+<!-- to use Mapbox GL Geocoder in IE 11. -->
+<script src="https://cdn.jsdelivr.net/npm/es6-promise@4/dist/es6-promise.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/es6-promise@4/dist/es6-promise.auto.min.js"></script>
+
+<div class="container--">
+  <div class="card container--content">
+    <div class="card-body">
+      <div id="map" class="location--map"></div>
+      <form id="form">
+        <div class="login--form">
+          <div class="form-group">
+            <label>Address</label>
+            <input
+              placeholder="Address (required)"
+              type="text"
+              class="form-control"
+              name="textAddress"
+              id="textAddress"
+            />
+          </div>
+
+          <div class="form-group">
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="isOnline" value="1" checked>
+              <label class="form-check-label" for="open">
+                Open
+              </label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="isOnline" value="0">
+              <label class="form-check-label" for="closed">
+                Closed
+              </label>
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            class="btn btn-primary center-block"
+            id="submit"
+          >Submit</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+<script type="text/javascript">
+  var lngLat = {
+    type: 'Point',
+    coordinates: []
+  }
+  // TO MAKE THE MAP APPEAR YOU MUST
+	// ADD YOUR ACCESS TOKEN FROM
+	// https://account.mapbox.com
+	mapboxgl.accessToken = 'pk.eyJ1IjoiZ2l2ZWJlc3QiLCJhIjoiY2twYW4wM2gzMHI0NzJubXhneTZkN3VmMyJ9.6Gcw8OdR6Ow6YTz5TB1jHg';
+    var map = new mapboxgl.Map({
+    container: 'map',
+    style: 'mapbox://styles/mapbox/streets-v11',
+    center: [-79.4512, 43.6568],
+    zoom: 13,
+  });
+  
+  // Add the control to the map.
+  map.addControl(
+    new MapboxGeocoder({
+      accessToken: mapboxgl.accessToken,
+      mapboxgl: mapboxgl,
+    })
+  );
+
+  map.on('click', function (e) {
+    console.log(e.lngLat)
+    var lngLatData = e.lngLat || {}
+    lngLat.coordinates[0] = lngLatData.lat
+    lngLat.coordinates[1] = lngLatData.lng
+  });
+
+  $(function() {
+
+    var $form = $('#form');
+
+    // Get Details
+    {{!-- $.ajax({
+        type: 'GET',
+        url: '/vendor/account',
+    }).always(function(res) { 
+      console.log('res',res)
+    }); --}}
+
+    // update
+    $('#submit').click(function(e) {
+      e.preventDefault();
+
+      var textAddressVal = $form.find('input[name="textAddress"]').val();
+      var isOnlineVal = $form.find('input[name="isOnline"]').val()
+
+      console.log('lngLat', lngLat)
+
+      if (lngLat.coordinates.length < 2) {
+        gbmsg.info('Please click the location on the map')
+        return
+      }
+
+      if (!textAddressVal) {
+        gbmsg.info('Please enter the address.')
+        return
+      }
+
+      $.ajax({
+          type: 'POST',
+          url: '/vendor/account',
+          data: {
+            textAddress: textAddressVal,
+            isOnline: isOnlineVal === '1' ? true : false,
+            location: lngLat
+          }
+      }).done(function( res ) {
+        gbmsg.success('Successful')
+      }).fail(function(jqXHR) {
+          console.log('jqXHR', jqXHR)
+          var res = jqXHR.responseJSON || {}
+          var errs = res.errors || []
+
+          gbmsg.failure(errs[0] || 'Failed！')
+      }).always(function(res) { 
+         res = res || {}
+           if (res.status === 400) {
+              gbmsg.failure(res.responseText || 'Failed！')
+              return
+          }
+
+          gbmsg.success('Successful')
+      });
+    })
+
+    
+  })
+</script>

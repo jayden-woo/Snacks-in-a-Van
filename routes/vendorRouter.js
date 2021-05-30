@@ -38,6 +38,9 @@ vendorRouter.get('/order/:orderNumber', isVendor, vendorController.getOrderByNum
 // // handle the GET request to get the history of all previous orders
 vendorRouter.get('/api/history', isVendor, vendorController.getOrderHistory)
 
+// store view rendering
+vendorRouter.get("/location", isVendor, vendorController.viewLocation);
+
 /* ----- POST routes ----- */
 
 // handle the POST request to log in
