@@ -83,8 +83,10 @@ const getOrders = async (req, res) => {
     try {
         // check if there's any orders
         const list = await Order.find({ customerID: req.user._id }).limit(1)
+        console.log(list)
         if (!list.length) {
-            return res.status(200).render("customer/order", {order: [], user: req.user.lean()})
+            console.log("HERE")
+            return res.status(200).render("customer/order", {order: [], user: JSON.stringify(req.user)})
         }
         const orders = await Order
             // find orders associated with the current customer
@@ -105,6 +107,7 @@ const getOrders = async (req, res) => {
         return res.status(200).render("customer/order", {order: orders, user: JSON.stringify(req.user)})
     // error occurred during query
     } catch (err) {
+        console.log(err)
         return res.status(400).render("error", {code: 400, message: "Oops! Something went wrong."})
     }
 }

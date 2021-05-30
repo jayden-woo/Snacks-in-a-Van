@@ -54,9 +54,21 @@ const scriptSrc = [
     "https://cdn.jsdelivr.net/npm/jquery", 
     "https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js", 
     "https://cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js", 
-    "https://api.mapbox.com/mapbox-gl-js/v2.3.0/mapbox-gl.js", 
-    "https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"
+    "https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js", 
+    "https://cdn.jsdelivr.net/npm/es6-promise@4/", 
+    "https://api.mapbox.com/"
 ];
+
+const workerSrc = [
+    "'self'", 
+    "blob:"
+]
+
+const connectSrc = [
+    "'self'", 
+    "https://api.mapbox.com/", 
+    "https://events.mapbox.com/events/"
+]
 
 // set up HTTP headers for web app security
 app.use(helmet({
@@ -66,7 +78,9 @@ app.use(helmet({
             "img-src": imgSrc, 
             "script-src": scriptSrc, 
             "script-src-attr": scriptSrc, 
-            "script-src-elem": scriptSrc
+            "script-src-elem": scriptSrc, 
+            "worker-src": workerSrc, 
+            "connect-src": connectSrc
         }
     }
 }))
