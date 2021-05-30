@@ -71,6 +71,8 @@
     // show cart
     $cart.click(function() {
       // Direct to the login page when not logged in
+      
+      /*
       if (!$isLogin.val()) {
           gbmsg.info('Please sign in before placing an order.')
           setTimeout(() => {
@@ -78,6 +80,8 @@
           }, 1000)
           return
       }
+      */
+
       // get current item in cart
       var carts = window.sessionStorage.getItem('carts') || '[]'
       var cartsJson = JSON.parse(carts)

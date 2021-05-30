@@ -91,12 +91,14 @@
   })
   
   $(document).ready(function() {
+    // time limit to give a discount for orders (15 mins)
+    var DISCOUNT_TIME = 15 * 60 * 1000; 
 
     // countdown timer
     setTimeout(() => {
       $('#customer-order').find('.text--muted').each(function() {
         var updatedAt = $(this).attr('data-time')
-        var time = new Date(updatedAt).getTime() + (10 * 60 * 1000);
+        var time = new Date(updatedAt).getTime() + DISCOUNT_TIME;
         $(this).countdown(time, function(event) {
           var minute =  Number(event.strftime('%M'))
 

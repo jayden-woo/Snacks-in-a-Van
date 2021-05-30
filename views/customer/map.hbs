@@ -1,7 +1,8 @@
-<section class='container--'>
-
-  <div class="container--">
-    <div class="card container--content" style='width: 18rem;' id="list">
+{{!-- <section class='container--'> --}}
+  <div class="map--head__icon">
+    <a class="fa fa-map-marker fa-1x" id="showMap" aria-hidden="true" href="javascript:;"></a> 
+  </div>
+    {{!-- <div class="card container--content"  id="list">
     {{#each vendors}}
     <div class="card-body">
       <div class="row">
@@ -15,13 +16,107 @@
     </div>
     {{/each}}
     </div>
-  </div>
-</section>
+</section> --}}
 
-<script type="text/javascript">  
+<div class="account--dialog animate__faster" id="dialog">
+    <div class="account--dialog__header">
+      <a href="/customer/" class="account--dialog__header--close fa fa-arrow-left"></a>
+      <a href="javascript:;" class="account--dialog__header--showlist fa fa-bars" id="showList"></a>
+    </div>
+    <div class="account--dialog__content">
+      <div class="card">
+          <div class="card-body">
+              <div id="map" class="view--map"></div>
+              <div class="vendor--list">
+                {{#each vendors}}
+                  <div class="row ">
+                    <div class="col-8">
+                      <h5 class='card-title'>{{this.username}}</h5>
+                      <p class='card-text'>{{this.textAddress}}</p>
+                      <p class='card-text'>{{this.distance}} km away</p>
+                    </div>
+                  </div>
+                  <button id="submit" type="button" data-id="{{this._id}}" class='submit btn btn-primary'>Order Here</button>
+                {{/each}}
+              </div>
+          </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+
+
+<script type="text/javascript">
   $(function() {
+    var $dialog = $('#dialog')
+
+    // Opend dialog
+    function showDialog() {
+        $dialog.addClass('animate__animated animate__backInUp').show()
+
+        mapboxgl.accessToken = 'pk.eyJ1IjoiZ2l2ZWJlc3QiLCJhIjoiY2twYW4wM2gzMHI0NzJubXhneTZkN3VmMyJ9.6Gcw8OdR6Ow6YTz5TB1jHg';
+        var map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/mapbox/streets-v11',
+        center: [144.970075, -37.785843],
+        zoom: 12
+        });
+        
+        // Create a default Marker and add it to the map.
+        // var marker1 = new mapboxgl.Marker()
+        // .setLngLat([12.554729, 55.70651])
+       //  .addTo(map);
+        
+        // Create a default Marker, colored black, rotated 45 degrees.
+        // var marker2 = new mapboxgl.Marker({ color: 'black'})
+        // .setLngLat([12.65147, 55.608166])
+        // .addTo(map);
+
+        // Get vendor list
+        $.ajax({
+            type: 'GET',
+            url: '/customer/api/map',
+        }).done(function( res ) {
+            console.log('done res', res)
+            var vendors = res.vendors || []
+
+
+
+            vendors.forEach((v,i) => {
+              var lngLat = v.location && v.location.coordinates || []
+              if (lngLat.length === 2) {
+                // Create a default Marker and add it to the map.
+                var marker1 = new mapboxgl.Marker()
+                .setLngLat(lngLat)
+                .addTo(map);
+              }
+            })
+
+        }).fail(function(jqXHR) {
+            console.log('jqXHR', jqXHR)
+            var res = jqXHR.responseJSON || {}
+            var errs = res.errors || []
+            gbmsg.failure(errs[0] || 'Failed！')
+        }).always(function(res) { 
+            gbmsg.hide()
+        });
+    }
+
+    
+    
+    // Close dailog
+    $('#close, #showList').click(function () {
+        $dialog.hide()
+    })
+
+    $('#showMap').click(function() {
+      showDialog()
+    })
+
+
     // order here button
-    $('#list').on('click', 'button.submit', function(e) {
+    $('#list, #dialog').on('click', 'button.submit', function(e) {
       // get the venderId of selected vendor
       let vendorID = $(this).attr('data-id')
       // store in session storage temporarily
