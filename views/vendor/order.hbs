@@ -1,300 +1,299 @@
 <div class="container--" id="container">
-    <div class="card container--content" id="list">
-     
-    </div>
+  <div class="card container--content" id="list">
+   
+  </div>
 
-    <div class="card container--content vendor--order__history">
-        <h4>Order history</h4>
-        <ul class="list-group" id="history">
-           
-        </ul>
-    </div>
-    <div id="getting-started"></div>
+  <div class="card container--content vendor--order__history">
+    <h4>Order history</h4>
+    <ul class="list-group" id="history">
+       
+    </ul>
+  </div>
+  <div id="getting-started"></div>
 </div>
 
 
 <div class="account--dialog animate__faster" id="dialog">
-    <div class="account--dialog__header">
-      <a id="close" href="javascript:;" class="account--dialog__header--close fa fa-close fa-2x"></a>
-    </div>
-    <div class="account--dialog__content">
-      <div class="container--content">
-          <div class="card">
-              <div class="card-body">
-                  
-              </div>
-          </div>
+  <div class="account--dialog__header">
+    <a id="close" href="javascript:;" class="account--dialog__header--close fa fa-close fa-2x"></a>
+  </div>
+  <div class="account--dialog__content">
+    <div class="container--content">
+      <div class="card">
+        <div class="card-body">
+          
+        </div>
       </div>
     </div>
+  </div>
 </div>
 
 
 <script id="tpl-list" type="text/html">
-    <% for(var i = 0; i < list.length; i++){ %>
-            <div class="card-body">
-                <a class="detail" data-id="<%= list[i].orderNumber %>" href="javascript:;">
-                    <div class="row">
-                        <div class="col-8">
-                            <h5 class="card-title"><%= list[i].orderNumber %></h5>
-                            <p>
-                                <%= list[i].snacks.length %> orders - <%= list[i].customerID.firstName%>
-                            </p>
-                        </div>
+  <% for(var i = 0; i < list.length; i++){ %>
+      <div class="card-body">
+        <a class="detail" data-id="<%= list[i].orderNumber %>" href="javascript:;">
+          <div class="row">
+            <div class="col-8">
+              <h5 class="card-title"><%= list[i].orderNumber %></h5>
+              <p>
+                <%= list[i].snacks.length %> orders - <%= list[i].customerID.firstName%>
+              </p>
+            </div>
 
-                        <div class="col-4">
-                            <div class="text--muted alert alert-primary" data-time="<%= list[i].updatedAt %>"></div>
-                            <div class="discount badge badge-info">discount not applied</div>
-                        </div>
-                    </div>
-                </a>
+            <div class="col-4">
+              <div class="text--muted alert alert-primary" data-time="<%= list[i].updatedAt %>"></div>
+              <div class="discount badge badge-info">discount not applied</div>
             </div>
-    <% } %>
-    <% if (list.length <= 0) { %>
-        <div class="row">
-            <div class="col-12 text-center">
-                <p>
-                    <img src="/img/order-icon.png">
-                </p>
-                <h3>No orders</h3>
-                <p class="text-secondary">You don't have any orders in your history.</p>
-            </div>
-        </div>
-    <% } %>
+          </div>
+        </a>
+      </div>
+  <% } %>
+  <% if (list.length <= 0) { %>
+    <div class="row">
+      <div class="col-12 text-center">
+        <p>
+          <img src="/img/order-icon.png">
+        </p>
+        <h3>No orders</h3>
+        <p class="text-secondary">You don't have any orders in your history.</p>
+      </div>
+    </div>
+  <% } %>
 </script>
 
 <script id="tpl-history-list" type="text/html">
-    <% for(var i = 0; i < historyList.length; i++){ %>
-        <li class="list-group-item list-group-item-secondary">
-           <a class="detail" data-id="<%= historyList[i].orderNumber %>" href="javascript:;"> <%= historyList[i].orderNumber %> </a>
-        </li>
-    <% } %>
+  <% for(var i = 0; i < historyList.length; i++){ %>
+    <li class="list-group-item list-group-item-secondary">
+        <a class="detail" data-id="<%= historyList[i].orderNumber %>" href="javascript:;"> <%= historyList[i].orderNumber %> </a>
+    </li>
+  <% } %>
 
 </script>
 
 <script id="tpl-detail" type="text/html">
-    <div class="row">
-        <div class="col-12">
-            Order <%= detail.orderNumber %>
-        </div>
-        <div class="col-12">
-            Pick up <%= detail.pickedUpTime %>
-        </div>
-         <% for(var i = 0; i < detail.snacks.length; i++){ %>
-            <div class="col-8"><%= detail.snacks[i].snackID.name %>  x<%= detail.snacks[i].quantity %> 
-            </div>
-            <div class="col-4">
-                $<%= detail.snacks[i].snackID.price.$numberDecimal %>
-            </div>
-        <% } %>
-
-        <div class="col-8 text-right">Subtotal</div>
-        <div class="col-4  text-right">$<%= detail.total %></div>
-        <div class="col-8 text-right">Tax</div>
-        <div class="col-4  text-right">$0.00</div>
-
-        <% if (detail.duration <= 0) { %>
-            <div class="col-8 text-right">Discount</div>
-            <div class="col-4  text-right">-$<%= detail.total * 0.2 %></div>
-        <% } %>
-        <div class="col-8 text-right">Paid</div>
-        <div class="col-4  text-right">$<%= detail.discountPrice %></div>
-
-        <% if (detail.status !== 'Picked-Up' && detail.status !== 'Cancelled') { %>
-            <div class="col-6">
-                <button class="btn btn-info done" data-id="<%= detail.orderNumber %>">FOOD IS DONE</button>
-            </div>
-            <div class="col-6">
-                <button class="btn btn-primary picked-up" data-id="<%= detail.orderNumber %>">ORDER PICKED UP</button>
-            </div>
-        <% } %>
+  <div class="row">
+    <div class="col-12">
+      Order <%= detail.orderNumber %>
     </div>
+    <div class="col-12">
+      Pick up <%= detail.pickedUpTime %>
+    </div>
+     <% for(var i = 0; i < detail.snacks.length; i++){ %>
+      <div class="col-8"><%= detail.snacks[i].snackID.name %>  x<%= detail.snacks[i].quantity %> 
+      </div>
+      <div class="col-4">
+        $<%= detail.snacks[i].snackID.price.$numberDecimal %>
+      </div>
+    <% } %>
+
+    <div class="col-8 text-right">Subtotal</div>
+    <div class="col-4  text-right">$<%= detail.total %></div>
+    <div class="col-8 text-right">Tax</div>
+    <div class="col-4  text-right">$0.00</div>
+
+    <% if (detail.duration <= 0) { %>
+      <div class="col-8 text-right">Discount</div>
+      <div class="col-4  text-right">-$<%= detail.total * 0.2 %></div>
+    <% } %>
+    <div class="col-8 text-right">Paid</div>
+    <div class="col-4  text-right">$<%= detail.discountPrice %></div>
+
+    <% if (detail.status !== 'Picked-Up' && detail.status !== 'Cancelled') { %>
+      <div class="col-6">
+        <button class="btn btn-info done" data-id="<%= detail.orderNumber %>">FOOD IS DONE</button>
+      </div>
+      <div class="col-6">
+        <button class="btn btn-primary picked-up" data-id="<%= detail.orderNumber %>">ORDER PICKED UP</button>
+      </div>
+    <% } %>
+  </div>
 </script>
 
 <script type="text/javascript">
-   $(function() {
-       // time limit to give a discount for orders (15 mins)
-        var DISCOUNT_TIME = 15 * 60 * 1000; 
+  $(function() {
+    // time limit to give a discount for orders (15 mins)
+    var DISCOUNT_TIME = 15 * 60 * 1000; 
 
-        var $list = $('#list')
-        var $dialog = $('#dialog')
+    var $list = $('#list')
+    var $dialog = $('#dialog')
 
-       // Get order list
-        function getOrderList(type) {
+    // Get order list
+    function getOrderList(type) {
 
-            if (type !== 'polling') {
-                gbmsg.loading()
-            }
-            
-            $.ajax({
-                type: 'GET',
-                url: '/vendor/api/order'
-            }).done(function( res ) {
-                var list = res || []
+      if (type !== 'polling') {
+        gbmsg.loading()
+      }
+      
+      $.ajax({
+        type: 'GET',
+        url: '/vendor/api/order'
+      }).done(function( res ) {
+        var list = res || []
 
-                console.log('list',list)
+        console.log('list',list)
 
-                var html = template('tpl-list', {list:list})
-                $('#list').html(html)
+        var html = template('tpl-list', {list:list})
+        $('#list').html(html)
 
-                // countdown
-                
-                setTimeout(() => {
-                    $('#list').find('.text--muted').each(function() {
-                    var updatedAt = $(this).attr('data-time')
-
-                    var time = new Date(updatedAt).getTime() + DISCOUNT_TIME;
-                    $(this).countdown(time, function(event) {
-                        console.log('event', event.strftime('%M'))
-                        var minute =  Number(event.strftime('%M'))
-
-                        // 10-5 minutes show the yellow box
-                        if (minute <= 10 && minute > 5) {
-                            $(this).addClass('alert-warning')    
-                        } else if (minute <= 5) {
-                        // Less than 5 minutes to show the red box
-                            $(this).removeClass('alert-warning').addClass('alert-danger')      
-
-                            if (minute <= 0) {
-                                $(this).next('div.discount').text('discount applied')
-                            }
-                        }
-
-                        $(this).text(event.strftime('%M:%S'));
-                        })
-                    });
-                }, 100)
-
-            }).fail(function(jqXHR) {
-                console.log('jqXHR', jqXHR)
-                var res = jqXHR.responseJSON || {}
-                var errs = res.errors || []
-
-                gbmsg.failure(errs[0] || 'Failed！')
-            }).always(function() { 
-                gbmsg.hide()
-            });
-        }
-
-        // Get order history
-        function getOrderHistoryList(type) {
-
-            if (type !== 'polling') {
-                gbmsg.loading()
-            }
-            
-            $.ajax({
-                type: 'GET',
-                url: '/vendor/api/history'
-            }).done(function( res ) {
-                var historyList = res || []
-
-                var html = template('tpl-history-list', {historyList:historyList})
-                $('#history').html(html)
-
-            }).fail(function(jqXHR) {
-                console.log('jqXHR', jqXHR)
-                var res = jqXHR.responseJSON || {}
-                var errs = res.errors || []
-
-                gbmsg.failure(errs[0] || 'Failed！')
-            }).always(function() { 
-                gbmsg.hide()
-            });
-        }
+        // countdown
         
-        // Opend dialog
-        function showDialog(type) {
-            $dialog.addClass('animate__animated animate__backInUp').show()
+        setTimeout(() => {
+          $('#list').find('.text--muted').each(function() {
+          var updatedAt = $(this).attr('data-time')
+
+          var time = new Date(updatedAt).getTime() + DISCOUNT_TIME;
+          $(this).countdown(time, function(event) {
+            console.log('event', event.strftime('%M'))
+            var minute =  Number(event.strftime('%M'))
+
+            // 10-5 minutes show the yellow box
+            if (minute <= 10 && minute > 5) {
+              $(this).addClass('alert-warning')    
+            } else if (minute <= 5) {
+            // Less than 5 minutes to show the red box
+              $(this).removeClass('alert-warning').addClass('alert-danger')      
+
+              if (minute <= 0) {
+                $(this).next('div.discount').text('discount applied')
+              }
+            }
+
+            $(this).text(event.strftime('%M:%S'));
+            })
+          });
+        }, 100)
+
+      }).fail(function(jqXHR) {
+        console.log('jqXHR', jqXHR)
+        var res = jqXHR.responseJSON || {}
+        var errs = res.errors || []
+
+        gbmsg.failure(errs[0] || 'Failed！')
+      }).always(function() { 
+        gbmsg.hide()
+      });
+    }
+
+    // Get order history
+    function getOrderHistoryList(type) {
+
+      if (type !== 'polling') {
+        gbmsg.loading()
+      }
+      
+      $.ajax({
+        type: 'GET',
+        url: '/vendor/api/history'
+      }).done(function( res ) {
+        var historyList = res || []
+
+        var html = template('tpl-history-list', {historyList:historyList})
+        $('#history').html(html)
+
+      }).fail(function(jqXHR) {
+        console.log('jqXHR', jqXHR)
+        var res = jqXHR.responseJSON || {}
+        var errs = res.errors || []
+
+        gbmsg.failure(errs[0] || 'Failed！')
+      }).always(function() { 
+        gbmsg.hide()
+      });
+    }
+    
+    // Opend dialog
+    function showDialog(type) {
+      $dialog.addClass('animate__animated animate__backInUp').show()
+    }
+    
+    // Close dailog
+    $('#close').click(function () {
+      $dialog.hide()
+    })
+
+    getOrderList()
+    getOrderHistoryList()
+
+    // Polling for order status updates
+    setInterval(() => {
+      getOrderList('polling')
+      getOrderHistoryList('polling')
+    },30000)    
+
+    // Open order details
+    $('#container').on('click', 'a.detail', function(e) {
+      e.preventDefault()
+
+      gbmsg.loading()
+
+      $.ajax({
+        type: 'GET',
+        url: '/vendor/order/' + $(this).attr('data-id')
+      }).done(function( res ) {
+        var detail = res || {}
+
+        var html = template('tpl-detail', {detail:detail})
+        $dialog.find('div.card-body').html(html)
+
+      }).fail(function(jqXHR) {
+        console.log('jqXHR', jqXHR)
+        var res = jqXHR.responseJSON || {}
+        var errs = res.errors || []
+
+        gbmsg.failure(errs[0] || 'Failed！')
+      }).always(function() { 
+        gbmsg.hide()
+      });
+
+      showDialog('dialog')
+    })
+
+    // Change the order status to fulfilled or picked up
+    $dialog.on('click', '.btn', function(e) {
+      e.preventDefault()
+
+      var $this = $(this)
+      var url = ''
+
+      // fulfilled
+      if ($this.hasClass('done')) {
+        url = `/vendor/order/${$(this).attr('data-id')}/fulfilled`
+      } else if ($this.hasClass('picked-up')) {
+        // picked up
+        url = `/vendor/order/${$(this).attr('data-id')}/pickedup`
+      }
+
+      gbmsg.loading()
+
+      $.ajax({
+        type: 'PUT',
+        url: url,
+      }).done(function( res ) {
+        console.log('done res', res)
+        gbmsg.success('Successful')
+      }).fail(function(jqXHR) {
+        console.log('jqXHR', jqXHR)
+        var res = jqXHR.responseJSON || {}
+        var errs = res.errors || []
+
+
+
+        gbmsg.failure(errs[0] || 'Failed！')
+      }).always(function(res) { 
+        console.log('res', res)
+        res = res || {}
+
+        if (res.status === 400) {
+          gbmsg.failure(res.responseText || 'Failed！')
+          return
         }
-        
-        // Close dailog
-        $('#close').click(function () {
-            $dialog.hide()
-        })
 
         getOrderList()
-        getOrderHistoryList()
+        gbmsg.success('Successful')
+        // gbmsg.hide()
+      });
 
-        // Polling for order status updates
-        setInterval(() => {
-            getOrderList('polling')
-            getOrderHistoryList('polling')
-        },30000)    
-
-        // Open order details
-        $('#container').on('click', 'a.detail', function(e) {
-            e.preventDefault()
-
-            gbmsg.loading()
-
-            $.ajax({
-                type: 'GET',
-                url: '/vendor/order/' + $(this).attr('data-id')
-            }).done(function( res ) {
-                var detail = res || {}
-
-                var html = template('tpl-detail', {detail:detail})
-                $dialog.find('div.card-body').html(html)
-
-            }).fail(function(jqXHR) {
-                console.log('jqXHR', jqXHR)
-                var res = jqXHR.responseJSON || {}
-                var errs = res.errors || []
-
-                gbmsg.failure(errs[0] || 'Failed！')
-            }).always(function() { 
-                gbmsg.hide()
-            });
-
-            showDialog('dialog')
-        })
-
-        // Change the order status to fulfilled or picked up
-        $dialog.on('click', '.btn', function(e) {
-            e.preventDefault()
-
-            var $this = $(this)
-            var url = ''
-
-            // fulfilled
-            if ($this.hasClass('done')) {
-                url = `/vendor/order/${$(this).attr('data-id')}/fulfilled`
-            } else if ($this.hasClass('picked-up')) {
-                // picked up
-                url = `/vendor/order/${$(this).attr('data-id')}/pickedup`
-            }
-
-            gbmsg.loading()
-
-            $.ajax({
-                type: 'PUT',
-                url: url,
-            }).done(function( res ) {
-                console.log('done res', res)
-                gbmsg.success('Successful')
-            }).fail(function(jqXHR) {
-                console.log('jqXHR', jqXHR)
-                var res = jqXHR.responseJSON || {}
-                var errs = res.errors || []
-
-
-
-                gbmsg.failure(errs[0] || 'Failed！')
-            }).always(function(res) { 
-                console.log('res', res)
-                res = res || {}
-
-                if (res.status === 400) {
-                    gbmsg.failure(res.responseText || 'Failed！')
-                    return
-                }
-
-                getOrderList()
-                gbmsg.success('Successful')
-                // gbmsg.hide()
-            });
-
-        })
+    })
    });
 </script>
-
