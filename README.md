@@ -137,7 +137,9 @@ The login details for sample customer and vendor will be given here. The login d
 
 -----
 
-<br/><br/> 
+<br/><br/>
+
+## Customer map on the right top after press the search button
 
 **Now Get ready to complete all the tasks:**
 
