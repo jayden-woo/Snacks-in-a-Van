@@ -91,7 +91,8 @@ const getOrders = async (req, res) => {
         const orders = await Order
             // find orders associated with the current customer
             .find({
-                customerID: req.user._id
+                customerID: req.user._id, 
+                status: {$ne: "Cancelled"}
             // add the vendor van name
             }).populate({
                 path: "vendorID",

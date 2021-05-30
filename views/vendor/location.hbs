@@ -56,14 +56,14 @@
     type: 'Point',
     coordinates: []
   }
-  // TO MAKE THE MAP APPEAR YOU MUST
-	// ADD YOUR ACCESS TOKEN FROM
+  // add access token to make the map appear
 	// https://account.mapbox.com
 	mapboxgl.accessToken = 'pk.eyJ1IjoiZ2l2ZWJlc3QiLCJhIjoiY2twYW4wM2gzMHI0NzJubXhneTZkN3VmMyJ9.6Gcw8OdR6Ow6YTz5TB1jHg';
     var map = new mapboxgl.Map({
     container: 'map',
     style: 'mapbox://styles/mapbox/streets-v11',
-    center: [-79.4512, 43.6568],
+    // center in Melboourne, Victoria
+    center: [144.9631, -37.8136],
     zoom: 13,
   });
   
@@ -78,8 +78,8 @@
   map.on('click', function (e) {
     console.log(e.lngLat)
     var lngLatData = e.lngLat || {}
-    lngLat.coordinates[0] = lngLatData.lat
-    lngLat.coordinates[1] = lngLatData.lng
+    lngLat.coordinates[0] = lngLatData.lng
+    lngLat.coordinates[1] = lngLatData.lat
   });
 
   $(function() {
@@ -121,22 +121,23 @@
             isOnline: isOnlineVal === '1' ? true : false,
             location: lngLat
           }
-      }).done(function( res ) {
-        gbmsg.success('Successful')
-      }).fail(function(jqXHR) {
-          console.log('jqXHR', jqXHR)
-          var res = jqXHR.responseJSON || {}
-          var errs = res.errors || []
-
-          gbmsg.failure(errs[0] || 'Failed！')
-      }).always(function(res) { 
-         res = res || {}
-           if (res.status === 400) {
-              gbmsg.failure(res.responseText || 'Failed！')
-              return
-          }
-
-          gbmsg.success('Successful')
+      }).done( function(res) {
+        gbmsg.success(res.message[0] || 'Successful')
+        setTimeout(() => {
+          window.location.href = '/vendor/order'
+        }, 1200)
+      }).fail( function(jqXHR) {
+        console.log('jqXHR', jqXHR)
+        var res = jqXHR.responseJSON || {}
+        var errs = res.message || []
+        gbmsg.failure(errs[0] || 'Failed！')
+      }).always( function(res) { 
+        res = res || {}
+        if (res.status === 400) {
+          gbmsg.failure(res.responseText || 'Sorry, the application has encountered an unknown error.')
+          return
+        }
+        gbmsg.success(res.message[0] || 'Successful')
       });
     })
 
