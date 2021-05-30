@@ -307,6 +307,14 @@ hr {
 }
 
 
+/* order */
+.text--muted {
+  display: inline-block !important;
+  padding: 5px 10px !important;
+  text-align: center;
+}
+
+
 /* Style page content - use this if you want to push the page content to the right when you open the side navigation */
 
 #main {
@@ -559,6 +567,45 @@ a#favourite:hover {
 
 .customer-search {
   padding: 10px 0px 20px 0px;
+}
+
+/* Customer Order */
+
+#customer-order .row {
+  margin-bottom: 10px;
+}
+
+#customer-order .card {
+  margin: 10px;
+}
+
+#customer-order #info-row {
+  margin-right: 0px;
+  margin-left: 10px;
+}
+
+#customer-order-progress {
+  width: 100%;
+  height: 100%;
+  display: table;
+  text-align: center;
+  margin-top: 20px;
+  margin-bottom: 30px;
+}
+
+#customer-order-progress .progress-bar {
+  display: flex;
+  height: 40px;
+  align-items: center;
+}
+
+#customer-order-progress .progress-bar h6{
+  margin-bottom: 0px;
+}
+
+#customer-order-list {
+  width: 73%;
+  margin-bottom: 0px;
 }
 
 

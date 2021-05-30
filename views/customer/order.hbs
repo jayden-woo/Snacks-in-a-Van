@@ -1,174 +1,204 @@
-<div class="container--">
-    <div class="card container--content" id="list">
-     
+<div id="customer-order" class="container py-5">
+  <div class="row text-center text-blue mb-5">
+    <div class="col-lg-7 mx-auto">
+      <h1>Order History</h1>
     </div>
-    <div id="getting-started"></div>
+  </div>
+  <div class="row">
+    <div class="col-lg-8 mx-auto">
+      <!-- List group-->
+      {{#if order}}
+        {{#each order}}
+          <!-- list group item-->
+          <div class="card shadow mb-4">
+            <!-- Custom content-->
+            <div class="card-body p-5">
+              <div class="media align-items-lg-center flex-column flex-lg-row p-3">
+                <div class="media-body order-2 order-lg-1">
+                  <h4 class="mt-0 font-weight-bold mb-2">Order #{{orderNumber}}</h4>
+                  <div id="customer-order-progress" class="progress">
+                    <div 
+                      class="progress-bar" 
+                      role="progressbar" 
+                      style="width: 33%" 
+                      aria-valuenow="33" 
+                      aria-valuemin="0" 
+                      aria-valuemax="100" 
+                      data-data="{{status}}"
+                    ><h6>{{status}}</h6>
+                    </div>
+                  </div>
+                  <div class="d-flex flex-wrap align-items-center justify-content-between mt-1">
+                    <ul id="customer-order-list" class="unstyled-list">
+                      {{#each snacks}}
+                        <li class=mb-2>
+                          <div class="container">
+                            <div class="row">
+                              <div class="col-xs-12 col-sm">
+                                <span class="float-left">{{snackID.name}}</span>
+                              </div>
+                              <div class="col-xs-12 col-sm-3">
+                                <span class="float-right">Qty {{quantity}}</span>
+                              </div>
+                            </div>
+                          </div>
+                        </li>
+                      {{/each}}
+                    </ul>
+                    <div id="info-row" class="row">
+                      <div class="col-14">
+                        <div class="text--muted alert alert-success" data-time="{{updatedAt}}"></div>
+                      </div>
+                      <div class="col-14"><h6 class="font-weight-bold my-2" data-total="{{total}}">${{total}}</h6></div>
+                    </div>
+                  </div>
+                  <button type="button" class="edit btn btn-primary" data-id="{{_id}}" data-data={{{json snacks}}}>Edit Order</button>
+                  <button type="button" class="cancel btn btn-danger" data-id="{{_id}}">Cancel Order</button>
+                  {{#if (is_equal status "Picked-Up")}}
+                    <button type="button" class="rate btn btn-info" data-id="{{_id}}" data-number="{{orderNumber}}">Rate Order</button>
+                  {{/if}}
+                </div>
+              </div>
+            </div>
+          </div>
+        {{/each}}
+      {{else}}
+        <div class="row">
+          <div class="col-12 text-center">
+            <p><img src="/img/order-icon.png"></p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-12 text-center">
+            <p class="text-primary">You don't have any orders in your history yet.</p>
+          </div>
+        </div>
+      {{/if}}
+
+    </div>
+  </div>
 </div>
 
-
-<script id="tpl-list" type="text/html">
-<% for(var i = 0; i < list.length; i++){ %>
-        <div class="card-body">
-            <div class="row">
-                <div class="col-8">
-                    <h5 class="card-title">order #<%= list[i].orderNumber %></h5>
-    
-                    <% for(var ii =0; ii < list[i].snacks.length; ii++) { %>
-                        <div class="row">
-                            <div class="col-8"><%= list[i].snacks[ii].snackID.name %></div>
-                            <div class="col-3 lg--text">x<%= list[i].snacks[ii].quantity %></div>
-                        </div>
-                    <% } %>
-                </div>
-
-                <div class="col-4">
-                    <div class="alert alert-success"><a href="/customer/order/<%= list[i]._id %>">Order <%= list[i].status %></a></div>
-                </div>
-                <div class="col-12">
-                    <div class="text--muted alert" data-time="<%= list[i].updatedAt %>"></div>
-                </div>
-            </div>
-            
-            <button type="button" class="btn edit btn-primary btn-sm" data-id="<%= list[i]._id %>" data-data="<%= list[i].snacks%>">Edit Order</button>
-            <button type="button" data-id="<%= list[i]._id %>" class="cancel btn btn-danger btn-sm">Cancel Order</button>
-
-            <% if (list[i].status === 'Picked-Up') { %>
-                <a href="/customer/order/rating/<%= list[i]._id %>" class="btn btn-secondary btn-sm">Rate Order</a>
-            <% } %>
-        </div>
-<% } %>
-<% if (list.length <= 0) { %>
-    <div class="row">
-        <div class="col-12 text-center">
-            <p>
-                <img src="/img/order-icon.png">
-            </p>
-            <h3>No orders</h3>
-            <p class="text-secondary">You don't have any orders in your history.</p>
-        </div>
-    </div>
-<% } %>
-</script>
-
 <script type="text/javascript">
-   $(function() {
-       // Get order list
-        function getOrderList(type) {
+  var socket = io()
+  var user = {{{user}}}
+  socket.on('customer message', function(msg) {
+    if (msg == user._id) {
+      alertify.set('notifier', 'position', 'top-center')
+      alertify.warning('Your order(s) has been updated. Please reload the page to get the latest information.', 0)
+    }
+  })
+  
+  $(document).ready(function() {
 
-            if (type !== 'polling') {
-                gbmsg.loading()
-            }
-            
-            $.ajax({
-                type: 'GET',
-                url: '/customer/api/order'
-            }).done(function( res ) {
-                var list = res.data || []
+    // countdown timer
+    setTimeout(() => {
+      $('#customer-order').find('.text--muted').each(function() {
+        var updatedAt = $(this).attr('data-time')
+        var time = new Date(updatedAt).getTime() + (10 * 60 * 1000);
+        $(this).countdown(time, function(event) {
+          var minute =  Number(event.strftime('%M'))
 
-                var html = template('tpl-list', {list:list})
-                $('#list').html(html)
-
-                // countdown
-                
-                setTimeout(() => {
-                    $('#list').find('.text--muted').each(function() {
-                    var updatedAt = $(this).attr('data-time')
-
-                    var time = new Date(updatedAt).getTime() + 10 * 60 * 1000;
-                    $(this).countdown(time, function(event) {
-                        console.log('event', event.strftime('%M'))
-                        var minute =  Number(event.strftime('%M'))
-
-                        // 10-5 minutes show the yellow box
-                        if (minute <= 10 && minute > 5) {
-                            $(this).addClass('alert-warning')    
-                        } else if (minute <= 5) {
-                        // Less than 5 minutes to show the red box
-                            $(this).removeClass('alert-warning').addClass('alert-danger')      
-                        }
-
-                        $(this).text(event.strftime('%M:%S'));
-                        })
-                    });
-                }, 100)
-
-            }).fail(function(jqXHR) {
-                console.log('jqXHR', jqXHR)
-                var res = jqXHR.responseJSON || {}
-                var errs = res.errors || []
-
-                gbmsg.failure(errs[0] || 'Failed！')
-            }).always(function() { 
-                gbmsg.hide()
-            });
-        }
-
-        getOrderList()
-
-        // Polling for order status updates
-        setInterval(() => {
-            getOrderList('polling')
-        },30000)
-
-        $('#list').on('click', 'button.btn', function(e) {
-            // cancel order
-            if ($(this).hasClass('cancel')) {
-                gbmsg.loading();
-
-                $.ajax({
-                    type: 'PUT',
-                    url: '/customer/api/order/cancel',
-                    data: {
-                        orderId: $(this).attr('data-id'),
-                    }
-                }).done(function( res ) {
-                    console.log('res', res)
-                    gbmsg.success('Successfully')
-                    setTimeout(() => {
-                        window.location.reload()
-                    }, 800)
-                }).fail(function(jqXHR) {
-                    console.log('jqXHR', jqXHR)
-                    var res = jqXHR.responseJSON || {}
-                    var errs = res.errors || []
-                    gbmsg.failure(errs[0] || 'Failed！')
-                }).always(function() { 
-                // gbmsg.hide()
-                });
-            }
-
-            // Edit order
-            if ($(this).hasClass('edit')) {
-                var orderId = $(this).attr('data-id')
-                var data = $(this).attr('data-data')
-
-                window.sessionStorage.setItem('orderId', orderId)
-                console.log(orderId,data)
-
-                var dataJson = JSON.parse(data)
-                var carts = dataJson.map(v => {
-                    var snack = v.snackID || {}
-                    return {
-                        id: snack._id,
-                        name: snack.name,
-                        price: snack.price.$numberDecimal,
-                        desc: snack.description,
-                        count: v.quantity
-                    }
-                })
-                console.log('carts',carts)
-
-                window.sessionStorage.setItem('carts', JSON.stringify(carts))
-
-                setTimeout(() => {
-                    window.location.href = '/customer/cart'
-                }, 100)
-            }
+          // 10-5 minutes show the yellow box
+          if (minute <= 10 && minute > 5) {
+            $(this).removeClass('alert-success').addClass('alert-warning')    
+          } else if (minute <= 5) {
+            // Less than 5 minutes to show the red box
+            $(this).removeClass('alert-warning').addClass('alert-danger')      
+          }
+          $(this).text(event.strftime('%M:%S'))
         })
+      })
+    }, 100)
+    
+    // set progress bar
+    $('#customer-order').find('.progress-bar').each(function() {
+      var status = $(this).attr('data-data')
+      if (status == "Placed") {
+        $(this).attr('style', 'width: 33%')
+        $(this).attr('aria-valuenow', '33')
+      } else if (status == "Fulfilled") {
+        $(this).attr('style', 'width: 66%')
+        $(this).attr('aria-valuenow', '66')
+      } else {
+        $(this).attr('style', 'width: 100%')
+        $(this).attr('aria-valuenow', '100')
+      }
+    })
+    
+    // set total with decimal place
+    $('#customer-order').find('h6.font-weight-bold').each(function() {
+      var total = $(this).attr('data-total')
+      $(this).html('$ ' + Number(total).toFixed(2))
+    })
+  })
 
-        
-        
-        
-   });
+  // handle button clicks
+  $('#customer-order').on('click', 'button.btn', function(e) {
+
+    // cancel order
+    if ($(this).hasClass('cancel')) {
+      gbmsg.loading()
+      console.log($(this).attr('data-id'))
+      $.ajax({
+        type: 'PUT',
+        url: '/customer/order/cancel',
+        data: {
+          orderId: $(this).attr('data-id')
+        }
+      }).done( function(res) {
+        console.log('res', res)
+        {{!-- gbmsg.success(res.message[0]) --}}
+        alertify.alert('Cancel Success', res.message[0])
+        setTimeout(() => {
+          window.location.reload()
+        }, 1200)
+      }).fail( function(jqXHR) {
+        console.log('jqXHR', jqXHR)
+        var res = jqXHR.responseJSON || {}
+        var errs = res.message || []
+        {{!-- gbmsg.failure(errs[0] || 'Sorry, the application has encountered an unknown error.') --}}
+        alertify.alert('Cancel Failed', errs[0] || 'Sorry, the application has encountered an unknown error.')
+      }).always(function() { 
+        gbmsg.hide()
+      })
+    }
+
+    // edit order
+    if ($(this).hasClass('edit')) {
+      var orderId = $(this).attr('data-id')
+      var data = $(this).attr('data-data')
+
+      window.sessionStorage.setItem('orderId', orderId)
+
+      var dataJson = JSON.parse(decodeURIComponent(data))
+      var carts = dataJson.map(v => {
+        var snack = v.snackID || {}
+        return {
+          id: snack._id,
+          name: snack.name,
+          price: snack.price.$numberDecimal,
+          desc: snack.description,
+          count: v.quantity
+        }
+      })
+      console.log('carts',carts)
+
+      window.sessionStorage.setItem('carts', JSON.stringify(carts))
+
+      setTimeout(() => {
+        window.location.href = '/customer/cart'
+      }, 100)
+    }
+
+    // rate order
+    if ($(this).hasClass('rate')) {
+      var orderId = $(this).attr('data-id')
+      var orderNumber = $(this).attr('data-number')
+      var url = "/customer/feedback?_id=" + encodeURIComponent(orderId) + "&number=" + encodeURIComponent(orderNumber)
+      window.location.href = url;
+    }
+
+  })
+  
 </script>
-

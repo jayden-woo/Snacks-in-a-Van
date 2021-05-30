@@ -49,11 +49,9 @@ const getMenu = async (req, res) => {
     try {
         const menu = await Snack.find().lean()
         // render the menu page
-        // return res.status(200).send(menu)
         return res.status(200).render("customer/menu", {list: menu})
     // error occurred during query
     } catch (err) {
-        // return res.status(400).send("Oops! Something went wrong.")
         return res.status(400).render("error", {code: 400, message: "Oops! Something went wrong."})
     }
 }
@@ -65,26 +63,29 @@ const getSnackByName = async (req, res) => {
         const snack = await Snack.findOne({ name: req.params.snackName }).lean()
         // snack not found in database
         if (snack === null) { 
-            // return res.status(404).send("Oops! Snack not found.")
             return res.status(404).render("error", {code: 404, message: "Oops! Snack not found."})
         }
         // render the snack details page
-        // return res.status(200).send(snack)
         return res.status(200).render("customer/oneSnack", {oneSnack: snack, user: req.user })
     // error occurred during query
     } catch (err) {
-        return res.status(400).send("Oops! Something went wrong.")
+        return res.status(400).render("error", {code: 400, message: "Oops! Something went wrong."})
     }
 }
 
 // render the cart page for the client
 const getCart = (req, res) => {
-    res.render('customer/cart', { user: req.user });
+    return res.status(200).render("customer/cart", {user: req.user})
 }
 
 // get all the orders details
 const getOrders = async (req, res) => {
     try {
+        // check if there's any orders
+        const list = await Order.find({ customerID: req.user._id }).limit(1)
+        if (!list.length) {
+            return res.status(200).render("customer/order", {order: [], user: req.user.lean()})
+        }
         const orders = await Order
             // find orders associated with the current customer
             .find({
@@ -101,10 +102,10 @@ const getOrders = async (req, res) => {
                 updatedAt: -1
             // convert to a js object
             }).lean()
-        return res.status(200).send(orders)
+        return res.status(200).render("customer/order", {order: orders, user: JSON.stringify(req.user)})
     // error occurred during query
     } catch (err) {
-        return res.status(400).send("Oops! Something went wrong.")
+        return res.status(400).render("error", {code: 400, message: "Oops! Something went wrong."})
     }
 }
 
@@ -134,7 +135,7 @@ const getOrderByNumber = async (req, res) => {
 
 // render the feedback page for the client
 const getFeedback = (req, res) => {
-    return res.status(200).send("<h1> Feedback Page <\h1>")
+    return res.status(200).render("customer/feedback", {id: req.query._id, number: req.query.number})
 }
 
 // save the location of the customer in session
@@ -144,7 +145,7 @@ const saveLocation = (req, res) => {
             type: "Point", 
             coordinates: [Number(req.body.longitude), Number(req.body.latitude)]
         }
-        return res.status(200).json({success: true, message: []})
+        return res.status(200).json({success: true, message: ["Your location has been successfully captured."]})
     } catch (err) {
         return res.status(500).json({success: false, message: ["Oops! Something went wrong. Please try again later."]})
     }
@@ -172,64 +173,66 @@ const selectVendor = async (req, res) => {
 const confirmOrder = async (req, res) => {
     try {
         // create a list containing all the snacks and quantity
-        const { orderlist, price , vendorId} = req.body;
-        const lineItems = [];
-        for (i = 0; i < orderlist.length; i++) {
-          lineItems.push(
-            new OrderLine({
-              snackID: orderlist[i].snackId,
-              quantity: parseInt(orderlist[i].quantity),
-            }),
-          );
+        const orderlist = req.body.orderlist;
+        const lineItems = []
+        for (i=0; i<orderlist.length; i++) {
+            lineItems.push(
+                new OrderLine({
+                    snackID: orderlist[i].snackId,
+                    quantity: parseInt(orderlist[i].quantity)
+                })
+            )
         }
-
         // construct a new order and save it to database
         const orderNumber = await Order.countDocuments()
         const order = new Order({
             orderNumber: orderNumber, 
-            vendorID: vendorId || req.session.vendor._id,
+            vendorID: req.body.vendorId || req.session.vendor._id,
             customerID: req.user._id, 
             snacks: lineItems, 
-            total: parseInt(price)
+            total: parseFloat(req.body.price)
         })
-
-        await order.save((err) => {
-            if (err) throw err;
-            else {
-                return req.res.status(200).json({success: true, message: ["Order placed successfully."]})
-            }
-        });
-
+        await order.save()
+        // send a notification to the vendor to refresh their page
+        req.io.emit('vendor message', order.vendorID)
+        return req.res.status(200).json({success: true, message: ["Order placed successfully."]})
     // error occurred during saving
     } catch {
-        return res.status(400).send("Oops! Something went wrong.")
+        return res.status(400).json({success: false, message: ["Oops! Something went wrong."]})
     }
 }
 
 // update the previously confirmed order with new items or quantities
 const updateOrder = async (req, res) => {
     try {
-        const {orderId, orderlist, newPrice} = req.body
-        console.log(req.body);
-        const order = await Order.findOne({ _id: orderId });
-        if (order == null) {
-            return res.status(400).json("Order doesnt exist")
+        // find the order from the database
+        const order = await Order.findOne({
+            _id: req.body.orderId, 
+            customerID: req.user._id
+        })
+        // order not found in database
+        if (order === null) {
+            return res.status(404).json({success: false, message: ["Oops! Order not found."]})
         }
-
         // create a new list containing all the snacks and quantity
+        const orderlist = req.body.orderlist;
         const lineItems = []
-        for (i=0; i<req.body.list.length; i++) {
+        for (i=0; i<orderlist.length; i++) {
             lineItems.push(new OrderLine({
                 snackID: orderlist[i].snackId, 
                 quantity: parseInt(orderlist[i].quantity)
             }))
         }
-
-        await Order.updateOne( {_id: orderId}, {$set: {snacks: lineItems, total: parseInt(newPrice)}} )
-        return res.status(200).json({ success: true, errors: [] });
+        // change the items and the price in the order and save it
+        order.snacks = lineItems
+        order.total = parseFloat(req.body.newPrice)
+        await order.save()
+        // send a notification to the vendor to refresh their page
+        req.io.emit('vendor message', order.vendorID)
+        return res.status(200).json({success: true, message: ["Your order has been successfully updated."]});
     // error occurred during saving
     } catch (err) {
-        return res.status(400).send("Oops! Something went wrong.")
+        return res.status(400).json({success: false, message: ["Oops! Something went wrong."]})
     }
 }
 
@@ -238,22 +241,22 @@ const cancelOrder = async (req, res) => {
     try {
         // find the order from the database
         const order = await Order.findOne({
-            customerID: req.user._id, 
-            orderNumber: req.params.orderNumber
+            _id: req.body.orderId, 
+            customerID: req.user._id
         })
         // snack not found in database
         if (order === null) {
-            return res.status(404).send("Order does not exist.")
+            return res.status(404).json({success: false, message: ["Order does not exist."]})
         }
         // change the order status to "cancelled" and save it
         order.status = "Cancelled"
         await order.save()
-
-        req.flash("orderMessage", "Order successfully cancelled.")
-        return res.status(200).send("Order has been successfully cancelled.")
+        // send a notification to the vendor to refresh their page
+        req.io.emit('vendor message', order.vendorID)
+        return res.status(200).json({success: true, message: ["Order has been successfully cancelled."]})
     // error occurred during saving
     } catch (err) {
-        return res.status(400).send("Oops! Something went wrong.")
+        return res.status(400).json({success: false, message: ["Oops! Something went wrong."]})
     }
 }
 
@@ -267,8 +270,8 @@ const submitFeedback = async (req, res) => {
         })
         // search for the order to place the feedback in
         const order = await Order.findOne({
+            _id: req.body._id, 
             customerID: req.user._id, 
-            orderNumber: req.params.orderNumber
         })
         // order not found in database
         if (order === null) {
@@ -277,12 +280,10 @@ const submitFeedback = async (req, res) => {
         // add the feedback to the order and save it
         order.feedback = feedback
         await order.save()
-
-        req.flash("feedbackMessage", "Feedback successfully added.")
-        return res.status(200).redirect("/customer/order")
+        return res.status(200).json({success: true, message: ["Feedback has been successfully added for your order."]})
     // error occured during saving
     } catch (err) {
-        return res.status(400).send("Oops! Something went wrong.")
+        return res.status(400).json({success: false, message: ["Oops! Something went wrong."]})
     }
 }
 

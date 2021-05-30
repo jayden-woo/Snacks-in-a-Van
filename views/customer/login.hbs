@@ -62,7 +62,7 @@
         }
       }).done( function(res) {
         alertify.alert('Login Success', res.message[0], function() {
-          window.location.href = '/customer/account'
+          window.location.href = '/customer/menu'
         })
       }).fail( function(jqXHR) {
         console.log('jqXHR', jqXHR)

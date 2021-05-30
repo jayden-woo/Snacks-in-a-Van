@@ -1,9 +1,10 @@
 var register = function(Handlebars) {
     // add all helpers as key: value pairs
     var helpers = {
+
         // iterate over food items and display it on the page
         listsnack: function (snacks) { 
-            var ret ="<ul>";
+            var ret ="<ul>"
 
             for (var i = 0, j = snacks.length; i < j; i++) {
                 var snackName = snacks[i].name.slice(0,1).toUpperCase() + snacks[i].name.slice(1);
@@ -19,13 +20,12 @@ var register = function(Handlebars) {
                             "</section>" +
                         "</li>" +
                     "</a>&nbsp;"
-                    
             }
 
-            return ret + "</ul>";
+            return ret + "</ul>"
 		},
 
-        onesnack: function (snack){
+        onesnack: function (snack) {
             var snackName = snack.name.slice(0,1).toUpperCase() + snack.name.slice(1);
             ret = 
                 "<a href=\"/customer/menu\">" + "<h1>" + snackName + "</h1>" + "</a>" +
@@ -45,24 +45,31 @@ var register = function(Handlebars) {
                         "</form>"+
                     "</section>" +
                 "</section>"
-            return ret;
+            return ret
         },
-    };
-  
-    if (Handlebars && typeof Handlebars.registerHelper === "function") {
-      // register helpers
-      // for each helper defined above (we have only one, listfood)
-      for (var prop in helpers) {
-          // we register helper using the registerHelper method
-          Handlebars.registerHelper(prop, helpers[prop])
-      }
-    } else {
-        // just return helpers object if we can't register helpers here
-        return helpers;
+
+        is_equal: function (a, b) {
+            return a === b
+        },
+
+        json: function (context) {
+            return encodeURIComponent(JSON.stringify(context))
+        },
+
     }
   
-  };
+    if (Handlebars && typeof Handlebars.registerHelper === "function") {
+        // register helpers
+        for (var prop in helpers) {
+            Handlebars.registerHelper(prop, helpers[prop])
+        }
+    } else {
+        // just return helpers object if we can't register helpers here
+        return helpers
+    }
   
-  // export helpers to be used in our express app
-  module.exports.register = register
-  module.exports.helpers = register(null)
+}
+  
+// export helpers to be used in our express app
+module.exports.register = register
+module.exports.helpers = register(null)

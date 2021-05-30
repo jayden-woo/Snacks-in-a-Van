@@ -126,29 +126,33 @@ const getOrderByNumber = async (req, res) => {
 
 // get the order history with picked-up and cancelled orders
 const getOrderHistory = async (req, res) => {
-  try {
-    const orders = await Order
-      // find the previous orders associated with the current vendor
-      .find({
-        vendorID: req.user._id,
-        status: { $in: ["Picked-Up", "Cancelled"] },
-        // add the customer given name
-      })
-      .populate({
-        path: "customerID",
-        select: "firstName",
-        // add the snack details
-      })
-      .populate({
-        path: "snacks.snackID",
-        // sort by newest order first
-      })
-      .sort({
-        updatedAt: -1,
-        // convert to a js object
-      })
-      .lean();
-    return res.status(200).send(orders);
+    try {
+        // check if there's any orders
+        const list = await Order
+            .find({
+                vendorID: req.user._id, 
+                status: {$in: ["Picked-Up", "Cancelled"]}
+            }).limit(1)
+        if (!list.length) {
+            return res.status(200).render("vendor/history", {order: []})
+        }
+        const orders = await Order
+            // find the previous orders associated with the current vendor
+            .find({
+                vendorID: req.user._id, status: {$in: ["Picked-Up", "Cancelled"]}
+            // add the customer given name
+            }).populate({
+                path: "customerID", 
+                select: "firstName"
+            // add the snack details
+            }).populate({
+                path: "snacks.snackID"
+            // sort by newest order first
+            }).sort({
+                updatedAt: -1
+            // convert to a js object
+            }).lean()
+        return res.status(200).send(orders)
     // error occurred during query
   } catch (err) {
     return res.status(400).send("Oops! Something went wrong.");
@@ -190,32 +194,32 @@ const getOrderHistory = async (req, res) => {
 
 // mark an order as fulfilled and apply discount if time limit passed
 const markFulfilled = async (req, res) => {
-  try {
-    // search for the order from the database
-    let order = await Order.findOne({
-      vendorID: req.user._id,
-      orderNumber: req.params.orderNumber,
-    });
-    // order not found in database
-    if (order === null) {
-      req.flash("updateMessage", "Order does not exist.");
-      return res
-        .status(400)
-        .send("Sorry, we could not find the order in our database.");
-    }
-    // order has already been fulfilled or cancelled
-    if (order.status != "Placed") {
-      req.flash("updateMessage", "Order could not be fulfilled.");
-      return res.status(400).send("Sorry, the order could not be fulfilled.");
-    }
-    // check if the time limit for discount has passed
-    if (new Date() - new Date(order.updatedAt) >= DISCOUNT_TIME) {
-      order.discountApplied = true;
-    }
-    // mark the order as fulfilled and save it in the database
-    order.status = "Fulfilled";
-    await order.save();
-    return res.status(200).send("Order has been fulfilled.");
+    try {
+        // search for the order from the database
+        const order = await Order.findOne({
+            vendorID: req.user._id, 
+            orderNumber: req.params.orderNumber
+        })
+        // order not found in database
+        if (order === null) {
+            req.flash("updateMessage", "Order does not exist.")
+            return res.status(400).send("Sorry, we could not find the order in our database.")
+        }
+        // order has already been fulfilled or cancelled
+        if (order.status != "Placed") {
+            req.flash("updateMessage", "Order could not be fulfilled.")
+            return res.status(400).send("Sorry, the order could not be fulfilled.")
+        }
+        // check if the time limit for discount has passed
+        if ((new Date() - new Date(order.updatedAt)) >= DISCOUNT_TIME) {
+            order.discountApplied = true
+        }
+        // mark the order as fulfilled and save it in the database
+        order.status = "Fulfilled"
+        await order.save()
+        // send a notification to the customer to refresh their page
+        req.io.emit('customer message', order.customerID)
+        return res.status(200).send("Order has been fulfilled.")
     // error occurred during saving
   } catch (err) {
     console.log("markFulfilled", err);
