@@ -1,0 +1,68 @@
+<section class='container--'>
+  <h1>Order #{{number}}</h1>
+  <form>
+    <div class="row text-center">
+        <div class="col-12">
+            <div><h6>Rate your order</h6></div>
+            <div class="br-wrapper br-theme-css-stars">
+                <select id='rating'>
+                <option value='1'>1</option>
+                <option value='2'>2</option>
+                <option value='3'>3</option>
+                <option value='4'>4</option>
+                <option value='5' selected>5</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-12">
+            <h6>Leave your comments</h6>
+            <textarea name="" id="content" placeholder="Comments" cols="30" rows="10"></textarea>
+        </div>
+        <div class="col-12">
+            <input type="hidden" id="id" value="{{id}}">
+            <input type='submit' class="btn btn-primary center-block " value='Submit' id="submit" />
+        </div>
+    </div>
+  </form>
+</section>
+
+<script type="text/javascript">
+   $(function() {
+      $('#rating').barrating({
+        theme: 'fontawesome-stars'
+      });
+        var $id = $('#id')
+        var $rating = $('#rating')
+        var $content = $('#content')
+        var $submit = $('#submit')
+        
+        // Rating interface request
+        $submit.click(function(e) {
+        e.preventDefault()
+        if (!$rating.val()) {
+            gbmsg.failure('Please rate the order first.')
+            return
+        }
+        gbmsg.loading();
+        $.ajax({
+            type: 'PUT',
+            url: '/customer/feedback',
+            data: {
+                _id: $id.val(),
+                rating: $rating.val(),
+                comment: $content.val()
+            }
+        }).done( function(res) {
+            gbmsg.success(res.message[0])
+            setTimeout(() => {
+              window.location.href = '/customer/menu'
+            }, 1000)
+        }).fail( function(jqXHR) {
+            console.log('jqXHR', jqXHR)
+            var res = jqXHR.responseJSON || {}
+            var errs = res.message || []
+            gbmsg.failure(errs[0] || 'Sorry, the application has encountered an unknown error.')
+        })
+      })
+   })
+</script>

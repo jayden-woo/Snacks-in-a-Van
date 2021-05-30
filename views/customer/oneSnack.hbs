@@ -72,7 +72,7 @@
     $cart.click(function() {
       // Direct to the login page when not logged in
       if (!$isLogin.val()) {
-          gbmsg.info('please sign in before place an order')
+          gbmsg.info('Please sign in before placing an order.')
           setTimeout(() => {
               window.location.href = '/customer/login'
           }, 1000)
@@ -103,8 +103,7 @@
       }
       // update cart
       window.sessionStorage.setItem('carts', JSON.stringify(cartsJson))
-      gbmsg.info('Added to cart successfully')
-      gbmsg.success('Successfully')
+      gbmsg.success('Added to cart successfully.')
       setTimeout(() => {
           window.location.href = '/customer/menu'
       }, 1000)
