@@ -130,21 +130,25 @@ CONNECTION_STRING = "mongodb+srv://xyz:1234@project-t10-generator.1mtcl.mongodb.
 
 The login details for sample customer and vendor will be given here. The login details are as follows:
 
-| Account Type | Username |     Email      | Password  |
-| :----------- | :------: | :------------: | --------: |
-| Customer     |   test   | test@gmail.com | Test1234! |
-| Vendor       |          |                |           |
+| Account Type | Username |      Email       |  Password |
+| :----------- | :------: | :--------------: | --------: |
+| Customer     |    /     | martin@gmail.com | info30005 |
+| Vendor       | unimelb  |        /         | info30005 |
 
 -----
 
-<br/><br/> 
+<br/><br/>
+
+## Customer map button on the top right after  
+
+## Customer map on the right top after press the search button
 
 **Now Get ready to complete all the tasks:**
 
 - [x] Read the Project handouts carefully
 - [x] User Interface (UI)mockup
-- [ ] App server mockup
-- [ ] Front-end + back-end (one feature)
-- [ ] Complete system + source code
-- [ ] Report on your work(+ test1 feature)
+- [x] App server mockup
+- [x] Front-end + back-end (one feature)
+- [x] Complete system + source code
+- [x] Report on your work(+ test1 feature)
 
