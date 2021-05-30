@@ -40,7 +40,7 @@ customerRouter.get('/menu', customerController.getMenu)
 customerRouter.get('/menu/:snackName', customerController.getSnackByName)
 
 // handle the GET request to get the current cart
-customerRouter.get('/cart', isCustomer, customerController.getCart)
+customerRouter.get('/cart',  customerController.getCart)
 
 // handle the GET request to get all the order details
 customerRouter.get('/order', isCustomer, customerController.getOrders)
