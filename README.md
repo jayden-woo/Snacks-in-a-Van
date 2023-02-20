@@ -30,7 +30,7 @@ Welcome!
 
 ## General info
 
-This project is by Generator, a INFO30005 student team, based on the business requirements from Snacks in a Van, a startup company in Melbourne managing a fleet of mobile food trucks that operate as cafes. This operation involves the creation of a web app for customers and vendors to use, viewable through vertical mobile devices and horizontal tablets.
+This project is built by Team Generator, a INFO30005 Semester 1 2021 student group, based on the business requirements from Snacks in a Van, a startup company in Melbourne managing a fleet of mobile food trucks that operate as cafes. This operation involves the creation of a web app for customers and vendors to use, viewable through vertical mobile devices and horizontal tablets.
 
 ## Live Link
 
