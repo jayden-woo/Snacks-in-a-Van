@@ -1,22 +1,23 @@
 {
-  "name": "project-t10-generator",
+  "name": "snack-in-a-van",
   "version": "1.0.0",
   "description": "Web App Project for UniMelb INFO30005 Semester 1, 2021",
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
+    "dev": "nodemon app.js",
     "test": "jest --forceExit"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/INFO30005-2021-SM1/project-t10-generator.git"
+    "url": "git+https://github.com/jayden-woo/Snacks-in-a-Van.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/INFO30005-2021-SM1/project-t10-generator/issues"
+    "url": "https://github.com/jayden-woo/Snacks-in-a-Van/issues"
   },
-  "homepage": "https://github.com/INFO30005-2021-SM1/project-t10-generator#readme",
+  "homepage": "https://github.com/jayden-woo/Snacks-in-a-Van#readme",
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "connect-flash-plus": "^0.2.1",
@@ -36,7 +37,7 @@
   "keywords": [],
   "devDependencies": {
     "jest": "^27.0.3",
-    "nodemon": "^2.0.7",
+    "nodemon": "^2.0.20",
     "supertest": "^6.1.3"
   }
 }
