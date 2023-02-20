@@ -1,0 +1,214 @@
+<section class="container--">
+  <ul class="list-group account--list" id="list">
+    <li class="list-group-item">
+      <span class="list--label bg-primary">Van Name</span>
+      <a href="javascript:;" class="username text-secondary">{{user.username}}</a>
+    </li>
+    <li class="list-group-item">
+      <span class="list--label bg-primary">Password</span>
+      <a href="javascript:;" class="password text-secondary">********</a>
+    </li>
+        <li class="list-group-item">
+      <span class="list--label bg-primary">Status</span>
+      <a href="javascript:;" class="status text-secondary">{{user.isOnline}}</a>
+    </li>
+  </ul>
+
+  <div class="account--dialog animate__faster" id="dialog">
+    <div class="account--dialog__header">
+      <a id="close" href="javascript:;" class="account--dialog__header--close fa fa-close fa-2x"></a>
+    </div>
+    <div class="account--dialog__content">
+      <div class="flex-wrap" id="username" style="display: none;">
+        <div class="form-group">
+          <label>Van Name</label>
+          <input type="text" class="form-control username" value="{{user.username}}">
+        </div>
+        <div class="form-group">
+          <button type="submit" class="btn btn-primary">Update</button>
+        </div>
+      </div>
+
+      <div class="flex-wrap" id="password" style="display: none;">
+        <div class="form-group">
+          <label>Current password</label>
+          <input type="password" class="form-control current" value="">
+        </div>
+        <div class="form-group">
+          <label>New password</label>
+          <input type="password" class="form-control new" value="">
+        </div>
+        <div class="form-group">
+          <button type="submit" class="btn btn-primary">Update</button>
+        </div>
+      </div>
+
+      <div class="flex-wrap" id="status" style="display: none;">
+        <div class="form-group">
+          <label>Status</label>
+        </div>
+        <div class="form-group">
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="isOnline" value="1">
+            <label class="form-check-label" for="open">
+              Open
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="isOnline" value="0">
+            <label class="form-check-label" for="closed">
+              Closed
+            </label>
+          </div>
+        </div>
+        <div class="form-group">
+          <button type="submit" class="btn btn-primary">Update</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  $(function() {
+    // declare html variables
+    var $list = $('#list')
+    var $dialog = $('#dialog')
+
+    // validations
+    var re_name = /^[a-zA-Z0-9 ]+$/
+    var re_pwd = /^(?=.*\d)(?=.*[a-zA-Z])[a-zA-Z0-9!@#$%^&*]{8,}$/
+    // open dialog when clicking on list
+    function showDialog(type) {
+      $(`#${type}`).show().siblings().hide()
+      $dialog.addClass('animate__animated animate__backInUp').show()
+    }
+
+    $list.on('click', 'a', function() {
+      var $this = $(this)
+
+      if ($this.hasClass('username')) {
+        showDialog('username')
+      }  else if ($this.hasClass('password')) {
+        showDialog('password')
+      }  else if ($this.hasClass('status')) {
+        showDialog('status')
+      }
+
+    })
+    // username validations and post request
+    $('#username').on('click', 'button', function() {
+      var value = $('#username').find('input.username').val()
+
+      if (!value) {
+        alertify.alert('Missing Field', 'Please enter your username.')
+        $('#username').focus()
+        return
+      }
+
+      if (!re_name.test(value)) {
+        alertify.alert('Value Error', 'First name can only contain letters, numbers and spaces.')
+        $('#username').focus()
+        return
+      }
+
+      gbmsg.loading()
+
+
+      $.ajax({
+        type: 'POST',
+        url: '/vendor/account',
+        data: {
+          username: value
+        }
+      }).done( function(res) {
+        gbmsg.success(res.message[0] || 'Success')
+        $dialog.hide()
+        $list.find('a.username').text(value)
+      }).fail( function(jqXHR) {
+        console.log(jqXHR)
+        var res = jqXHR.responseJSON || {}
+        var errs = res.message || []
+        gbmsg.failure(errs[0] || "error");
+      })
+    })
+    // password validations and post request
+    $('#password').on('click', 'button', function() {
+      var curVal = $('#password').find('input.current').val()
+      var newVal = $('#password').find('input.new').val()
+
+      if (!curVal) {
+        alertify.alert('Missing Field', 'Please enter your current password.')
+        $('#password').focus()
+        return
+      }
+
+      if (!newVal) {
+        alertify.alert('Missing Field', 'Please enter your new password.')
+        $('#password').focus()
+        return
+      }
+
+      if (!re_pwd.test(newVal)) {
+        alertify.alert('Value Error', 'Password must have at least one uppercase or lowercase letter (A-Z or a-z), at least one digit (0-9), and be longer than 8 characters.')
+        $('#password').focus()
+        return
+      }
+
+      gbmsg.loading()
+
+      $.ajax({
+        url: '/vendor/account',
+        type: 'POST',
+        data:{
+          oldPassword: curVal,
+          password: newVal,
+        }
+      }).done( function(res) {
+        gbmsg.success(res.message[0] || 'Success')
+        $dialog.hide()
+      }).fail( function(jqXHR) {
+        console.log(jqXHR)
+        var res = jqXHR.responseJSON || {}
+        var errs = res.message || []
+        gbmsg.failure(errs[0] || "error")
+      })
+    })
+    // status validations and post request
+    $('#status').on('click', 'button', function() {
+      var value = $('#status').find('input:checked').val()
+
+      console.log(value)
+      if (!value) {
+        alertify.alert('Missing Field', 'Please select a status.')
+        $('#email').focus()
+        return
+      }
+
+      gbmsg.loading()
+
+      $.ajax({
+        url: '/vendor/account',
+        type: 'POST',
+        data:{
+          isOnline: value === '1' ? true : false,
+        }
+      }).done( function(res) {
+        gbmsg.success(res.message[0] || 'Success')
+        $dialog.hide()
+        $list.find('a.status').text(value === '1' ? "Open" : "Closed")
+      }).fail( function(jqXHR) {
+        console.log(jqXHR)
+        var res = jqXHR.responseJSON || {}
+        var errs = res.message || []
+        gbmsg.failure(errs[0] || "error")
+      })
+    })
+
+    // close dialog
+    $('#close').click(function () {
+      $dialog.hide()
+    })
+
+  })
+</script>
