@@ -51,14 +51,14 @@
       }
 
       gbmsg.loading()
-      
-      // handle customer-login post request 
+
+      // handle customer-login post request
       $.ajax({
         type: 'POST',
         url: '/customer/login',
         data: {
           email: $email.val(),
-          password: $password.val() 
+          password: $password.val()
         }
       }).done( function(res) {
         alertify.alert('Login Success', res.message[0], function() {
@@ -69,7 +69,7 @@
         var res = jqXHR.responseJSON || {}
         var errs = res.message || []
         alertify.alert('Login Failure', errs[0] || 'Sorry, the application has encountered an unknown error.')
-      }).always( function() { 
+      }).always( function() {
         gbmsg.hide()
        })
     })

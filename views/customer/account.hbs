@@ -2,19 +2,19 @@
   <ul class="list-group account--list" id="list">
     <li class="list-group-item">
       <span class="list--label bg-primary">First Name</span>
-      <a href="javascript:;" class="firstname text-secondary">{{user.firstName}}</a> 
+      <a href="javascript:;" class="firstname text-secondary">{{user.firstName}}</a>
     </li>
     <li class="list-group-item">
       <span class="list--label bg-primary">Last Name</span>
-      <a href="javascript:;" class="lastname text-secondary">{{user.lastName}}</a> 
+      <a href="javascript:;" class="lastname text-secondary">{{user.lastName}}</a>
     </li>
     <li class="list-group-item">
       <span class="list--label bg-primary">Email</span>
-      <a href="javascript:;" class="email text-secondary">{{user.email}}</a> 
+      <a href="javascript:;" class="email text-secondary">{{user.email}}</a>
     </li>
     <li class="list-group-item">
       <span class="list--label bg-primary">Password</span>
-      <a href="javascript:;" class="password text-secondary">********</a> 
+      <a href="javascript:;" class="password text-secondary">********</a>
     </li>
   </ul>
 
@@ -97,7 +97,7 @@
       }  else if ($this.hasClass('password')) {
         showDialog('password')
       }
-      
+
     })
     // first name validations and post request
     $('#firstname').on('click', 'button', function() {
@@ -117,22 +117,22 @@
 
       gbmsg.loading()
 
-      
+
       $.ajax({
         type: 'POST',
         url: '/customer/account',
         data: {
           firstName: value
         }
-      }).done( function(res) { 
-        gbmsg.success(res.message[0] || 'Success') 
+      }).done( function(res) {
+        gbmsg.success(res.message[0] || 'Success')
         $dialog.hide()
         $list.find('a.firstname').text(value)
       }).fail( function(jqXHR) {
         console.log(jqXHR)
         var res = jqXHR.responseJSON || {}
         var errs = res.message || []
-        gbmsg.failure(errs[0] || "error"); 
+        gbmsg.failure(errs[0] || "error");
       })
     })
     // last name validations and post request
@@ -159,11 +159,11 @@
         data:{
           lastName: value
         }
-      }).done( function(res) { 
-        gbmsg.success(res.message[0] || 'Success') 
+      }).done( function(res) {
+        gbmsg.success(res.message[0] || 'Success')
         $dialog.hide()
         $list.find('a.lastname').text(value)
-      }).fail( function(jqXHR) { 
+      }).fail( function(jqXHR) {
         console.log(jqXHR)
         var res = jqXHR.responseJSON || {}
         var errs = res.message || []
@@ -194,11 +194,11 @@
         data:{
           email: value
         }
-      }).done( function(res) { 
-        gbmsg.success(res.message[0] || 'Success') 
+      }).done( function(res) {
+        gbmsg.success(res.message[0] || 'Success')
         $dialog.hide()
         $list.find('a.email').text(value)
-      }).fail( function(jqXHR) { 
+      }).fail( function(jqXHR) {
         console.log(jqXHR)
         var res = jqXHR.responseJSON || {}
         var errs = res.message || []
@@ -237,10 +237,10 @@
           oldPassword: curVal,
           password: newVal,
         }
-      }).done( function(res) { 
-        gbmsg.success(res.message[0] || 'Success')  
+      }).done( function(res) {
+        gbmsg.success(res.message[0] || 'Success')
         $dialog.hide()
-      }).fail( function(jqXHR) { 
+      }).fail( function(jqXHR) {
         console.log(jqXHR)
         var res = jqXHR.responseJSON || {}
         var errs = res.message || []

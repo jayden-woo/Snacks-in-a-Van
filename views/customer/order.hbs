@@ -24,13 +24,13 @@
                       <h6>{{vendorID.textAddress}}</h6>
                     {{/if}}
                     <div id="customer-order-progress" class="progress">
-                      <div 
-                        class="progress-bar" 
-                        role="progressbar" 
-                        style="width: 33%" 
-                        aria-valuenow="33" 
-                        aria-valuemin="0" 
-                        aria-valuemax="100" 
+                      <div
+                        class="progress-bar"
+                        role="progressbar"
+                        style="width: 33%"
+                        aria-valuenow="33"
+                        aria-valuemin="0"
+                        aria-valuemax="100"
                         data-data="{{status}}"
                       ><h6>{{status}}</h6>
                       </div>
@@ -98,10 +98,10 @@
         }, 1500)
     }
   })
-  
+
   $(document).ready(function() {
     // time limit to give a discount for orders (15 mins)
-    var DISCOUNT_TIME = 15 * 60 * 1000; 
+    var DISCOUNT_TIME = 15 * 60 * 1000;
 
     // countdown timer
     setTimeout(() => {
@@ -113,16 +113,16 @@
 
           // 10-5 minutes show the yellow box
           if (minute <= 10 && minute > 5) {
-            $(this).removeClass('alert-success').addClass('alert-warning')    
+            $(this).removeClass('alert-success').addClass('alert-warning')
           } else if (minute <= 5) {
             // Less than 5 minutes to show the red box
-            $(this).removeClass('alert-warning').addClass('alert-danger')      
+            $(this).removeClass('alert-warning').addClass('alert-danger')
           }
           $(this).text(event.strftime('%M:%S'))
         })
       })
     }, 100)
-    
+
     // set progress bar
     $('#customer-order').find('.progress-bar').each(function() {
       var status = $(this).attr('data-data')
@@ -137,7 +137,7 @@
         $(this).attr('aria-valuenow', '100')
       }
     })
-    
+
     // set total with decimal place
     $('#customer-order').find('h6.font-weight-bold').each(function() {
       var total = $(this).attr('data-total')
@@ -171,7 +171,7 @@
         var errs = res.message || []
         {{!-- gbmsg.failure(errs[0] || 'Sorry, the application has encountered an unknown error.') --}}
         alertify.alert('Cancel Failed', errs[0] || 'Sorry, the application has encountered an unknown error.')
-      }).always(function() { 
+      }).always(function() {
         gbmsg.hide()
       })
     }
@@ -212,5 +212,5 @@
     }
 
   })
-  
+
 </script>

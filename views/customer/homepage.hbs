@@ -17,15 +17,20 @@
       e.preventDefault()
 
       gbmsg.loading();
-      // get current location
-      navigator.geolocation.getCurrentPosition( (location) => {
+
+      function callback(location) {
+        // assign a default location if no location data is received
+        if (!location.coords) location.coords = {
+            latitude: -37.79826461755695,
+            longitude: 144.96144405198987
+        }
         console.log(`${location.coords.latitude},${location.coords.longitude}`)
         // save location post request
         $.ajax({
           type: 'POST',
           url: '/customer/',
           data: {
-            longitude: location.coords.longitude, 
+            longitude: location.coords.longitude,
             latitude: location.coords.latitude
           }
         }).done( function(res) {
@@ -41,8 +46,10 @@
         }).always(function(){
           gbmsg.hide()
         })
+      }
 
-      })
+      // get current location
+      navigator.geolocation.getCurrentPosition(callback, callback)
 
     })
   })

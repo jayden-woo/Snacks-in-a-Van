@@ -1,12 +1,12 @@
 <div class="container--" id="container">
   <div class="card container--content" id="list">
-   
+
   </div>
 
   <div class="card container--content vendor--order__history">
     <h4>Order history</h4>
     <ul class="list-group" id="history">
-       
+
     </ul>
   </div>
   <div id="getting-started"></div>
@@ -21,7 +21,7 @@
     <div class="container--content">
       <div class="card">
         <div class="card-body">
-          
+
         </div>
       </div>
     </div>
@@ -80,7 +80,7 @@
       Pick up <%= detail.pickedUpTime %>
     </div>
      <% for(var i = 0; i < detail.snacks.length; i++){ %>
-      <div class="col-8"><%= detail.snacks[i].snackID.name %>  x<%= detail.snacks[i].quantity %> 
+      <div class="col-8"><%= detail.snacks[i].snackID.name %>  x<%= detail.snacks[i].quantity %>
       </div>
       <div class="col-4">
         $<%= detail.snacks[i].snackID.price.$numberDecimal %>
@@ -113,7 +113,7 @@
 <script type="text/javascript">
   $(function() {
     // time limit to give a discount for orders (15 mins)
-    var DISCOUNT_TIME = 15 * 60 * 1000; 
+    var DISCOUNT_TIME = 15 * 60 * 1000;
 
     var $list = $('#list')
     var $dialog = $('#dialog')
@@ -124,7 +124,7 @@
       if (type !== 'polling') {
         gbmsg.loading()
       }
-      
+
       $.ajax({
         type: 'GET',
         url: '/vendor/api/order'
@@ -137,7 +137,7 @@
         $('#list').html(html)
 
         // countdown
-        
+
         setTimeout(() => {
           $('#list').find('.text--muted').each(function() {
           var updatedAt = $(this).attr('data-time')
@@ -149,10 +149,10 @@
 
             // 10-5 minutes show the yellow box
             if (minute <= 10 && minute > 5) {
-              $(this).addClass('alert-warning')    
+              $(this).addClass('alert-warning')
             } else if (minute <= 5) {
             // Less than 5 minutes to show the red box
-              $(this).removeClass('alert-warning').addClass('alert-danger')      
+              $(this).removeClass('alert-warning').addClass('alert-danger')
 
               if (minute <= 0) {
                 $(this).next('div.discount').text('discount applied')
@@ -170,7 +170,7 @@
         var errs = res.errors || []
 
         gbmsg.failure(errs[0] || 'Failed！')
-      }).always(function() { 
+      }).always(function() {
         gbmsg.hide()
       });
     }
@@ -181,7 +181,7 @@
       if (type !== 'polling') {
         gbmsg.loading()
       }
-      
+
       $.ajax({
         type: 'GET',
         url: '/vendor/api/history'
@@ -197,16 +197,16 @@
         var errs = res.errors || []
 
         gbmsg.failure(errs[0] || 'Failed！')
-      }).always(function() { 
+      }).always(function() {
         gbmsg.hide()
       });
     }
-    
+
     // Opend dialog
     function showDialog(type) {
       $dialog.addClass('animate__animated animate__backInUp').show()
     }
-    
+
     // Close dailog
     $('#close').click(function () {
       $dialog.hide()
@@ -219,7 +219,7 @@
     setInterval(() => {
       getOrderList('polling')
       getOrderHistoryList('polling')
-    },30000)    
+    },30000)
 
     // Open order details
     $('#container').on('click', 'a.detail', function(e) {
@@ -242,7 +242,7 @@
         var errs = res.errors || []
 
         gbmsg.failure(errs[0] || 'Failed！')
-      }).always(function() { 
+      }).always(function() {
         gbmsg.hide()
       });
 
@@ -280,7 +280,7 @@
 
 
         gbmsg.failure(errs[0] || 'Failed！')
-      }).always(function(res) { 
+      }).always(function(res) {
         console.log('res', res)
         res = res || {}
 

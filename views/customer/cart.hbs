@@ -21,18 +21,18 @@
 
   <div class="row">
     <div class="col-12 text-center">
-        
+
     </div>
   </div>
 
   <div class="cart--footer row">
     <div class="cart--footer__amount col-12 text-center">Total Amount = $<span id="total">0</span></div>
     <div class="col-6 text-center">
-      <a href="/customer/menu" class="btn btn-info">Menu</a>  
+      <a href="/customer/menu" class="btn btn-info">Menu</a>
     </div>
     <div class="col-6 cart--footer__btn text-center">
       <a href="javascript:;" id="order" class="btn btn-primary">Place Order</a>
-      
+
       <div id="orderUpdate">
       <a href="javascript:;" class="btn btn-success">Press to confirm</a>
         <p>
@@ -66,7 +66,7 @@
       $order.hide()
     } else {
       $orderUpdate.hide()
-      $order.show()   
+      $order.show()
     }
 
     // Update shopping cart
@@ -111,7 +111,7 @@
       var carts = window.sessionStorage.getItem('carts') || '[]'
       var cartsJson = JSON.parse(carts)
       var id = $(this).attr('data-id')
-      
+
       cartsJson = cartsJson.filter(v => {
         return v.id !== id
       })
@@ -151,7 +151,7 @@
       })
 
       gbmsg.loading()
-      
+
       $.ajax({
         type: 'POST',
         url: '/customer/menu/order',
@@ -171,7 +171,7 @@
         var res = jqXHR.responseJSON || {}
         var errs = res.message || []
         alertify.alert('Order Failed', errs[0] || 'Sorry, the application has encountered an unknown error.')
-      }).always(function() { 
+      }).always(function() {
         gbmsg.hide()
       })
     })
@@ -196,7 +196,7 @@
       })
 
       gbmsg.loading()
-      
+
       $.ajax({
         type: 'PUT',
         url: '/customer/order/update',

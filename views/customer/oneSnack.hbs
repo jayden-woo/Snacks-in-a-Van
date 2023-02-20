@@ -1,14 +1,14 @@
 <section id='oneFood'>
-  <a href='/customer/menu'> 
-    <h1 
-      id="name" 
-      data-id="{{oneSnack._id}}" 
-      data-name="{{oneSnack.name}}" 
-      data-desc="{{oneSnack.description}}" 
+  <a href='/customer/menu'>
+    <h1
+      id="name"
+      data-id="{{oneSnack._id}}"
+      data-name="{{oneSnack.name}}"
+      data-desc="{{oneSnack.description}}"
       data-price="{{oneSnack.price}}"
     >
       {{oneSnack.name}}
-    </h1> 
+    </h1>
   </a>
 
   <section id='oneFood-details'>
@@ -71,7 +71,7 @@
     // show cart
     $cart.click(function() {
       // Direct to the login page when not logged in
-      
+
       /*
       if (!$isLogin.val()) {
           gbmsg.info('Please sign in before placing an order.')
@@ -93,17 +93,17 @@
       console.log('itemIndex',itemIndex)
       // increase quantity if item is already in cart
       if (itemIndex > -1) {
-        cartsJson[itemIndex].count = count 
+        cartsJson[itemIndex].count = count
       // add new item to cart
       } else {
          cartsJson.push({
-          id:id, 
-          name: name, 
+          id:id,
+          name: name,
           count: count,
           desc: desc,
           price: price,
-        }) 
-          
+        })
+
       }
       // update cart
       window.sessionStorage.setItem('carts', JSON.stringify(cartsJson))

@@ -1,7 +1,7 @@
 <!-- Load the `mapbox-gl-geocoder` plugin. -->
 <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.0/mapbox-gl-geocoder.min.js"></script>
 <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.0/mapbox-gl-geocoder.css" type="text/css">
- 
+
 <!-- Promise polyfill script is required -->
 <!-- to use Mapbox GL Geocoder in IE 11. -->
 <script src="https://cdn.jsdelivr.net/npm/es6-promise@4/dist/es6-promise.min.js"></script>
@@ -66,7 +66,7 @@
     center: [144.9631, -37.8136],
     zoom: 13,
   });
-  
+
   // Add the control to the map.
   map.addControl(
     new MapboxGeocoder({
@@ -90,7 +90,7 @@
     {{!-- $.ajax({
         type: 'GET',
         url: '/vendor/account',
-    }).always(function(res) { 
+    }).always(function(res) {
       console.log('res',res)
     }); --}}
 
@@ -131,7 +131,7 @@
         var res = jqXHR.responseJSON || {}
         var errs = res.message || []
         gbmsg.failure(errs[0] || 'Failed！')
-      }).always( function(res) { 
+      }).always( function(res) {
         res = res || {}
         if (res.status === 400) {
           gbmsg.failure(res.responseText || 'Sorry, the application has encountered an unknown error.')
@@ -141,6 +141,6 @@
       });
     })
 
-    
+
   })
 </script>

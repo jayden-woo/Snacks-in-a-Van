@@ -18,7 +18,7 @@
   </div>
 </section>
 
-<script type="text/javascript">  
+<script type="text/javascript">
   $(function() {
     // order here button
     $('#list').on('click', 'button.submit', function(e) {
@@ -26,10 +26,10 @@
       let vendorID = $(this).attr('data-id')
       // store in session storage temporarily
       window.sessionStorage.setItem('vendor', vendorID)
-      // handle click 
+      // handle click
       $.ajax({
         type: 'POST',
-        url: '/customer/map', 
+        url: '/customer/map',
         data: {
             _id: vendorID
         }
@@ -46,7 +46,7 @@
         gbmsg.failure(errs[0] || 'Failed')
       }).always(function() {
         gbmsg.hide()
-      })      
+      })
     })
   })
-</script> 
+</script>

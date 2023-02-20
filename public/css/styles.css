@@ -34,7 +34,7 @@
 body {
   font-family: var(--font-body);
   font-size: var(--text-medium);
-  background-color: var(--color-light);
+  background-color: var(--color-light) !important;
   color: var(--color-dark);
 }
 
@@ -572,7 +572,7 @@ a#favourite:hover {
 /* Customer homepage */
 
 .customer-search {
-  padding: 10px 0px 20px 0px;
+  padding: 120px 0px;
 }
 
 /* Customer Order */
@@ -696,4 +696,18 @@ a#favourite:hover {
   #foodList ul {
     column-count: 4;
   }
+}
+
+.customer-button {
+  display: block;
+  padding: 140px 0px 15px;
+}
+
+.vendor-button {
+  display: block;
+  padding: 15px 0px 140px;
+}
+
+main {
+  min-height: 520px;
 }

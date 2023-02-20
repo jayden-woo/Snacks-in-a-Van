@@ -48,7 +48,7 @@
     $submit.click(function(e) {
       // handle empty input
       e.preventDefault()
-      
+
       if (!$firstname.val()) {
         {{!-- gbmsg.failure('Please enter first name') --}}
         alertify.alert('Missing Field', 'Please enter your first name.')
@@ -128,7 +128,7 @@
           firstName: $firstname.val(),
           lastName: $lastname.val(),
           email: $email.val(),
-          password: $password.val() 
+          password: $password.val()
         }
       }).done( function(res) {
         alertify.alert('Signup Success', res.message[0], function() {
@@ -139,7 +139,7 @@
         var res = jqXHR.responseJSON || {}
         var errs = res.message || []
         alertify.alert('Signup Failure', errs[0] || 'Sorry, the application has encountered an unknown error.')
-      }).always( function() { 
+      }).always( function() {
         gbmsg.hide()
       })
     })

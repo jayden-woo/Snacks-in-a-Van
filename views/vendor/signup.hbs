@@ -81,7 +81,7 @@
         url: '/vendor/signup',
         data: {
           username: $vanname.val(),
-          password: $password.val() 
+          password: $password.val()
         }
       }).done( function(res) {
         alertify.alert('Signup Success', res.message[0], function() {
@@ -92,7 +92,7 @@
         var res = jqXHR.responseJSON || {}
         var errs = res.message || []
         alertify.alert('Signup Failure', errs[0] || 'Sorry, the application has encountered an unknown error.')
-      }).always( function() { 
+      }).always( function() {
         gbmsg.hide()
        })
     })
